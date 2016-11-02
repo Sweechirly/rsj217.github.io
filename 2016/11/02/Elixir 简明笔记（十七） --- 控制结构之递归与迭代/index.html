@@ -1,0 +1,687 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="计算机顾名思义，执行计算功能。然而通常计算机是通过重复计算得出结果。例如计算从1到100的求和，就是一个个数进行累加。这样的重复性工作，人类显然不太擅长，所以人发明了算法。高斯小朋友就实现了一个等差数列的求和算法。
+既然计算机通过快速的重复计算得出结果。那么对数据源进行循环处理就是一种基本的控制结构。经典的循环控制都是通过while，for语句实现。很可惜，elixr中并没有这样的语句。不过不用担">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十七） --- 控制结构之递归与迭代">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十七） --- 控制结构之递归与迭代/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="计算机顾名思义，执行计算功能。然而通常计算机是通过重复计算得出结果。例如计算从1到100的求和，就是一个个数进行累加。这样的重复性工作，人类显然不太擅长，所以人发明了算法。高斯小朋友就实现了一个等差数列的求和算法。
+既然计算机通过快速的重复计算得出结果。那么对数据源进行循环处理就是一种基本的控制结构。经典的循环控制都是通过while，for语句实现。很可惜，elixr中并没有这样的语句。不过不用担">
+<meta property="og:updated_time" content="2016-11-02T06:26:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十七） --- 控制结构之递归与迭代">
+<meta name="twitter:description" content="计算机顾名思义，执行计算功能。然而通常计算机是通过重复计算得出结果。例如计算从1到100的求和，就是一个个数进行累加。这样的重复性工作，人类显然不太擅长，所以人发明了算法。高斯小朋友就实现了一个等差数列的求和算法。
+既然计算机通过快速的重复计算得出结果。那么对数据源进行循环处理就是一种基本的控制结构。经典的循环控制都是通过while，for语句实现。很可惜，elixr中并没有这样的语句。不过不用担">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十七） --- 控制结构之递归与迭代/"/>
+
+
+  <title> Elixir 简明笔记（十七） --- 控制结构之递归与迭代 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十七） --- 控制结构之递归与迭代
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:20:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>计算机顾名思义，执行计算功能。然而通常计算机是通过重复计算得出结果。例如计算从1到100的求和，就是一个个数进行累加。这样的重复性工作，人类显然不太擅长，所以人发明了算法。高斯小朋友就实现了一个等差数列的求和算法。</p>
+<p>既然计算机通过快速的重复计算得出结果。那么对数据源进行循环处理就是一种基本的控制结构。经典的循环控制都是通过while，for语句实现。很可惜，elixr中并没有这样的语句。不过不用担心，elixir提供了优雅而强大的递归来进行循环迭代处理。</p>
+<a id="more"></a>
+<h3 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h3><p>在函数内调用函数自身即为递归。正常情况下，打印一些一些自然数可以这么写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python</span></div><div class="line">In [<span class="number">1</span>]: <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">6</span>):</div><div class="line">   ...:     <span class="keyword">print</span> i</div><div class="line">   ...:</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">4</span></div><div class="line"><span class="number">5</span></div><div class="line"></div><div class="line">In [<span class="number">4</span>]: n = <span class="number">1</span></div><div class="line"></div><div class="line">In [<span class="number">5</span>]: <span class="keyword">while</span> n &lt;= <span class="number">5</span>:</div><div class="line">   ...:     <span class="keyword">print</span> n</div><div class="line">   ...:     n += <span class="number">1</span></div><div class="line">   ...:</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">4</span></div><div class="line"><span class="number">5</span></div></pre></td></tr></table></figure>
+<p>Elixir 中使用递归则为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">defmodule Nums do</div><div class="line"></div><div class="line">	def print(1), do: IO.puts 1</div><div class="line"></div><div class="line">	def print(n) do</div><div class="line">	 print(n - 1)</div><div class="line">	 IO.puts n</div><div class="line">	end</div><div class="line"></div><div class="line">end</div><div class="line"></div><div class="line">iex(1)&gt; Nums.print(5)</div><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">:ok</div></pre></td></tr></table></figure>
+<h3 id="列表递归"><a href="#列表递归" class="headerlink" title="列表递归"></a>列表递归</h3><p>Lisp拥有很高的声誉，它本身就是指列表进行计算。前面我们提及，List的实现是链表结构，因此读取列表第一个元素将会很快。elixir还提供了<code>|</code>操作符。下面就使用列表来完成加和计算：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Math</span></span> <span class="keyword">do</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>([]) <span class="keyword">do</span></div><div class="line">		<span class="number">0</span></div><div class="line">	<span class="keyword">end</span>	</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>([head|tail]) <span class="keyword">do</span></div><div class="line">		head + sum(tail)</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"></div><div class="line">IO.puts Math.sum([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</div></pre></td></tr></table></figure>
+<h3 id="尾递归"><a href="#尾递归" class="headerlink" title="尾递归"></a>尾递归</h3><p>使用递归来做循环控制是函数式语言的一大特点。别的语言通常在处理递归的时候存在着一个最大递归深度。而elixir对递归在编译上做了优化。当然并不是针对所有递归，而是专门指尾递归（tail recursion）。至于尾递归和递归的差别，可以阅读<a href="">递归和尾递归</a>。其形式大概就是自己调用自己的时候，并不是作为表达式，大概形式如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">original_fun</span></span>(...) <span class="keyword">do</span></div><div class="line">    ...</div><div class="line">	another_fun(...)    <span class="comment"># Tail call </span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>上述加和操作用尾递归重写如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Math</span></span> <span class="keyword">do</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(list) <span class="keyword">do</span></div><div class="line">		_sum(list, <span class="number">0</span>)</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">defp</span> <span class="title">_sum</span></span>([], accumulator) <span class="keyword">do</span></div><div class="line">		accumulator</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">defp</span> <span class="title">_sum</span></span>([head|tail], accumulator) <span class="keyword">do</span></div><div class="line">		_sum(tail, head + accumulator)</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"></div><div class="line">IO.puts Math.sum([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</div></pre></td></tr></table></figure>
+<h3 id="更多递归"><a href="#更多递归" class="headerlink" title="更多递归"></a>更多递归</h3><p>上述递归的控制基于函数参数的模式匹配，关于条件的控制，还有case和cond宏，下面结合这些控制结构来重写上述的求和计算。</p>
+<p>Lisp中常用cond结构，下面情况cond的结果：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Math</span></span> <span class="keyword">do</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">sum</span></span>(list) <span class="keyword">do</span></div><div class="line">		_sum(list, <span class="number">0</span>)</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">_sum</span></span>(list, accumulator) <span class="keyword">do</span></div><div class="line">		</div><div class="line">		<span class="keyword">cond</span> <span class="keyword">do</span></div><div class="line">			list == [] -&gt; </div><div class="line">				accumulator</div><div class="line">			</div><div class="line">			[head|tail] = list -&gt; </div><div class="line">				_sum(tail, head+accumulator)</div><div class="line">		<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"></div><div class="line">IO.puts Math.sum([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</div></pre></td></tr></table></figure>
+<p>再看case的结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">defmodule Math do</div><div class="line">	</div><div class="line">	def sum(list) do</div><div class="line">		_sum(list, 0)</div><div class="line">	end</div><div class="line"></div><div class="line">	def _sum(list, accumulator) do</div><div class="line">		</div><div class="line">		case list do</div><div class="line">			[] -&gt; accumulator</div><div class="line">			[head|tail] -&gt; _sum(tail, head + accumulator)</div><div class="line">		end</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line"></div><div class="line">IO.puts Math.sum([1, 2, 3, 4, 5])</div></pre></td></tr></table></figure>
+<p>由此可见，使用递归实现循环控制，遇到条件判断的时候，即可以使用函数参数的模式匹配，也可以使用cond和case方式进行判断。其中cond和case内部逻辑分支也是基于模式匹配。</p>
+<h3 id="列表解析"><a href="#列表解析" class="headerlink" title="列表解析"></a>列表解析</h3><p>todo</p>
+<p>总而言之，使用elixir的递归实现迭代功能，尽量使用尾递归。尾递归经过编译器优化，不会因为调用栈出现问题，也不会引起额外的内存开销。普通递归则会出现最大递归栈的问题。实际上，函数式语言的特点就是函数。在实现循环的功能，Elixir提供了一些高阶函数用来处理，通过这些高阶函数的抽象，隐藏了递归调用的细节。开发者掌握这些高阶函数，更有利于实现功能需求。Enum和Stream提供了大部分所需要的函数，下一节继续探索高阶函数。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十六） --- 控制结构之条件控制/" rel="next" title="Elixir 简明笔记（十六） --- 控制结构之条件控制">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十六） --- 控制结构之条件控制
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十八） --- 数据结构实战/" rel="prev" title="Elixir 简明笔记（十八） --- 数据结构实战">
+                Elixir 简明笔记（十八） --- 数据结构实战 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#递归"><span class="nav-number">1.</span> <span class="nav-text">递归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表递归"><span class="nav-number">2.</span> <span class="nav-text">列表递归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#尾递归"><span class="nav-number">3.</span> <span class="nav-text">尾递归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多递归"><span class="nav-number">4.</span> <span class="nav-text">更多递归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表解析"><span class="nav-number">5.</span> <span class="nav-text">列表解析</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

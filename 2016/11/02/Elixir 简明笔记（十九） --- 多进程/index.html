@@ -1,0 +1,729 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="多进程
+Elixir强大的并发来自其actor并发模型，简而言之就是可以使用大量的进程来实现并发。elixir中的进程依托与erlang虚拟机的存在，这个进程与操作系统的进程不一样，虽然他们可以像原生进程一样在处理器中运行，但是他们比原生进程轻，在普通机器创建十万个进程是轻而易举的事情，甚至比普通语言创建线程还要轻便。下面就看看elixir的多进程是如何work。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十九） --- 多进程">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十九） --- 多进程/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="多进程
+Elixir强大的并发来自其actor并发模型，简而言之就是可以使用大量的进程来实现并发。elixir中的进程依托与erlang虚拟机的存在，这个进程与操作系统的进程不一样，虽然他们可以像原生进程一样在处理器中运行，但是他们比原生进程轻，在普通机器创建十万个进程是轻而易举的事情，甚至比普通语言创建线程还要轻便。下面就看看elixir的多进程是如何work。">
+<meta property="og:updated_time" content="2016-11-02T06:29:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十九） --- 多进程">
+<meta name="twitter:description" content="多进程
+Elixir强大的并发来自其actor并发模型，简而言之就是可以使用大量的进程来实现并发。elixir中的进程依托与erlang虚拟机的存在，这个进程与操作系统的进程不一样，虽然他们可以像原生进程一样在处理器中运行，但是他们比原生进程轻，在普通机器创建十万个进程是轻而易举的事情，甚至比普通语言创建线程还要轻便。下面就看看elixir的多进程是如何work。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十九） --- 多进程/"/>
+
+
+  <title> Elixir 简明笔记（十九） --- 多进程 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十九） --- 多进程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:21:15+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>多进程</p>
+<p>Elixir强大的并发来自其actor并发模型，简而言之就是可以使用大量的进程来实现并发。elixir中的进程依托与erlang虚拟机的存在，这个进程与操作系统的进程不一样，虽然他们可以像原生进程一样在处理器中运行，但是他们比原生进程轻，在普通机器创建十万个进程是轻而易举的事情，甚至比普通语言创建线程还要轻便。下面就看看elixir的多进程是如何work。</p>
+<a id="more"></a>
+<p>使用erlang的timer模块，模拟进程中耗时的操作。定义一个匿名函数，运行函数之后，可以看到iex在两秒之后才打印消息,连续调用5次，则一共耗时10秒：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">iex(<span class="number">1</span>)&gt; run_query = <span class="keyword">fn</span> query_def -&gt;</div><div class="line">...(<span class="number">1</span>)&gt;     <span class="symbol">:timer</span>.sleep <span class="number">2000</span></div><div class="line">...(<span class="number">1</span>)&gt;     <span class="string">"<span class="subst">#&#123;query_def&#125;</span> result"</span></div><div class="line">...(<span class="number">1</span>)&gt; <span class="keyword">end</span></div><div class="line"><span class="comment">#Function&lt;6.54118792/1 in :erl_eval.expr/5&gt;</span></div><div class="line">iex(<span class="number">2</span>)&gt; run_query.(<span class="string">"query 1"</span>)</div><div class="line"><span class="string">"query 1 result"</span></div><div class="line">iex(<span class="number">3</span>)&gt; <span class="number">1</span>..<span class="number">5</span> |&gt; Enum.map(&amp;(run_query.(<span class="string">"query <span class="subst">#&#123;&amp;<span class="number">1</span>&#125;</span>"</span>)))</div><div class="line">[<span class="string">"query 1 result"</span>, <span class="string">"query 2 result"</span>, <span class="string">"query 3 result"</span>, <span class="string">"query 4 result"</span>,</div><div class="line"> <span class="string">"query 5 result"</span>]</div></pre></td></tr></table></figure>
+<p>创建进程,Elixir创建进程只需要使用spawn宏即可，sqwan/1 接受一个匿名函数，创建另外一个新进程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">spawn(</div><div class="line">	fn -&gt;</div><div class="line">		expression_1</div><div class="line">		...</div><div class="line">		expression_2</div><div class="line">	end</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>修改上面的例子，使用spawn创建一个新进程。可以看到，执行spawn之后，马上返回了函数调用的结果，为新进程新pid。两秒后，新进程执行并打印内容返回到iex中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">iex(4)&gt; spawn(fn -&gt; IO.puts run_query.(&quot;1&quot;) end )</div><div class="line">#PID&lt;0.65.0&gt;</div><div class="line">1 result</div></pre></td></tr></table></figure>
+<p>因此可以定义一个异步的查询函数并执行，可以发现每次执行函数都马上返回，而新创建的进程将会在后台运行，并打印最终结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">iex(5)&gt; async_query = fn query_def -&gt;</div><div class="line">...(5)&gt;     spawn(fn -&gt; IO.puts run_query.(query_def) end) end</div><div class="line">#Function&lt;6.54118792/1 in :erl_eval.expr/5&gt;</div><div class="line">iex(6)&gt; async_query.(&quot;query 1&quot;)</div><div class="line">#PID&lt;0.71.0&gt;</div><div class="line">query 1 result</div><div class="line">iex(7)&gt; 1..5 |&gt; Enum.map(&amp;(async_query.(&quot;query #&#123;&amp;1&#125;&quot;)))</div><div class="line">[#PID&lt;0.73.0&gt;, #PID&lt;0.74.0&gt;, #PID&lt;0.75.0&gt;, #PID&lt;0.76.0&gt;, #PID&lt;0.77.0&gt;]</div><div class="line">query 1 result</div><div class="line">query 2 result</div><div class="line">query 3 result</div><div class="line">query 4 result</div><div class="line">query 5 result</div></pre></td></tr></table></figure>
+<p>Elixir中，所有代码都运行在一个在进程中，iex也是运行在进程中，并且是shell中的主进程。上面的例子中，进程是并发运行的，因此并不会按照顺序输出结果。每一个进程都是独立的，不同的进程是不能读取对方的数据的，而进程之间想要通信需要通过<code>message</code>。</p>
+<h3 id="进程中的message"><a href="#进程中的message" class="headerlink" title="进程中的message"></a>进程中的message</h3><p>通常的语言中，使用多线程进行并发，所有线程共享内存数据。而elixir提供的是aotor的进程模型。进程通过message同步数据。进程A想要让进程B做点事情，需要A给B的mailbox发送异步消息，B进程读取mailbox的消息，解析后执行。因为进程见是无法共享内存的，因此消息发送的时候存在着深拷贝(deep-copied)。</p>
+<p>发送信息使用 send函数，接受消息使用 <code>receive do</code> 结构。 send提供两个参数，第一个是进程的标识pid，第二个是所需要发送的数据。receive的结构如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">receive do</div><div class="line">  pattern_1 -&gt; do_something</div><div class="line">  pattern_2 -&gt; do_something_else</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>receive 结构和 case 结构十分相似，也支持mailbox的模式匹配。在iex中，self表示当前的进程，下面使用self来对消息做实验：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">iex(8)&gt; send(self, &quot;a message&quot;)</div><div class="line">&quot;a message&quot;</div><div class="line">iex(9)&gt; receive do</div><div class="line">...(9)&gt;   message -&gt; IO.puts message</div><div class="line">...(9)&gt; end</div><div class="line">a message</div><div class="line">:ok</div><div class="line">iex(10)&gt; send(self, &#123;:message, 1&#125;)</div><div class="line">&#123;:message, 1&#125;</div><div class="line">iex(11)&gt; receive do</div><div class="line">...(11)&gt;   &#123;:message, id&#125; -&gt; IO.puts &quot;received message #&#123;id&#125;&quot;</div><div class="line">...(11)&gt; end</div><div class="line">received message 1</div><div class="line">:ok</div><div class="line">iex(13)&gt; receive do</div><div class="line">...(13)&gt;    &#123;_, _, _&#125; -&gt;</div><div class="line">...(13)&gt;      	IO.puts &quot;received&quot;</div><div class="line">...(13)&gt; end</div></pre></td></tr></table></figure>
+<p>send调用之后会返回发送的内容。由于是自身给自身发消息，所以可以在当前的进程中调用receive结构拉取自身的mailbox的message。如果模式匹配失败，当前的进程会被block。可以设置一个after分支，当匹配失败之后，执行after的内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(2)&gt; receive do</div><div class="line">...(2)&gt;   &#123;_,_,_&#125; -&gt; &apos;nonthing&apos;</div><div class="line">...(2)&gt; after 3000 -&gt; &quot;message not received&quot;</div><div class="line">...(2)&gt; end</div><div class="line">&quot;message not received&quot;</div><div class="line">iex(3)&gt;</div></pre></td></tr></table></figure>
+<p>receive结构主要从当前的mailbox中pull数据。如果当前消息模式匹配失败，这个消息将会被放回进程的mailbox之中，仅需读取下一条消息。总结receive的工作流如下：</p>
+<ol>
+<li>从mailbox中读取第一条消息。</li>
+<li>尝试使用 receive中模式和消息进行模式匹配，从上到下依次进行匹配。</li>
+<li>匹配成功则执行对应分支的代码。</li>
+<li>如果模式匹配失败，将消息放回原处，接着出现下一条消息。</li>
+<li>如果mailbox的队列没有消息了，则等待下一个消息到达，消息一到达，则重复开始第一步。</li>
+<li>如果存在after语句，在等到消息未到到或匹配失败之后，执行after的代码分支逻辑。</li>
+</ol>
+<h3 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h3><p>通常send消息都是异步执行的，进程发送消息之后就返回，然后当前进程并不知道子进程的执行状况。通常我们需要子进程的执行过程，然后子进程将会send消息来反馈主进程。创建了子进程将会返回进程标识pid，基于pid和message可以进行进程间的通信。重写async_query 函数并调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; run_query = fn(query_def) -&gt;</div><div class="line">...(1)&gt;           :timer.sleep(2000)</div><div class="line">...(1)&gt;           &quot;#&#123;query_def&#125; result&quot;</div><div class="line">...(1)&gt;         end</div><div class="line">#Function&lt;6.54118792/1 in :erl_eval.expr/5&gt;</div><div class="line">iex(3)&gt; async_query = fn(query_def) -&gt;</div><div class="line">...(3)&gt;     caller = self</div><div class="line">...(3)&gt;     spawn(fn query_def -&gt;</div><div class="line">...(3)&gt;         send(caller, &#123;:query_result, run_query.(query_def)&#125;)</div><div class="line">...(3)&gt;     end)</div><div class="line">...(3)&gt; end</div><div class="line">iex(4)&gt; Enum.each(1..5, &amp;async_query.(&quot;query #&#123;&amp;1&#125;&quot;))</div><div class="line">:ok</div></pre></td></tr></table></figure>
+<p>新创建的子进程给主进程的mailbox发送了消息，主进程再把这些消息读取出来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">iex(7)&gt; get_result = fn -&gt;</div><div class="line">...(7)&gt;     receive do</div><div class="line">...(7)&gt;         &#123;:query_result, result&#125; -&gt; result</div><div class="line">...(7)&gt;     end</div><div class="line">...(7)&gt; end</div><div class="line">iex(10)&gt; get_result.()</div><div class="line">&quot;query 1 result&quot;</div><div class="line">iex(11)&gt; get_result.()</div><div class="line">&quot;query 2 result&quot;</div><div class="line">iex(12)&gt; get_result.()</div><div class="line">&quot;query 3 result&quot;</div></pre></td></tr></table></figure>
+<h3 id="客户端服务端状态"><a href="#客户端服务端状态" class="headerlink" title="客户端服务端状态"></a>客户端服务端状态</h3><p>通过message和receive可以实现进程间的通信，通常把主进程当成客户端进程，新创建的进程当成服务端进程。那么cs之间的进程通信会涉及到一下状态（state）的操作。所谓的server process 是指一些长时间监听消息的进程，就像服务器进程一样永远运行，处于一个无限循环当中，监听客户端的消息，处理消息。</p>
+<p>receive结构会将它mailbox，模式匹配不成功的时候会block进程。可是一旦mailbox中的messge消费完了，receive的监听也就结束了，进程会结束。因此需要在message消费完毕之后仍然运行进程。使用while结构很容易实现这样的程序逻辑，elixir没有循环，可是有递归。</p>
+<p>下面以数据库服务为例来做说明。其基本结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">defmodule DatabaseServer do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		spawn(&amp;loop/0)</div><div class="line">	end</div><div class="line"></div><div class="line">	defp loop do</div><div class="line">		receive do</div><div class="line">			# pass</div><div class="line">		end</div><div class="line">		loop</div><div class="line">	end</div><div class="line"></div><div class="line">end</div></pre></td></tr></table></figure>
+<p>DatabaseServer模块实现了一个服务器循环进程loop，给客户端（主进程，调用者）提供了一个启动入口start函数。这个函数将会创建一个服务端进程，用于监听客户端的发送的消息，韩寒处理返回。有人可能有以为，start和loop都是模块中的函数，分别运行在不同进程中。其实模块和进程本身没有特别的关系，模块就是函数的集合，这些函数可以运行在进程中，仅此而已。后期关于类似的实现，可以用到更高级的gen_server。</p>
+<p>接下来实现loop中的逻辑，以及数据库的服务端和客户端的查询方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">defmodule DatabaseServer do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		spawn(&amp;loop/0)</div><div class="line">	end</div><div class="line"></div><div class="line"></div><div class="line">	def run_async(server_pid, query_def) do</div><div class="line">		send(server_pid, &#123;:run_query, self, query_def&#125;)</div><div class="line">	end</div><div class="line"></div><div class="line">	defp loop do</div><div class="line">		receive do</div><div class="line">			receive do</div><div class="line">				&#123;:run_query, caller, query_def&#125; -&gt; send(caller, &#123;:query_result, run_query(query_def)&#125;)</div><div class="line">			end</div><div class="line">		end</div><div class="line">		loop</div><div class="line">	end</div><div class="line"></div><div class="line">	defp run_query(query_def) do</div><div class="line">		:timer.sleep(2000)</div><div class="line">		&quot;#&#123;query_def&#125; result&quot;</div><div class="line">	end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>run_query 为服务端的查询方法，run_async为客户端的查询方法，run_async将查询信息和自身的pid发给服务端，服务端匹配之后查询处理，然后再给客户端pid发送查询结果。客户端同样也使用receive结构pull查询结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">defmodule DatabaseServer do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		spawn(&amp;loop/0)</div><div class="line">	end</div><div class="line"></div><div class="line">	def run_async(server_pid, query_def) do</div><div class="line">		send(server_pid, &#123;:run_query, self, query_def&#125;)</div><div class="line">	end</div><div class="line"></div><div class="line">	def get_result do</div><div class="line">		</div><div class="line">		receive do</div><div class="line">			&#123;:query_result, result&#125; -&gt; result</div><div class="line">		after 5000 -&gt;</div><div class="line">			&#123;:error, :timeout&#125;</div><div class="line">		end</div><div class="line">	end</div><div class="line"></div><div class="line">	defp loop do</div><div class="line">		receive do</div><div class="line">			receive do</div><div class="line">				&#123;:run_query, caller, query_def&#125; -&gt; send(caller, &#123;:query_result, run_query(query_def)&#125;)</div><div class="line">			end</div><div class="line">		end</div><div class="line">		loop</div><div class="line">	end</div><div class="line"></div><div class="line">	defp run_query(query_def) do</div><div class="line">		:timer.sleep(2000)</div><div class="line">		&quot;#&#123;query_def&#125; result&quot;</div><div class="line">	end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>运行测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; server_pid = DatabaseServer.start</div><div class="line">#PID&lt;0.63.0&gt;</div><div class="line">iex(2)&gt; DatabaseServer.run_async(server_pid, &quot;query 1&quot;)</div><div class="line">&#123;:run_query, #PID&lt;0.61.0&gt;, &quot;query 1&quot;&#125;</div><div class="line">iex(3)&gt; DatabaseServer.get_result</div><div class="line">&quot;query 1 result&quot;</div><div class="line">iex(4)&gt; DatabaseServer.run_async(server_pid, &quot;query 2&quot;)</div><div class="line">&#123;:run_query, #PID&lt;0.61.0&gt;, &quot;query 2&quot;&#125;</div><div class="line">iex(5)&gt; DatabaseServer.get_result</div><div class="line">&quot;query 2 result&quot;</div><div class="line">iex(6)&gt; DatabaseServer.get_result</div><div class="line">&#123;:error, :timeout&#125;</div></pre></td></tr></table></figure>
+<p>把 timer.sleep 改成 10s后, 进程客户端马上就返回并且监听服务端的返回，可以服务端异步长时间处理，不能马上返回，客户端超时断开了。第二次调用get_result的时候，此时服务端已经处理完毕，并发送结果给客户端的mailbox。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(2)&gt; DatabaseServer.run_async(server_pid, &quot;query 1&quot;)</div><div class="line">&#123;:run_query, #PID&lt;0.61.0&gt;, &quot;query 1&quot;&#125;</div><div class="line">iex(3)&gt; DatabaseServer.get_result</div><div class="line">&#123;:error, :timeout&#125;</div><div class="line">iex(4)&gt; DatabaseServer.get_result</div><div class="line">&quot;query 1 result&quot;</div></pre></td></tr></table></figure>
+<h3 id="服务端进程都是顺序的"><a href="#服务端进程都是顺序的" class="headerlink" title="服务端进程都是顺序的"></a>服务端进程都是顺序的</h3><p>尽管实现了服务端进程来处理查询请求，可是服务端进程监听的是自己进程的mailbos，消费消息却是顺序的。如果客户端调用十个查询请求，服务端同样需要执行10秒。为了避免这样的情况，一个简单的处理就是每一个请求实现一个服务端进程，也就是服务端实现一个进程池。面对大量的客户端就能处理了。等等，你一定以为实现进程池是一个夸张的做法，毕竟直觉上进程的创建和销毁十分耗资源。感谢Erlang的并发模式，我们可以在Elixir中轻而易举的创建大量的进程，这个进程和操作系统进程概念不一样，它甚至比操作系统的线程还要轻量级。</p>
+<p>下面演示进程池的用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; pool = 1..100 |&gt; Enum.map(fn _ -&gt; DatabaseServer.start end)</div><div class="line">[#PID&lt;0.64.0&gt;, #PID&lt;0.65.0&gt;, #PID&lt;0.66.0&gt;, #PID&lt;0.67.0&gt;, #PID&lt;0.68.0&gt;,</div><div class="line"> #PID&lt;0.69.0&gt;, #PID&lt;0.70.0&gt;, #PID&lt;0.71.0&gt;, #PID&lt;0.72.0&gt;, #PID&lt;0.73.0&gt;,</div><div class="line"> #PID&lt;0.74.0&gt;, #PID&lt;0.75.0&gt;, #PID&lt;0.76.0&gt;, #PID&lt;0.77.0&gt;, #PID&lt;0.78.0&gt;,</div><div class="line"> #PID&lt;0.79.0&gt;, #PID&lt;0.80.0&gt;, #PID&lt;0.81.0&gt;, #PID&lt;0.82.0&gt;, #PID&lt;0.83.0&gt;,</div><div class="line"> #PID&lt;0.84.0&gt;, #PID&lt;0.85.0&gt;, #PID&lt;0.86.0&gt;, #PID&lt;0.87.0&gt;, #PID&lt;0.88.0&gt;,</div><div class="line"> #PID&lt;0.89.0&gt;, #PID&lt;0.90.0&gt;, #PID&lt;0.91.0&gt;, #PID&lt;0.92.0&gt;, #PID&lt;0.93.0&gt;,</div><div class="line"> #PID&lt;0.94.0&gt;, #PID&lt;0.95.0&gt;, #PID&lt;0.96.0&gt;, #PID&lt;0.97.0&gt;, #PID&lt;0.98.0&gt;,</div><div class="line"> #PID&lt;0.99.0&gt;, #PID&lt;0.100.0&gt;, #PID&lt;0.101.0&gt;, #PID&lt;0.102.0&gt;, #PID&lt;0.103.0&gt;,</div><div class="line"> #PID&lt;0.104.0&gt;, #PID&lt;0.105.0&gt;, #PID&lt;0.106.0&gt;, #PID&lt;0.107.0&gt;, #PID&lt;0.108.0&gt;,</div><div class="line"> #PID&lt;0.109.0&gt;, #PID&lt;0.110.0&gt;, #PID&lt;0.111.0&gt;, #PID&lt;0.112.0&gt;, #PID&lt;0.113.0&gt;, ...]</div><div class="line">iex(2)&gt; 1..5 |&gt;</div><div class="line">...(2)&gt;     Enum.each(fn query_def -&gt;</div><div class="line">...(2)&gt;         server_pid = Enum.at(pool, :random.uniform(100) - 1)</div><div class="line">...(2)&gt;         DatabaseServer.run_async(server_pid, query_def)</div><div class="line">...(2)&gt;     end)</div><div class="line">:ok</div><div class="line">iex(3)&gt; 1..5 |&gt;</div><div class="line">...(3)&gt;           Enum.map(fn(_) -&gt; DatabaseServer.get_result end)</div><div class="line">[&quot;3 result&quot;, &quot;5 result&quot;, &quot;4 result&quot;, &quot;1 result&quot;, &quot;2 result&quot;]</div></pre></td></tr></table></figure>
+<p>运行的结果中，并没有超过十秒，而是很快就返回了结果。</p>
+<h3 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h3><p>设想一下，如果需要跟数据库服务交互的时候，首先当然是需要建立一个连接。连接就必须保持socket能够正确的工作。因此也需要在进程中保持状态，可以修改loop函数实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">defmodule DatabaseServer do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		spawn(fn -&gt;</div><div class="line">			connection = :random.uniform(1000)</div><div class="line">			loop(connection)</div><div class="line">		end)</div><div class="line">	end</div><div class="line"></div><div class="line">	def run_async(server_pid, query_def) do</div><div class="line">		send(server_pid, &#123;:run_query, self, query_def&#125;)</div><div class="line">	end</div><div class="line"></div><div class="line">	def get_result do</div><div class="line">		receive do</div><div class="line">			&#123;:query_result, result&#125; -&gt; result</div><div class="line">		after 5000 -&gt;</div><div class="line">			&#123;:error, :timeout&#125;</div><div class="line">		end</div><div class="line">	end</div><div class="line"></div><div class="line">	defp loop(connection) do</div><div class="line">		receive do	</div><div class="line">			&#123;:run_query, from_pid, query_def&#125; -&gt; </div><div class="line">				query_result = run_query(connection, query_def)</div><div class="line">				send(from_pid, &#123;:query_result, query_result&#125;)</div><div class="line"></div><div class="line">		end</div><div class="line">		loop(connection)</div><div class="line">	end</div><div class="line"></div><div class="line">	defp run_query(connection, query_def) do</div><div class="line">		:timer.sleep(2000)</div><div class="line">		&quot;Connection #&#123;connetion&#125;: #&#123;query_def&#125; result&quot;</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line">iex(1)&gt; server_pid = DatabaseServer.start</div><div class="line">#PID&lt;0.63.0&gt;</div><div class="line">iex(2)&gt; DatabaseServer.run_async(server_pid, &quot;query 1&quot;)</div><div class="line">&#123;:run_query, #PID&lt;0.61.0&gt;, &quot;query 1&quot;&#125;</div><div class="line">iex(3)&gt; DatabaseServer.get_result</div><div class="line">&quot;Connection 444: query 1 result&quot;</div><div class="line">iex(4)&gt; DatabaseServer.run_async(server_pid, &quot;query 2&quot;)</div><div class="line">&#123;:run_query, #PID&lt;0.61.0&gt;, &quot;query 2&quot;&#125;</div><div class="line">iex(5)&gt; DatabaseServer.get_result</div><div class="line">&quot;Connection 444: query 2 result&quot;</div></pre></td></tr></table></figure>
+<p>start 函数中创建了一些连接，然后loop中把这个状态传递到进程执行代码的地方。从iex的结果可以看出，这个状态一直被保持，两次请求服务，都是同一个连接的状态。实际的服务器环境中，往往状态不是一层不变的。此时我们需要更新状态。一个简单的技巧就是在loop函数中更新状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">def loop(state) do</div><div class="line">  	new_state = receive do    	# 捕捉新状态</div><div class="line">		msg1 -&gt; ...</div><div class="line">		msg2 -&gt; ...</div><div class="line">	end</div><div class="line">  	loop(new_state)				# 更新状态</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>下面实现一个计算器服务来阐明状态更新技巧。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">defmodule Calculator do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		spawn(fn -&gt;loop(0) end)</div><div class="line">	end</div><div class="line"></div><div class="line">	def loop(current_value) do</div><div class="line">		new_value = receive do</div><div class="line">			&#123;:value, caller&#125; -&gt;</div><div class="line">				send(caller, &#123;:response, current_value&#125;)</div><div class="line">				current_value</div><div class="line">			&#123;:add, value&#125; -&gt; current_value + value</div><div class="line">			&#123;:sub, value&#125; -&gt; current_value - value</div><div class="line">			&#123;:mul, value&#125; -&gt; current_value * value</div><div class="line">			&#123;:div, value&#125; -&gt; current_value / value</div><div class="line"></div><div class="line">			invalid_request -&gt;</div><div class="line">				IO.puts &quot;invalid request #&#123;inspect invalid_request&#125;&quot;</div><div class="line">				current_value</div><div class="line">		end</div><div class="line">		loop(new_value)</div><div class="line">	end</div><div class="line"></div><div class="line">	def value(server_pid) do</div><div class="line">		send(server_pid, &#123;:value, self&#125;)</div><div class="line">		receive do</div><div class="line">			&#123;:response, value&#125; -&gt; value</div><div class="line">		end</div><div class="line">	end</div><div class="line"></div><div class="line">	def add(server_pid, value), do: send(server_pid, &#123;:add, value&#125;)</div><div class="line">	def sub(server_pid, value), do: send(server_pid, &#123;:sub, value&#125;)</div><div class="line">	def mul(server_pid, value), do: send(server_pid, &#123;:mul, value&#125;)</div><div class="line">	def div(server_pid, value), do: send(server_pid, &#123;:div, value&#125;)</div><div class="line"></div><div class="line">end</div><div class="line"></div><div class="line">iex(1)&gt; calculator_pid = Calculator.start</div><div class="line">#PID&lt;0.63.0&gt;</div><div class="line">iex(2)&gt; Calculator.value(calculator_pid)</div><div class="line">0</div><div class="line">iex(3)&gt; Calculator.add(calculator_pid, 10)</div><div class="line">&#123;:add, 10&#125;</div><div class="line">iex(4)&gt; Calculator.sub(calculator_pid, 5)</div><div class="line">&#123;:sub, 5&#125;</div><div class="line">iex(5)&gt; Calculator.mul(calculator_pid, 3)</div><div class="line">&#123;:mul, 3&#125;</div><div class="line">iex(6)&gt; Calculator.div(calculator_pid, 5)</div><div class="line">&#123;:div, 5&#125;</div><div class="line">iex(7)&gt; Calculator.value(calculator_pid)</div><div class="line">3.0</div></pre></td></tr></table></figure>
+<p>通常情况下，状态远远比一个数字复杂。不过技术手段都是一样的，只需要在loop函数中操作状态即可。当应用的状态变得复杂的时候，是非有必要对代码进行组织。服务端进程的模块可以剥离出来专注请求的处理。下面针对之前的todo应用，使用多进程进行改下一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">defmodule TodoServer do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		spawn(fn -&gt; loop(TodoList.new) end)</div><div class="line">	end</div><div class="line"></div><div class="line">	defp loop(todo_list) do</div><div class="line">		new_todo_list = receive do</div><div class="line">			message -&gt; process_message(todo_list, message)</div><div class="line">		end</div><div class="line">		loop(new_todo_list)</div><div class="line">	end</div><div class="line"></div><div class="line"></div><div class="line">	def process_message(todo_list, &#123;:add_entry, new_entry&#125;) do</div><div class="line">		TodoList.add_entry(todo_list, new_entry)</div><div class="line">	end</div><div class="line"></div><div class="line">	def process_message(todo_list, &#123;:entries, caller, date&#125;) do</div><div class="line">		send(caller, &#123;:todo_entries, TodoList.entries(todo_list, date)&#125;)</div><div class="line">		todo_list</div><div class="line">	end</div><div class="line"></div><div class="line">	def add_entry(todo_server, new_entry) do</div><div class="line">		send(todo_server, &#123;:add_entry, new_entry&#125;)</div><div class="line">	end</div><div class="line"></div><div class="line">	def entries(todo_server, date) do</div><div class="line">		send(todo_server, &#123;:entries, self, date&#125;)</div><div class="line">		receive do</div><div class="line">			&#123;:todo_entries, entries&#125; -&gt; entries</div><div class="line">		after 5000 -&gt;</div><div class="line">			&#123;:error, :timeout&#125;</div><div class="line">		end</div><div class="line">	end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>调用方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; todo_server = TodoServer.start</div><div class="line">#PID&lt;0.66.0&gt;</div><div class="line">iex(2)&gt; TodoServer.add_entry(todo_server,</div><div class="line">...(2)&gt;                   %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Dentist&quot;&#125;)</div><div class="line">&#123;:add_entry, %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Dentist&quot;&#125;&#125;</div><div class="line">iex(3)&gt; TodoServer.entries(todo_server, &#123;2013, 12, 19&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;]</div><div class="line">iex(8)&gt; TodoServer.add_entry(todo_server,</div><div class="line">...(8)&gt;                   %&#123;date: &#123;2013, 12, 20&#125;, title: &quot;Shopping&quot;&#125;)</div><div class="line">&#123;:add_entry, %&#123;date: &#123;2013, 12, 20&#125;, title: &quot;Shopping&quot;&#125;&#125;</div><div class="line">iex(9)&gt; TodoServer.entries(todo_server, &#123;2013, 12, 19&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;]</div><div class="line">iex(10)&gt; TodoServer.entries(todo_server, &#123;2013, 12, 20&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 20&#125;, id: 2, title: &quot;Shopping&quot;&#125;]</div><div class="line">iex(11)&gt; TodoServer.add_entry(todo_server,</div><div class="line">...(11)&gt;                   %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Movies&quot;&#125;)</div><div class="line">&#123;:add_entry, %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Movies&quot;&#125;&#125;</div><div class="line">iex(12)&gt; TodoServer.entries(todo_server, &#123;2013, 12, 19&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 19&#125;, id: 3, title: &quot;Movies&quot;&#125;,</div><div class="line"> %&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;]</div></pre></td></tr></table></figure>
+<p>这样的调用方式，客户端需要知道开启的后台进程号。如果这个过程隐藏在模块中，岂不是更简洁。elixir提供了Process 模块的register函数，实现了针对进程的设置别名的应用。</p>
+<p>其用法如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; Process.register(self, :some_name)</div><div class="line">iex(2)&gt; send(:some_name, :msg)</div><div class="line">iex(3)&gt; receive do</div><div class="line">          msg -&gt; IO.puts &quot;received #&#123;msg&#125;&quot;</div><div class="line">        end</div><div class="line">received msg</div></pre></td></tr></table></figure>
+<p>修改TodoServer如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">defmodule TodoServer do</div><div class="line">	</div><div class="line">	def start do</div><div class="line">		pid = spawn(fn -&gt; loop(TodoList.new) end)</div><div class="line">		Process.register(pid, :todo_server)</div><div class="line">	end</div><div class="line"></div><div class="line">	defp loop(todo_list) do</div><div class="line">		new_todo_list = receive do</div><div class="line">			message -&gt; process_message(todo_list, message)</div><div class="line">		end</div><div class="line">		loop(new_todo_list)</div><div class="line">	end</div><div class="line"></div><div class="line"></div><div class="line">	def process_message(todo_list, &#123;:add_entry, new_entry&#125;) do</div><div class="line">		TodoList.add_entry(todo_list, new_entry)</div><div class="line">	end</div><div class="line"></div><div class="line">	def process_message(todo_list, &#123;:entries, caller, date&#125;) do</div><div class="line">		send(caller, &#123;:todo_entries, TodoList.entries(todo_list, date)&#125;)</div><div class="line">		todo_list</div><div class="line">	end</div><div class="line"></div><div class="line">	def add_entry(new_entry) do</div><div class="line">		send(:todo_server, &#123;:add_entry, new_entry&#125;)</div><div class="line">	end</div><div class="line"></div><div class="line">	def entries(date) do</div><div class="line">		send(:todo_server, &#123;:entries, self, date&#125;)</div><div class="line">		receive do</div><div class="line">			&#123;:todo_entries, entries&#125; -&gt; entries</div><div class="line">		after 5000 -&gt;</div><div class="line">			&#123;:error, :timeout&#125;</div><div class="line">		end</div><div class="line">	end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>调用方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; TodoServer.start</div><div class="line">true</div><div class="line">iex(2)&gt; TodoServer.add_entry(%&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Dentist&quot;&#125;)</div><div class="line">&#123;:add_entry, %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Dentist&quot;&#125;&#125;</div><div class="line">iex(3)&gt; TodoServer.add_entry(%&#123;date: &#123;2013, 12, 20&#125;, title: &quot;Shopping&quot;&#125;)</div><div class="line">&#123;:add_entry, %&#123;date: &#123;2013, 12, 20&#125;, title: &quot;Shopping&quot;&#125;&#125;</div><div class="line">iex(4)&gt; TodoServer.add_entry(%&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Movies&quot;&#125;)</div><div class="line">&#123;:add_entry, %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Movies&quot;&#125;&#125;</div><div class="line">iex(5)&gt; TodoServer.entries(&#123;2013, 12, 19&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 19&#125;, id: 3, title: &quot;Movies&quot;&#125;,</div><div class="line"> %&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;]</div></pre></td></tr></table></figure>
+<p>可见，后台执行任务的进程，相对客户端被隐藏啦。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十八） --- 数据结构实战/" rel="next" title="Elixir 简明笔记（十八） --- 数据结构实战">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十八） --- 数据结构实战
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#进程中的message"><span class="nav-number">1.</span> <span class="nav-text">进程中的message</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程通信"><span class="nav-number">2.</span> <span class="nav-text">进程通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端服务端状态"><span class="nav-number">3.</span> <span class="nav-text">客户端服务端状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务端进程都是顺序的"><span class="nav-number">4.</span> <span class="nav-text">服务端进程都是顺序的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#状态"><span class="nav-number">5.</span> <span class="nav-text">状态</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

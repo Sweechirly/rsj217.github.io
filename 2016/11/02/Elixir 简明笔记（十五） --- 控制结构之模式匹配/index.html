@@ -1,0 +1,699 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="编程语言中，流程控制是重要的一部分。流程大致可以分为顺序、条件和循环结构。有趣的是Elixir并没有直接提供这些结构的关键字，而是通过模式匹配，枚举迭代，递归来实现流程控制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十五） --- 控制结构之模式匹配">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十五） --- 控制结构之模式匹配/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="编程语言中，流程控制是重要的一部分。流程大致可以分为顺序、条件和循环结构。有趣的是Elixir并没有直接提供这些结构的关键字，而是通过模式匹配，枚举迭代，递归来实现流程控制。">
+<meta property="og:updated_time" content="2016-11-02T06:24:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十五） --- 控制结构之模式匹配">
+<meta name="twitter:description" content="编程语言中，流程控制是重要的一部分。流程大致可以分为顺序、条件和循环结构。有趣的是Elixir并没有直接提供这些结构的关键字，而是通过模式匹配，枚举迭代，递归来实现流程控制。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十五） --- 控制结构之模式匹配/"/>
+
+
+  <title> Elixir 简明笔记（十五） --- 控制结构之模式匹配 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十五） --- 控制结构之模式匹配
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:08:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>编程语言中，流程控制是重要的一部分。流程大致可以分为<strong>顺序</strong>、<strong>条件</strong>和<strong>循环</strong>结构。有趣的是<code>Elixir</code>并没有直接提供这些结构的关键字，而是通过模式匹配，枚举迭代，递归来实现流程控制。</p>
+<a id="more"></a>
+<h3 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h3><p>前面介绍了简单的模式匹配，尤其是介绍不同的数据结构时候，也针对该模块提供模式匹配的方式。本篇关于模式匹配的讨论，更像是模式匹配的总结。</p>
+<h4 id="基本定义"><a href="#基本定义" class="headerlink" title="基本定义"></a>基本定义</h4><p>所谓模式匹配，即使用匹配符<code>=</code>将左边和右边的变量进行绑定。左边的表达式或变量称之为：模式（pattern），右边的表达式进行求值。然后将右边求值的结果与左边的模式进行匹配，匹配成功则绑定对应的变量。模式匹配的表达式返回右边表达式的求值结果。</p>
+<h4 id="Tuple匹配"><a href="#Tuple匹配" class="headerlink" title="Tuple匹配"></a>Tuple匹配</h4><p>模式可以是一个变量，也可以是一个元组。elixir中的所有表达式都会返回值，模式匹配中将会把匹配成功的右边求值返回：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; person = &#123;<span class="string">"Bob"</span>, <span class="number">25</span>&#125;           	<span class="comment"># 匹配成功，返回右边表达式的求值结果，元组本身的求值返回元组</span></div><div class="line">&#123;<span class="string">"Bob"</span>, <span class="number">25</span>&#125;</div><div class="line">iex(<span class="number">2</span>)&gt; &#123;name, age&#125; = &#123;<span class="string">"Bob"</span>, <span class="number">25</span>&#125;</div><div class="line">&#123;<span class="string">"Bob"</span>, <span class="number">25</span>&#125;</div><div class="line">iex(<span class="number">3</span>)&gt; name 							<span class="comment"># 绑定变量 name</span></div><div class="line"><span class="string">"Bob"</span></div><div class="line">iex(<span class="number">4</span>)&gt; age								<span class="comment"># 绑定变量 age</span></div><div class="line"><span class="number">25</span></div></pre></td></tr></table></figure>
+<p>Elixir中，经常把函数返回的多个值放到tuple当中，常用与tuple的pattern match。并且还可以嵌套匹配：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; &#123;date, time&#125; = <span class="symbol">:calendar</span>.local_time</div><div class="line">&#123;&#123;<span class="number">2016</span>, <span class="number">4</span>, <span class="number">7</span>&#125;, &#123;<span class="number">20</span>, <span class="number">49</span>, <span class="number">11</span>&#125;&#125;</div><div class="line">iex(<span class="number">2</span>)&gt; &#123;year, month, day&#125; = date</div><div class="line">&#123;<span class="number">2016</span>, <span class="number">4</span>, <span class="number">7</span>&#125;</div><div class="line">iex(<span class="number">3</span>)&gt; year</div><div class="line"><span class="number">2016</span></div><div class="line">iex(<span class="number">4</span>)&gt; &#123;&#123;year, month, day&#125;, &#123;hour, minutes, second&#125;&#125; = <span class="symbol">:calendar</span>.local_time</div><div class="line">&#123;&#123;<span class="number">2016</span>, <span class="number">4</span>, <span class="number">7</span>&#125;, &#123;<span class="number">20</span>, <span class="number">58</span>, <span class="number">3</span>&#125;&#125;</div><div class="line">iex(<span class="number">5</span>)&gt; year</div><div class="line"><span class="number">2016</span></div><div class="line">iex(<span class="number">6</span>)&gt; hour</div><div class="line"><span class="number">20</span></div><div class="line">iex(<span class="number">7</span>)&gt; &#123;&#123;year, month, day&#125;, &#123;hour, minutes, second&#125;&#125; = &#123;date, time&#125; = <span class="symbol">:calendar</span>.local_time</div><div class="line">&#123;&#123;<span class="number">2016</span>, <span class="number">4</span>, <span class="number">7</span>&#125;, &#123;<span class="number">20</span>, <span class="number">59</span>, <span class="number">7</span>&#125;&#125;</div><div class="line">iex(<span class="number">8</span>)&gt; month</div><div class="line"><span class="number">4</span></div><div class="line">iex(<span class="number">9</span>)&gt; date</div><div class="line">&#123;<span class="number">2016</span>, <span class="number">4</span>, <span class="number">7</span>&#125;</div></pre></td></tr></table></figure>
+<p>最后一个表达式就是嵌套匹配，即先从最右边的进行模式匹配，然后把最右边的表达式求值作为模式匹配成功的结果（:calendar.local_time）返回，然后这个结果继续和左边的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;&#123;year, month, day&#125;, &#123;hour, minutes, second&#125;&#125;</div></pre></td></tr></table></figure>
+<p>进行模式匹配。</p>
+<h4 id="固定匹配"><a href="#固定匹配" class="headerlink" title="固定匹配"></a>固定匹配</h4><p>尽管elixir的数据是不变的，可是变量却可以重新绑定。有时候并不需要变量被重新绑定，此时可以使用pin 操作符 (^)来固定匹配。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">iex(10)&gt; expected_name = &quot;Bob&quot;</div><div class="line">&quot;Bob&quot;</div><div class="line">iex(11)&gt; &#123;^expected_name, _&#125; = &#123;&quot;Bob&quot;, 25&#125;     # 此时固定了expected_name</div><div class="line">&#123;&quot;Bob&quot;, 25&#125;</div><div class="line">iex(12)&gt; &#123;^expected_name, _&#125; = &#123;&quot;Alice&quot;, 30&#125;      </div><div class="line">** (MatchError) no match of right hand side value: &#123;&quot;Alice&quot;, 30&#125;</div><div class="line"></div><div class="line">``` </div><div class="line"></div><div class="line">#### List匹配</div><div class="line"></div><div class="line">匹配列表和匹配元组的差别不是很大。由于列表操作head和tail的特殊性，因此可以使用`|`来匹配列表，当遇到不想匹配绑定的变量，可以使用`_`，表示可以匹配任何模式，并且不绑定变量：</div><div class="line"></div><div class="line"></div><div class="line">```elixir</div><div class="line">iex(15)&gt; [1, second, third] = [1, 2, 3]</div><div class="line">[1, 2, 3]</div><div class="line">iex(16)&gt; second</div><div class="line">2</div><div class="line">iex(17)&gt; [head|tail] = [1, 2, 3]</div><div class="line">[1, 2, 3]</div><div class="line">iex(18)&gt; head</div><div class="line">1</div><div class="line">iex(19)&gt; [1|tail] = [1, 2, 3]</div><div class="line">[1, 2, 3]</div><div class="line">iex(20)&gt; tail</div><div class="line">[2, 3]</div></pre></td></tr></table></figure>
+<p>匹配其实很灵活，同一个变量可以匹配多次，但不能匹配多个变量：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">21</span>)&gt; [first, first, first] = [<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>]</div><div class="line">iex(<span class="number">22</span>)&gt; first</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">23</span>)&gt; [^first, second, <span class="number">_</span>] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">24</span>)&gt; first</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">25</span>)&gt; second</div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">26</span>)&gt; [first|first] = [<span class="number">1</span>, <span class="number">1</span>]</div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> [<span class="number">1</span>, <span class="number">1</span>]</div><div class="line"></div><div class="line">iex(<span class="number">26</span>)&gt; [first, first] = [<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> [<span class="number">1</span>, <span class="number">2</span>]</div></pre></td></tr></table></figure>
+<h4 id="Map匹配"><a href="#Map匹配" class="headerlink" title="Map匹配"></a>Map匹配</h4><p>map的匹配和列表与元组都不一样，list和tuple都必须把需要匹配的元素都写出来，list的<code>|</code>也是。而map可以只匹配部分模式， 匹配失败则会报错：<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">26</span>)&gt; %&#123;<span class="symbol">age:</span> age&#125; = %&#123;<span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">age:</span> <span class="number">25</span>&#125;</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>&#125;</div><div class="line">iex(<span class="number">27</span>)&gt; age</div><div class="line"><span class="number">25</span></div><div class="line">iex(<span class="number">28</span>)&gt; name</div><div class="line">** (RuntimeError) undefined <span class="symbol">function:</span> name/<span class="number">0</span></div><div class="line">iex(<span class="number">28</span>)&gt; %&#123;<span class="symbol">age:</span> age, <span class="symbol">work_at:</span> work_at&#125; = %&#123;<span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">age:</span> <span class="number">25</span>&#125;</div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> %&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="Function-匹配"><a href="#Function-匹配" class="headerlink" title="Function 匹配"></a>Function 匹配</h4><p>函数的参数可以进行模式匹配。同一个函数名，不同的参数模式可以匹配不同的参数，执行多路函数逻辑，匹配失败则会抛出异常：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; <span class="class"><span class="keyword">defmodule</span> <span class="title">Geometry</span></span> <span class="keyword">do</span></div><div class="line">...(<span class="number">1</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">area</span></span>(&#123;<span class="symbol">:rectangle</span>, a, b&#125;) <span class="keyword">do</span></div><div class="line">...(<span class="number">1</span>)&gt;     a * b</div><div class="line">...(<span class="number">1</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">1</span>)&gt;</div><div class="line">...(<span class="number">1</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">area</span></span>(&#123;<span class="symbol">:square</span>, a&#125;) <span class="keyword">do</span></div><div class="line">...(<span class="number">1</span>)&gt;     a * a</div><div class="line">...(<span class="number">1</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">1</span>)&gt;</div><div class="line">...(<span class="number">1</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">area</span></span>(&#123;<span class="symbol">:circle</span>, r&#125;) <span class="keyword">do</span></div><div class="line">...(<span class="number">1</span>)&gt;     r * r * <span class="number">3.14</span></div><div class="line">...(<span class="number">1</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">1</span>)&gt; <span class="keyword">end</span></div><div class="line">&#123;<span class="symbol">:module</span>, Geometry,</div><div class="line"> &lt;&lt;<span class="number">70</span>, <span class="number">79</span>, <span class="number">82</span>, <span class="number">49</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">124</span>, <span class="number">66</span>, <span class="number">69</span>, <span class="number">65</span>, <span class="number">77</span>, <span class="number">69</span>, <span class="number">120</span>, <span class="number">68</span>, <span class="number">99</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">117</span>, <span class="number">131</span>, <span class="number">104</span>, <span class="number">2</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">14</span>, <span class="number">101</span>, <span class="number">108</span>, <span class="number">105</span>, <span class="number">120</span>, <span class="number">105</span>, <span class="number">114</span>, <span class="number">95</span>, <span class="number">100</span>, <span class="number">111</span>, <span class="number">99</span>, <span class="number">115</span>, <span class="number">95</span>, <span class="number">118</span>, <span class="number">49</span>, <span class="number">108</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">104</span>, <span class="number">2</span>, ...&gt;&gt;,</div><div class="line"> &#123;<span class="symbol">:area</span>, <span class="number">1</span>&#125;&#125;</div><div class="line">iex(<span class="number">2</span>)&gt; Geometry.area(&#123;<span class="symbol">:rectangle</span>, <span class="number">4</span>, <span class="number">5</span>&#125;)</div><div class="line"><span class="number">20</span></div><div class="line">iex(<span class="number">3</span>)&gt; Geometry.area(&#123;<span class="symbol">:square</span>, <span class="number">5</span>&#125;)</div><div class="line"><span class="number">25</span></div><div class="line">iex(<span class="number">4</span>)&gt; Geometry.area(&#123;<span class="symbol">:circle</span>, <span class="number">4</span>&#125;)</div><div class="line"><span class="number">50.24</span></div><div class="line">iex(<span class="number">5</span>)&gt; Geometry.area(&#123;<span class="symbol">:triangle</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;)</div><div class="line">** (FunctionClauseError) no function clause matching <span class="keyword">in</span> Geometry.area/<span class="number">1</span></div><div class="line">    <span class="symbol">iex:</span><span class="number">2</span>: Geometry.area(&#123;<span class="symbol">:triangle</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;)</div></pre></td></tr></table></figure>
+<p>为了避免发生错误，可以写一个处理错误的匹配函数，通过万能匹配handler错误。需要注意，定义万能匹配不能放到模块的第一个函数，因为函数是按照顺序从上向下依次匹配的，如果写在第一个，则用于无法匹配后面的逻辑函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; defmodule Geometry do</div><div class="line">...(1)&gt;   def area(&#123;:rectangle, a, b&#125;) do</div><div class="line">...(1)&gt;     a * b</div><div class="line">...(1)&gt;   end</div><div class="line">...(1)&gt;</div><div class="line">...(1)&gt;   def area(&#123;:square, a&#125;) do</div><div class="line">...(1)&gt;     a * a</div><div class="line">...(1)&gt;   end</div><div class="line">...(1)&gt;</div><div class="line">...(1)&gt;   def area(&#123;:circle, r&#125;) do</div><div class="line">...(1)&gt;     r * r * 3.14</div><div class="line">...(1)&gt;   end</div><div class="line">...(1)&gt;   def area(unknow) do</div><div class="line">...(1)&gt;     &#123;:error, &#123;:unknow_shape, unknow&#125;&#125;</div><div class="line">...(1)&gt;   end</div><div class="line">...(1)&gt; end</div><div class="line"></div><div class="line">...(2)&gt;Geometry.area(&#123;:triangle, 1, 2, 3&#125;)</div><div class="line">&#123;:error, &#123;:unknown_shape, &#123;:triangle, 1, 2, 3&#125;&#125;&#125;</div></pre></td></tr></table></figure>
+<p>匿名函数中，我们使用<code>&amp;</code>来引用函数，函数也可以写这样的语法糖来匹配：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">5</span>)&gt; fun = &amp;Geometry.area/<span class="number">1</span></div><div class="line">&amp;Geometry.area/<span class="number">1</span></div><div class="line">iex(<span class="number">6</span>)&gt; fun.(&#123;<span class="symbol">:circle</span>, <span class="number">4</span>&#125;)</div><div class="line"><span class="number">50.24</span></div><div class="line">iex(<span class="number">7</span>)&gt; fun.(&#123;<span class="symbol">:square</span>, <span class="number">5</span>&#125;)</div><div class="line"><span class="number">25</span></div></pre></td></tr></table></figure>
+<h4 id="Guards-卫子句"><a href="#Guards-卫子句" class="headerlink" title="Guards 卫子句"></a>Guards 卫子句</h4><p>除了参数进行模式匹配，函数还可以提供guards语句。通过guard语句过滤一参数。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">8</span>)&gt; <span class="class"><span class="keyword">defmodule</span> <span class="title">TestNum</span></span> <span class="keyword">do</span></div><div class="line">...(<span class="number">8</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">test</span></span>(x) <span class="keyword">when</span> x &lt; <span class="number">0</span> <span class="keyword">do</span></div><div class="line">...(<span class="number">8</span>)&gt;     <span class="symbol">:negative</span></div><div class="line">...(<span class="number">8</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">8</span>)&gt;</div><div class="line">...(<span class="number">8</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">test</span></span>(<span class="number">0</span>) , <span class="symbol">do:</span> <span class="symbol">:zero</span></div><div class="line">...(<span class="number">8</span>)&gt;</div><div class="line">...(<span class="number">8</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">test</span></span>(x) <span class="keyword">when</span> x &gt; <span class="number">0</span> <span class="keyword">do</span></div><div class="line">...(<span class="number">8</span>)&gt;</div><div class="line">...(<span class="number">8</span>)&gt;     <span class="symbol">:positive</span></div><div class="line">...(<span class="number">8</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">8</span>)&gt;</div><div class="line">...(<span class="number">8</span>)&gt; <span class="keyword">end</span></div><div class="line">&#123;<span class="symbol">:module</span>, TestNum,</div><div class="line"> &lt;&lt;<span class="number">70</span>, <span class="number">79</span>, <span class="number">82</span>, <span class="number">49</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">184</span>, <span class="number">66</span>, <span class="number">69</span>, <span class="number">65</span>, <span class="number">77</span>, <span class="number">69</span>, <span class="number">120</span>, <span class="number">68</span>, <span class="number">99</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">111</span>, <span class="number">131</span>, <span class="number">104</span>, <span class="number">2</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">14</span>, <span class="number">101</span>, <span class="number">108</span>, <span class="number">105</span>, <span class="number">120</span>, <span class="number">105</span>, <span class="number">114</span>, <span class="number">95</span>, <span class="number">100</span>, <span class="number">111</span>, <span class="number">99</span>, <span class="number">115</span>, <span class="number">95</span>, <span class="number">118</span>, <span class="number">49</span>, <span class="number">108</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">104</span>, <span class="number">2</span>, ...&gt;&gt;,</div><div class="line"> &#123;<span class="symbol">:test</span>, <span class="number">1</span>&#125;&#125;</div><div class="line">iex(<span class="number">9</span>)&gt; TestNum.test(-<span class="number">1</span>)</div><div class="line"><span class="symbol">:negative</span></div><div class="line">iex(<span class="number">10</span>)&gt; TestNum.test(<span class="number">0</span>)</div><div class="line"><span class="symbol">:zero</span></div><div class="line">iex(<span class="number">11</span>)&gt; TestNum.test(<span class="number">1</span>)</div><div class="line"><span class="symbol">:positive</span></div><div class="line">iex(<span class="number">12</span>)&gt; TestNum.test(<span class="symbol">:not_a_number</span>)</div><div class="line"><span class="symbol">:positive</span></div></pre></td></tr></table></figure>
+<p>最后一个匹配也返回了值。在Elixir中，数据类型都是可以通过比较符<code>&gt;</code>和<code>&lt;</code>进行操作的，其优先级如下：</p>
+<p><code>number &lt; atom &lt; reference &lt; fun &lt; port &lt; pid &lt; tuple &lt; map &lt; list &lt; bitstring (binary)</code></p>
+<p>为了过滤非数字，可以修改guards如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">15</span>)&gt; <span class="class"><span class="keyword">defmodule</span> <span class="title">TestNum</span></span> <span class="keyword">do</span></div><div class="line">...(<span class="number">15</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">test</span></span>(x) <span class="keyword">when</span> is_number(x) <span class="keyword">and</span> x &lt; <span class="number">0</span> <span class="keyword">do</span></div><div class="line">...(<span class="number">15</span>)&gt;     <span class="symbol">:negative</span></div><div class="line">...(<span class="number">15</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">15</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">test</span></span>(<span class="number">0</span>), <span class="symbol">do:</span> <span class="symbol">:zero</span></div><div class="line">...(<span class="number">15</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">test</span></span>(x) <span class="keyword">when</span> is_number(x) <span class="keyword">and</span> x &gt; <span class="number">0</span> <span class="keyword">do</span></div><div class="line">...(<span class="number">15</span>)&gt;     <span class="symbol">:positive</span></div><div class="line">...(<span class="number">15</span>)&gt; <span class="keyword">end</span> <span class="keyword">end</span></div><div class="line"><span class="symbol">iex:</span><span class="number">15</span>: <span class="symbol">warning:</span> redefining <span class="keyword">module</span> TestNum</div><div class="line">&#123;<span class="symbol">:module</span>, TestNum,</div><div class="line"> &lt;&lt;<span class="number">70</span>, <span class="number">79</span>, <span class="number">82</span>, <span class="number">49</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">248</span>, <span class="number">66</span>, <span class="number">69</span>, <span class="number">65</span>, <span class="number">77</span>, <span class="number">69</span>, <span class="number">120</span>, <span class="number">68</span>, <span class="number">99</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">111</span>, <span class="number">131</span>, <span class="number">104</span>, <span class="number">2</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">14</span>, <span class="number">101</span>, <span class="number">108</span>, <span class="number">105</span>, <span class="number">120</span>, <span class="number">105</span>, <span class="number">114</span>, <span class="number">95</span>, <span class="number">100</span>, <span class="number">111</span>, <span class="number">99</span>, <span class="number">115</span>, <span class="number">95</span>, <span class="number">118</span>, <span class="number">49</span>, <span class="number">108</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">104</span>, <span class="number">2</span>, ...&gt;&gt;,</div><div class="line"> &#123;<span class="symbol">:test</span>, <span class="number">1</span>&#125;&#125;</div><div class="line">iex(<span class="number">16</span>)&gt; TestNum.test(-<span class="number">1</span>)</div><div class="line"><span class="symbol">:negative</span></div><div class="line">iex(<span class="number">17</span>)&gt; TestNum.test(<span class="symbol">:not_a_number</span>)</div><div class="line">** (FunctionClauseError) no function clause matching <span class="keyword">in</span> TestNum.test/<span class="number">1</span></div><div class="line">    <span class="symbol">iex:</span><span class="number">16</span>: TestNum.test(<span class="symbol">:not_a_number</span>)</div></pre></td></tr></table></figure>
+<p>写guards语句的时候需要注意，调用一下函数会引发错误。可是写在guard语句之后，错误会被隐藏，并不会抛出，gurad语句返回false。例如 length/1 函数只对list求其长度。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">25</span>)&gt; <span class="class"><span class="keyword">defmodule</span> <span class="title">ListHelper</span></span> <span class="keyword">do</span></div><div class="line">...(<span class="number">25</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">smallest</span></span>(list) <span class="keyword">when</span> length(list) &gt; <span class="number">0</span> <span class="keyword">do</span></div><div class="line">...(<span class="number">25</span>)&gt;     Enum.min(list)</div><div class="line">...(<span class="number">25</span>)&gt;   <span class="keyword">end</span></div><div class="line">...(<span class="number">25</span>)&gt;   <span class="function"><span class="keyword">def</span> <span class="title">smallest</span></span>(<span class="number">_</span>), <span class="symbol">do:</span> &#123;<span class="symbol">:error</span>, <span class="symbol">:invalid_argument</span>&#125;</div><div class="line">...(<span class="number">25</span>)&gt; <span class="keyword">end</span></div><div class="line"><span class="symbol">iex:</span><span class="number">25</span>: <span class="symbol">warning:</span> redefining <span class="keyword">module</span> ListHelper</div><div class="line">&#123;<span class="symbol">:module</span>, ListHelper,</div><div class="line"> &lt;&lt;<span class="number">70</span>, <span class="number">79</span>, <span class="number">82</span>, <span class="number">49</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">56</span>, <span class="number">66</span>, <span class="number">69</span>, <span class="number">65</span>, <span class="number">77</span>, <span class="number">69</span>, <span class="number">120</span>, <span class="number">68</span>, <span class="number">99</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">118</span>, <span class="number">131</span>, <span class="number">104</span>, <span class="number">2</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">14</span>, <span class="number">101</span>, <span class="number">108</span>, <span class="number">105</span>, <span class="number">120</span>, <span class="number">105</span>, <span class="number">114</span>, <span class="number">95</span>, <span class="number">100</span>, <span class="number">111</span>, <span class="number">99</span>, <span class="number">115</span>, <span class="number">95</span>, <span class="number">118</span>, <span class="number">49</span>, <span class="number">108</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">104</span>, <span class="number">2</span>, ...&gt;&gt;,</div><div class="line"> &#123;<span class="symbol">:smallest</span>, <span class="number">1</span>&#125;&#125;</div><div class="line">iex(<span class="number">26</span>)&gt; length [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line"><span class="number">3</span></div><div class="line">iex(<span class="number">27</span>)&gt; length &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;              	<span class="comment"># 对tuple求值错误</span></div><div class="line">** (ArgumentError) argument error</div><div class="line">    <span class="symbol">:erlang</span>.length(&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;)</div><div class="line">iex(<span class="number">27</span>)&gt; length <span class="number">123</span>						<span class="comment"># 对数字求值错误</span></div><div class="line">** (ArgumentError) argument error</div><div class="line">    <span class="symbol">:erlang</span>.length(<span class="number">123</span>)</div><div class="line">iex(<span class="number">27</span>)&gt; ListHelper.smallest([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">28</span>)&gt; ListHelper.smallest(<span class="number">123</span>)		<span class="comment"># 没有抛出错误，匹配错误</span></div><div class="line">&#123;<span class="symbol">:error</span>, <span class="symbol">:invalid_argument</span>&#125;</div><div class="line">iex(<span class="number">29</span>)&gt; ListHelper.smallest(&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;)	<span class="comment"># 没有抛出错误，匹配错误</span></div><div class="line">&#123;<span class="symbol">:error</span>, <span class="symbol">:invalid_argument</span>&#125;</div><div class="line">iex(<span class="number">30</span>)&gt; ListHelper.smallest(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)		</div><div class="line">** (UndefinedFunctionError) undefined <span class="symbol">function:</span> ListHelper.smallest/<span class="number">3</span></div><div class="line">    ListHelper.smallest(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</div></pre></td></tr></table></figure>
+<p>最后一个例子很有意思，尽管函数参数可以进行模式匹配，但是都是指参数签名一样的函数。最后一个例子错误，并且没有匹配错误，ListHelper.smallest/1 表示一个参数， ListHelper.smallest/3表示三个参数。模块只定义了ListHelper.smallest/1 的错误匹配，ListHelper.smallest/3则没有，所以匹配失败抛出了错误。</p>
+<h4 id="lambdas-匹配"><a href="#lambdas-匹配" class="headerlink" title="lambdas 匹配"></a>lambdas 匹配</h4><p>命名函数可以通过定义多个函数签名来使用多模式匹配，匿名函数则不能写多个def定义，但是也可以使用多路参数进行模式匹配，写法也比较简单，并且也支持guards语句。</p>
+<p>基本的形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">fn</div><div class="line">  pattern_1 -&gt; </div><div class="line">  	...   			Executed if pattern_1 matches </div><div class="line">	... </div><div class="line">  end</div><div class="line"></div><div class="line">  pattern_2 -&gt; </div><div class="line">    ...				Executed if pattern_2 matches</div><div class="line">	... </div><div class="line">  end</div></pre></td></tr></table></figure>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">30</span>)&gt; test_num = <span class="keyword">fn</span></div><div class="line">...(<span class="number">30</span>)&gt;   x <span class="keyword">when</span> is_number(x) <span class="keyword">and</span> x &lt; <span class="number">0</span> -&gt;</div><div class="line">...(<span class="number">30</span>)&gt;     <span class="symbol">:negative</span></div><div class="line">...(<span class="number">30</span>)&gt;   <span class="number">0</span> -&gt; <span class="symbol">:zero</span></div><div class="line">...(<span class="number">30</span>)&gt;   x <span class="keyword">when</span> is_number(x) <span class="keyword">and</span> x &gt; <span class="number">0</span> -&gt;</div><div class="line">...(<span class="number">30</span>)&gt;     <span class="symbol">:positive</span></div><div class="line">...(<span class="number">30</span>)&gt; <span class="keyword">end</span></div><div class="line"><span class="comment">#Function&lt;6.90072148/1 in :erl_eval.expr/5&gt;</span></div><div class="line">iex(<span class="number">31</span>)&gt; test_num.(-<span class="number">1</span>)</div></pre></td></tr></table></figure>
+<p>通过模式匹配，可以实现很多控制结构。配合函数的guard子句，甚至都不需要if条件语句。当然Elixir确实没有if条件语句，但是提供了if宏。其作用类似if条件语句，在深入宏之前，姑且当成一回事。下一节将会介绍Elixir的条件控制方式。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十四） --- 字典容器/" rel="next" title="Elixir 简明笔记（十四） --- 字典容器">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十四） --- 字典容器
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十六） --- 控制结构之条件控制/" rel="prev" title="Elixir 简明笔记（十六） --- 控制结构之条件控制">
+                Elixir 简明笔记（十六） --- 控制结构之条件控制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#模式匹配"><span class="nav-number">1.</span> <span class="nav-text">模式匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基本定义"><span class="nav-number">1.1.</span> <span class="nav-text">基本定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tuple匹配"><span class="nav-number">1.2.</span> <span class="nav-text">Tuple匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#固定匹配"><span class="nav-number">1.3.</span> <span class="nav-text">固定匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Map匹配"><span class="nav-number">1.4.</span> <span class="nav-text">Map匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Function-匹配"><span class="nav-number">1.5.</span> <span class="nav-text">Function 匹配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Guards-卫子句"><span class="nav-number">1.6.</span> <span class="nav-text">Guards 卫子句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lambdas-匹配"><span class="nav-number">1.7.</span> <span class="nav-text">lambdas 匹配</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

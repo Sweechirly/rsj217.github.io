@@ -1,0 +1,705 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="介绍了Elixir的基本数据类型和控制结构，可以写一个小应用来实战一下。针对elixir的数据抽象进行写一个简单的todo应用。
+todo的使用方式大概如下：
+1234todo_list = TodoList.new |&amp;gt;            TodoList.add_entry(&amp;#123;2013, 12, 19&amp;#125;, &amp;quot;Dentist&amp;quot;) |&amp;gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十八） --- 数据结构实战">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十八） --- 数据结构实战/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="介绍了Elixir的基本数据类型和控制结构，可以写一个小应用来实战一下。针对elixir的数据抽象进行写一个简单的todo应用。
+todo的使用方式大概如下：
+1234todo_list = TodoList.new |&amp;gt;            TodoList.add_entry(&amp;#123;2013, 12, 19&amp;#125;, &amp;quot;Dentist&amp;quot;) |&amp;gt;">
+<meta property="og:updated_time" content="2016-11-02T06:28:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十八） --- 数据结构实战">
+<meta name="twitter:description" content="介绍了Elixir的基本数据类型和控制结构，可以写一个小应用来实战一下。针对elixir的数据抽象进行写一个简单的todo应用。
+todo的使用方式大概如下：
+1234todo_list = TodoList.new |&amp;gt;            TodoList.add_entry(&amp;#123;2013, 12, 19&amp;#125;, &amp;quot;Dentist&amp;quot;) |&amp;gt;">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十八） --- 数据结构实战/"/>
+
+
+  <title> Elixir 简明笔记（十八） --- 数据结构实战 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十八） --- 数据结构实战
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:21:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>介绍了Elixir的基本数据类型和控制结构，可以写一个小应用来实战一下。针对elixir的数据抽象进行写一个简单的<code>todo</code>应用。</p>
+<p>todo的使用方式大概如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">todo_list = TodoList.new |&gt;</div><div class="line">            TodoList.add_entry(&#123;2013, 12, 19&#125;, &quot;Dentist&quot;) |&gt;</div><div class="line">            TodoList.add_entry(&#123;2013, 12, 20&#125;, &quot;Shopping&quot;) |&gt;</div><div class="line">            TodoList.add_entry(&#123;2013, 12, 19&#125;, &quot;Movies&quot;)</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>以日期的tuple作为key，todo的内容作为value。Todo模块提供一个增加todo的函数。</p>
+<h3 id="初步实现"><a href="#初步实现" class="headerlink" title="初步实现"></a>初步实现</h3><p>从上面的使用方法来看，TodoList模块有一个new函数，用来创建一个todo“实例”。而todo实际数据结构非常合适哈希结构，这里选择了HashDict。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line"></div><div class="line">    def new, do: HashDict.new</div><div class="line"></div><div class="line">end</div></pre></td></tr></table></figure>
+<p>剩下就是实现增加todo的函数。可以使用<code>HashDict.update/4</code>函数，可以实现改功能</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line"></div><div class="line">    def new, do: HashDict.new</div><div class="line"></div><div class="line">    def add_entry(todo_list, date, title) do</div><div class="line">        HashDict.update(</div><div class="line">            todo_list,</div><div class="line">            date,</div><div class="line">            [title],</div><div class="line">            fn titles -&gt; [title|titles] end</div><div class="line">        )</div><div class="line">    end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>update函数提供四个参数，第一个是要操作的hashdict，第二个是key，第三个是value，如果所传的key对于的value不存在，就调用第四个lambda函数。匿名函数接收一个存在的value作为参数，返回一个列表。使用<code>iex todo_list.ex</code>运行：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">3</span>)&gt; todo_list = TodoList.new</div><div class="line"><span class="comment">#HashDict&lt;[]&gt;</span></div><div class="line">iex(<span class="number">4</span>)&gt; todo_list = TodoList.add_entry(todo_list, &#123;<span class="number">2016</span>, <span class="number">12</span>, <span class="number">19</span>&#125;, <span class="string">"Dentist"</span>)</div><div class="line"><span class="comment">#HashDict&lt;[&#123;&#123;2016, 12, 19&#125;, ["Dentist"]&#125;]&gt;</span></div><div class="line">iex(<span class="number">5</span>)&gt; todo_list = TodoList.add_entry(todo_list, &#123;<span class="number">2016</span>, <span class="number">12</span>, <span class="number">20</span>&#125;, <span class="string">"Shopping"</span>)</div><div class="line"><span class="comment">#HashDict&lt;[&#123;&#123;2016, 12, 19&#125;, ["Dentist"]&#125;, &#123;&#123;2016, 12, 20&#125;, ["Shopping"]&#125;]&gt;</span></div><div class="line">iex(<span class="number">6</span>)&gt; todo_list = TodoList.add_entry(todo_list, &#123;<span class="number">2016</span>, <span class="number">12</span>, <span class="number">19</span>&#125;, <span class="string">"Movies"</span>)</div><div class="line"><span class="comment">#HashDict&lt;[&#123;&#123;2016, 12, 19&#125;, ["Movies", "Dentist"]&#125;,</span></div><div class="line"> &#123;&#123;<span class="number">2016</span>, <span class="number">12</span>, <span class="number">20</span>&#125;, [<span class="string">"Shopping"</span>]&#125;]&gt;</div></pre></td></tr></table></figure>
+<p>因为elixir的数据是不可变的，因此一直在针对<code>todo_list</code>进行重新绑定。</p>
+<p>下面要实现的一个方法则是通过key（date元组）来获取相应的title内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line"></div><div class="line">    def new, do: HashDict.new</div><div class="line"></div><div class="line">    def add_entry(todo_list, date, title) do</div><div class="line">        HashDict.update(</div><div class="line">            todo_list,</div><div class="line">            date,</div><div class="line">            [title],</div><div class="line">            fn titles -&gt; [title|titles] end</div><div class="line">        )</div><div class="line">    end</div><div class="line"></div><div class="line">    def entries(date) do</div><div class="line">        HashDict.get(todo_list, date [])</div><div class="line">    end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p><code>HashDict.get/3</code>函数可以通过key读取value，当然也可以在value不存在的时候返回一个默认的值。</p>
+<h3 id="抽象封装"><a href="#抽象封装" class="headerlink" title="抽象封装"></a>抽象封装</h3><p>上述的实现完全可以work。可是还可以针对HashDict做出更高级的抽象。然后让客户端的代码看起来可读性更高。实现一个针对key和value的函数的模块：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">defmodule MultiDict do</div><div class="line"></div><div class="line">    def new, do: HashDict.new</div><div class="line"></div><div class="line">    def add(dict, key, value) do</div><div class="line">        HashDict.update(</div><div class="line">            dict,</div><div class="line">            key,</div><div class="line">            [value],</div><div class="line">            &amp;([value|&amp;1])</div><div class="line">        )</div><div class="line">    end</div><div class="line"></div><div class="line">    def get(dict, key) do</div><div class="line">        HashDict.get(dict, key, [])</div><div class="line">    end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>通过抽象的MultiDict模块可以重写TodoList模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line"></div><div class="line">    def new, do: MultiDict.new</div><div class="line"></div><div class="line">    def add_entry(todo_list, date, title) do</div><div class="line">        MultiDict.add(todo_list, date, title)</div><div class="line">    end</div><div class="line"></div><div class="line">    def entries(date) do</div><div class="line">        MultiDict.get(todo_list, date)</div><div class="line">    end</div><div class="line">end</div></pre></td></tr></table></figure>
+<h3 id="使用map结构"><a href="#使用map结构" class="headerlink" title="使用map结构"></a>使用map结构</h3><p>目前为止，经过简单的抽象，已经让Todo的客户端代码变得简洁。可是在调用的时候，key传一个tuple还是让阅读性降低，既然todo是哈稀结构，那么参数也可以传一个哈稀结构就非常匹配。因此可以使用map来当成todo的值来传递。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line">	</div><div class="line">	def new, do: MultiDict.new</div><div class="line"></div><div class="line">	def add_entry(todo_list, entry) do</div><div class="line">		MultiDict.add(todo_list, entry.title, entry.value)</div><div class="line">	end</div><div class="line"></div><div class="line">	def entries(todo_list, title) do</div><div class="line">		MultiDict.get(todo_list, title)</div><div class="line">	end</div><div class="line"></div><div class="line">end</div><div class="line"></div><div class="line">iex(1)&gt; entry1 = %&#123;title: &#123;2013, 12, 19&#125;, value: &quot;Dentist&quot;&#125;</div><div class="line">%&#123;title: &#123;2013, 12, 19&#125;, value: &quot;Dentist&quot;&#125;</div><div class="line">iex(2)&gt; entry2 = %&#123;title: &#123;2013, 12, 20&#125;, value: &quot;Shopping&quot;&#125;</div><div class="line">%&#123;title: &#123;2013, 12, 20&#125;, value: &quot;Shopping&quot;&#125;</div><div class="line">iex(3)&gt; entry3 = %&#123;title: &#123;2013, 12, 19&#125;, value: &quot;Movies&quot;&#125;</div><div class="line">%&#123;title: &#123;2013, 12, 19&#125;, value: &quot;Movies&quot;&#125;</div><div class="line">iex(4)&gt;</div><div class="line">nil</div><div class="line">iex(5)&gt; todo_list =</div><div class="line">...(5)&gt;           TodoList.new |&gt;</div><div class="line">...(5)&gt;             TodoList.add_entry(entry1) |&gt;</div><div class="line">...(5)&gt;             TodoList.add_entry(entry2) |&gt;</div><div class="line">...(5)&gt;             TodoList.add_entry(entry3)</div><div class="line">#HashDict&lt;[&#123;&#123;2013, 12, 20&#125;, [&quot;Shopping&quot;]&#125;,</div><div class="line"> &#123;&#123;2013, 12, 19&#125;, [&quot;Movies&quot;, &quot;Dentist&quot;]&#125;]&gt;</div><div class="line">iex(6)&gt; TodoList.entries(todo_list, entry1.title)</div><div class="line">[&quot;Movies&quot;, &quot;Dentist&quot;]</div></pre></td></tr></table></figure>
+<h3 id="自增id的todo"><a href="#自增id的todo" class="headerlink" title="自增id的todo"></a>自增id的todo</h3><p>前面我们实现了C和R两个操作，接下来将会实现todo应用的修改和删除条目操作。通常而言，一个item条目，拥有一个id，这样对这个条目的操作可以借助id来做　关系的处理。下面对todo进行修改，客户端的代码还是一致，通过entry的title和value来创建todo，每一个条目的id都是自增的。这里使用了elixir的一种新的数据协议，struct。重写CR功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line"></div><div class="line">	defstruct auto_id: 1, entries: HashDict.new </div><div class="line">	</div><div class="line">	def new, do: %TodoList&#123;&#125;</div><div class="line"></div><div class="line">	def add_entry(%TodoList&#123;entries: entries, auto_id: auto_id&#125; = todo_list, entry) do</div><div class="line">		</div><div class="line">		new_entry = Map.put(entry, :id, auto_id)</div><div class="line">		new_entries = HashDict.put(entries, auto_id, new_entry)</div><div class="line">		new_id = auto_id + 1</div><div class="line">		</div><div class="line">		%TodoList&#123;todo_list | auto_id: new_id, entries: new_entries&#125;</div><div class="line"></div><div class="line">	end</div><div class="line"></div><div class="line"></div><div class="line">	def entries(%TodoList&#123;entries: entries&#125;, date) do</div><div class="line">		</div><div class="line">		entries </div><div class="line">		    |&gt; Stream.filter(fn &#123;_, entry&#125; -&gt;  entry.date == date end)</div><div class="line">		    |&gt; Enum.map(fn &#123;_, entry&#125; -&gt; entry end)</div><div class="line">	end</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>上面的代码，定义了一个struct，包含两个字段，一个是自增的当前id，默认为1。另外这是todo的条目，默认是一个空的HashDict。TodoList.new/0 方面很简单，初始化一个todo模块的实例。</p>
+<p>TodoList.add_entry/2 是增加一个条目，第一个参数使用了模式匹配，将传入的todo实例进行模式匹配，第二个参数是用来增加的条目。新增的条目是一个map，因此使用put函数增加一个key为id，id的值为当前自增的id，entries是一个HashDict。它的key都是自增id，值都在具体的条目，因此使用put函数新建一个new_entries。然后需要自增id，最后再使用struct的更新语法更新struct。因为所更新的new_id以及新<code>entries</code>的<code>HashDict</code>。对于已经存在的字段，可以使用<code>|</code>语法更新。</p>
+<p>最后的 TodoList.entires/2 函数的第一个参数也有模式匹配，因为函数内不需要使用todo_list，因此可以省略而不用写成<code>%TodoList{entries: entries}=todo_list</code>。具体逻辑则通过Stream模块进行迭代过滤，找出date与参数date相同的entry，然后再通过Enum的枚举把最后的entry列表返回。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; todo_list = TodoList.new |&gt;</div><div class="line">...(1)&gt;           TodoList.add_entry(</div><div class="line">...(1)&gt;               %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Dentist&quot;&#125;</div><div class="line">...(1)&gt;           ) |&gt;</div><div class="line">...(1)&gt;           TodoList.add_entry(</div><div class="line">...(1)&gt;             %&#123;date: &#123;2013, 12, 20&#125;, title: &quot;Shopping&quot;&#125;</div><div class="line">...(1)&gt; ) |&gt;</div><div class="line">...(1)&gt;           TodoList.add_entry(</div><div class="line">...(1)&gt;             %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Movies&quot;&#125;</div><div class="line">...(1)&gt; )</div><div class="line">%TodoList&#123;auto_id: 4,</div><div class="line"> entries: #HashDict&lt;[&#123;2, %&#123;date: &#123;2013, 12, 20&#125;, id: 2, title: &quot;Shopping&quot;&#125;&#125;,</div><div class="line">  &#123;3, %&#123;date: &#123;2013, 12, 19&#125;, id: 3, title: &quot;Movies&quot;&#125;&#125;,</div><div class="line">  &#123;1, %&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;&#125;]&gt;&#125;</div><div class="line">iex(2)&gt; TodoList.entries(todo_list, &#123;2013, 12, 19&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 19&#125;, id: 3, title: &quot;Movies&quot;&#125;,</div><div class="line"> %&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;]</div></pre></td></tr></table></figure>
+<p>使用自增id的方式，重写了todo的CR更能，下一个功能则是下面</p>
+<h3 id="todo条目的更新和删除"><a href="#todo条目的更新和删除" class="headerlink" title="todo条目的更新和删除"></a>todo条目的更新和删除</h3><p>下面实现更新和删除的功能。可以使用HashDict.update来更新一个HashDict。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line"></div><div class="line">	defstruct auto_id: 1, entries: HashDict.new </div><div class="line">	</div><div class="line">	def new, do: %TodoList&#123;&#125;</div><div class="line"></div><div class="line">	def add_entry(%TodoList&#123;entries: entries, auto_id: auto_id&#125; = todo_list, entry) do</div><div class="line">		</div><div class="line">		new_entry = Map.put(entry, :id, auto_id)</div><div class="line">		new_entries = HashDict.put(entries, auto_id, new_entry)</div><div class="line">		new_id = auto_id + 1</div><div class="line">		</div><div class="line">		%TodoList&#123;todo_list | auto_id: new_id, entries: new_entries&#125;</div><div class="line"></div><div class="line">	end</div><div class="line"></div><div class="line"></div><div class="line">	def entries(%TodoList&#123;entries: entries&#125;, date) do</div><div class="line">		</div><div class="line">		entries </div><div class="line">		    |&gt; Stream.filter(fn &#123;_, entry&#125; -&gt;  entry.date == date end)</div><div class="line">		    |&gt; Enum.map(fn &#123;_, entry&#125; -&gt; entry end)</div><div class="line">	end</div><div class="line"></div><div class="line">	def update_entry(%TodoList&#123;entries: entries&#125;=todo_list, entry_id, unpdate_fun) do</div><div class="line">		case entries[entry_id] do</div><div class="line">			nil -&gt; todo_list</div><div class="line"></div><div class="line">			old_entry -&gt; new_entry = unpdate_fun.(old_entry)</div><div class="line">						 new_entries = HashDict.put(entries, new_entry.id, new_entry)</div><div class="line">						 %TodoList&#123;todo_list | entries: new_entries&#125; 	</div><div class="line">		end</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line">iex(1)&gt; todo_list = TodoList.new |&gt;</div><div class="line">...(1)&gt;           TodoList.add_entry(</div><div class="line">...(1)&gt;               %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Dentist&quot;&#125;</div><div class="line">...(1)&gt;           ) |&gt;</div><div class="line">...(1)&gt;           TodoList.add_entry(</div><div class="line">...(1)&gt;             %&#123;date: &#123;2013, 12, 20&#125;, title: &quot;Shopping&quot;&#125;</div><div class="line">...(1)&gt; ) |&gt;</div><div class="line">...(1)&gt;           TodoList.add_entry(</div><div class="line">...(1)&gt;             %&#123;date: &#123;2013, 12, 19&#125;, title: &quot;Movies&quot;&#125;</div><div class="line">...(1)&gt; )</div><div class="line">%TodoList&#123;auto_id: 4,</div><div class="line"> entries: #HashDict&lt;[&#123;2, %&#123;date: &#123;2013, 12, 20&#125;, id: 2, title: &quot;Shopping&quot;&#125;&#125;,</div><div class="line">  &#123;3, %&#123;date: &#123;2013, 12, 19&#125;, id: 3, title: &quot;Movies&quot;&#125;&#125;,</div><div class="line">  &#123;1, %&#123;date: &#123;2013, 12, 19&#125;, id: 1, title: &quot;Dentist&quot;&#125;&#125;]&gt;&#125;</div><div class="line">iex(3)&gt; TodoList.entries(todo_list, &#123;2013, 12, 20&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 20&#125;, id: 2, title: &quot;Shopping&quot;&#125;]</div><div class="line">iex(8)&gt; todo_list = TodoList.update_entry(</div><div class="line">...(8)&gt;           todo_list,</div><div class="line">...(8)&gt; 1,</div><div class="line">...(8)&gt;           &amp;Map.put(&amp;1, :date, &#123;2013, 12, 20&#125;)</div><div class="line">...(8)&gt;         )</div><div class="line">%TodoList&#123;auto_id: 4,</div><div class="line"> entries: #HashDict&lt;[&#123;2, %&#123;date: &#123;2013, 12, 20&#125;, id: 2, title: &quot;Shopping&quot;&#125;&#125;,</div><div class="line">  &#123;3, %&#123;date: &#123;2013, 12, 19&#125;, id: 3, title: &quot;Movies&quot;&#125;&#125;,</div><div class="line">  &#123;1, %&#123;date: &#123;2013, 12, 20&#125;, id: 1, title: &quot;Dentist&quot;&#125;&#125;]&gt;&#125;</div><div class="line">iex(10)&gt; TodoList.entries(todo_list, &#123;2013, 12, 20&#125;)</div><div class="line">[%&#123;date: &#123;2013, 12, 20&#125;, id: 2, title: &quot;Shopping&quot;&#125;,</div><div class="line"> %&#123;date: &#123;2013, 12, 20&#125;, id: 1, title: &quot;Dentist&quot;&#125;]</div></pre></td></tr></table></figure>
+<p>更新的方式也是通过模式匹配。并且使用了case宏，如果是常规的编程语言，大概思路可能如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">old_entry = Map.get(entries, entry_id, [])</div><div class="line">if old_entry == [] do</div><div class="line">	todo_list</div><div class="line">else</div><div class="line">	new_entry = unpdate_fun.(old_entry)</div><div class="line">	new_entries = HashDict.put(entries, new_entry.id, new_entry)</div><div class="line">	%TodoList&#123;todo_list | entries: new_entries&#125; 	</div><div class="line">end</div></pre></td></tr></table></figure>
+<p>实现delete方法很简单，调用HashDict.delete/2 方法即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">defmodule TodoList do</div><div class="line">	...</div><div class="line"></div><div class="line">	def delete_entry(%TodoList&#123;entries: entries&#125;=todo_list, entry_id) do</div><div class="line">		case entries[entry_id] do</div><div class="line"></div><div class="line">			nil -&gt; todo_list</div><div class="line"></div><div class="line">			old_entry -&gt; IO.puts inspect old_entry</div><div class="line">						 new_entries = HashDict.delete(entries, entry_id)</div><div class="line">						 %TodoList&#123;todo_list | entries: new_entries&#125; 	</div><div class="line">		end</div><div class="line">	end</div><div class="line"></div><div class="line">end</div></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Elixir提供的数据类型比较丰富，并且发展也很快，随着Erlang的进化，elixir也在不断的跟进。之前刚查询HashDict的一些函数，请教了一个朋友，他说，为啥不用map。原来最新的1.2.4版本map不象之前1.0版本那样性能不足以支持大数据。最新的map已经对多item的性能进行了优化，map可以取代HashDict。</p>
+<p>无论<code>HashDict</code>还是<code>Map</code>。这些基本结构的操作都少不了常规的方法，具体选取可以跟进实际应用场景结合最新的文档。所谓的常规方法免不了需要进行迭代。我们知道递归可以循环，elixir还提供了一些高级函数封装隐藏了这些迭代细节。下面将会介绍强大的<code>Enum</code>和<code>Stream</code>模块</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十七） --- 控制结构之递归与迭代/" rel="next" title="Elixir 简明笔记（十七） --- 控制结构之递归与迭代">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十七） --- 控制结构之递归与迭代
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十九） --- 多进程/" rel="prev" title="Elixir 简明笔记（十九） --- 多进程">
+                Elixir 简明笔记（十九） --- 多进程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#初步实现"><span class="nav-number">1.</span> <span class="nav-text">初步实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抽象封装"><span class="nav-number">2.</span> <span class="nav-text">抽象封装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用map结构"><span class="nav-number">3.</span> <span class="nav-text">使用map结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自增id的todo"><span class="nav-number">4.</span> <span class="nav-text">自增id的todo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#todo条目的更新和删除"><span class="nav-number">5.</span> <span class="nav-text">todo条目的更新和删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

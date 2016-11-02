@@ -1,0 +1,704 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Elixir提供了丰富的数据类型（实际上只是基本类型的扩展）。前面介绍了元组和列表。他们的特点就是线性结构，通常称之为序列。此外，elixir还有一些哈希类型的结构，这些可以称之为容器集合（collection）结构。下面就来介绍elixir中的一些哈希容器。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十四） --- 字典容器">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十四） --- 字典容器/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Elixir提供了丰富的数据类型（实际上只是基本类型的扩展）。前面介绍了元组和列表。他们的特点就是线性结构，通常称之为序列。此外，elixir还有一些哈希类型的结构，这些可以称之为容器集合（collection）结构。下面就来介绍elixir中的一些哈希容器。">
+<meta property="og:updated_time" content="2016-11-02T06:10:07.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十四） --- 字典容器">
+<meta name="twitter:description" content="Elixir提供了丰富的数据类型（实际上只是基本类型的扩展）。前面介绍了元组和列表。他们的特点就是线性结构，通常称之为序列。此外，elixir还有一些哈希类型的结构，这些可以称之为容器集合（collection）结构。下面就来介绍elixir中的一些哈希容器。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十四） --- 字典容器/"/>
+
+
+  <title> Elixir 简明笔记（十四） --- 字典容器 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十四） --- 字典容器
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:08:12+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><code>Elixir</code>提供了丰富的数据类型（实际上只是基本类型的扩展）。前面介绍了元组和列表。他们的特点就是线性结构，通常称之为序列。此外，elixir还有一些哈希类型的结构，这些可以称之为容器集合（collection）结构。下面就来介绍elixir中的一些哈希容器。</p>
+<a id="more"></a>
+<h3 id="图-map"><a href="#图-map" class="headerlink" title="图 map"></a>图 map</h3><p>哈希结构是通过一些键值对组合的字典。每一种编程语言中都提供了哈希结构。elixir中更是提供了多种哈希结构。其中<code>Map</code>就是比较常用的一种。图是由一个键（key）和值（value）为基本存储单元的结构。key和value都可以是任意类型的数据。Map是在Erlang/OTP 17.0之后引入的数据结构。map通常只用来表示元素比较少的情况，当有大量元素的时候，elixir推荐使用<code>HashDict</code>这个结构（稍后介绍）。</p>
+<h4 id="map-的定义"><a href="#map-的定义" class="headerlink" title="map 的定义"></a>map 的定义</h4><p>map的定义也比较简单，使用一个<code>%</code>跟随一堆花括号<code>{}</code>。键和值之间使用 <code>=&gt;</code>（通常其他hash结构使用<code>:</code>， 例如python和js）。例如：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; bob = %&#123;<span class="symbol">:name</span> =&gt; <span class="string">"Bob"</span>, <span class="symbol">:age</span> =&gt; <span class="number">25</span>, <span class="symbol">:work_at</span> =&gt; <span class="string">"Initech"</span>&#125;</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div></pre></td></tr></table></figure>
+<p>定义了一个简单地map，其中键都是<code>Atom</code>类型，值有字符串和数字。针对这种map，可以使用下面的语法糖简写：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; bob = %&#123;<span class="symbol">:name</span> =&gt; <span class="string">"Bob"</span>, <span class="symbol">:age</span> =&gt; <span class="number">25</span>, <span class="symbol">:work_at</span> =&gt; <span class="string">"Initech"</span>&#125;</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">2</span>)&gt; bob2 = %&#123;<span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">3</span>)&gt; bob === bob2</div><div class="line"><span class="keyword">true</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">#### map 的读取</span></div></pre></td></tr></table></figure>
+<p>读取一个map键的值，使用中括号<code>[]</code>加上键名的atom即可。也可以使用 <code>.</code>操作符，前者访问不存在的键的时候，将会返回<code>nil</code>，后者则会抛出语法错误：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">5</span>)&gt; bob[<span class="symbol">:work_at</span>]</div><div class="line"><span class="string">"Initech"</span></div><div class="line">iex(<span class="number">6</span>)&gt; bob[<span class="symbol">:non_existent_field</span>]</div><div class="line"><span class="keyword">nil</span></div><div class="line">iex(<span class="number">7</span>)&gt; bob.work_at</div><div class="line"><span class="string">"Initech"</span></div><div class="line">iex(<span class="number">8</span>)&gt; bob.<span class="symbol">:non_existent_field</span></div><div class="line">** (SyntaxError) <span class="symbol">iex:</span><span class="number">8</span>: syntax error <span class="symbol">before:</span> non_existent_field</div></pre></td></tr></table></figure>
+<h4 id="map-的修改"><a href="#map-的修改" class="headerlink" title="map 的修改"></a>map 的修改</h4><p>map的修改使用 <code>|</code> ,因为elixir的数据都是不可变的，因此修改将会返回一个新的map。也可以同时修改多个键的值。但是只能修改已经存在的key，否则会报错。之所以这样限制，其目的是为了更有效的提高map更新的效率。因为map结构不会变，那么修改前后各个“版本”的map还将会被引用，可是使用更少的内存，操作也就更加迅速：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">iex(8)&gt; next_years_bob = %&#123;bob | age: 26&#125;</div><div class="line">%&#123;age: 26, name: &quot;Bob&quot;, work_at: &quot;Initech&quot;&#125;</div><div class="line">iex(9)&gt; bob</div><div class="line">%&#123;age: 25, name: &quot;Bob&quot;, work_at: &quot;Initech&quot;&#125;</div><div class="line">iex(10)&gt; %&#123;bob | age: 26, work_at: &quot;Initrode&quot;&#125;</div><div class="line">%&#123;age: 26, name: &quot;Bob&quot;, work_at: &quot;Initrode&quot;&#125;</div><div class="line">iex(11)&gt; %&#123;bob | non_existent_feild: &apos;new&apos;&#125;</div><div class="line">** (ArgumentError) argument error</div><div class="line">    (stdlib) :maps.update(:non_existent_feild, &apos;new&apos;, %&#123;age: 25, name: &quot;Bob&quot;, work_at: &quot;Initech&quot;&#125;)</div><div class="line">    (stdlib) erl_eval.erl:255: anonymous fn/2 in :erl_eval.expr/5</div><div class="line">    (stdlib) lists.erl:1261: :lists.foldl/3</div></pre></td></tr></table></figure>
+<p>除了使用 <code>|</code> 更新map之外，还可以使用模块的方法，即使用<code>Map</code>模块和<code>Dict</code>模块来更新map。并且使用模块的方式可以增加新的key和值， 但是不能同时更新多个值：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">13</span>)&gt; Map.put(bob, <span class="symbol">:salary</span>, <span class="number">5000</span>)</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">salary:</span> <span class="number">5000</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">14</span>)&gt; Map.put(bob, <span class="symbol">:age</span>, <span class="number">26</span>)</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">26</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">15</span>)&gt; Map.put(bob, <span class="symbol">:age</span>, <span class="number">26</span>, <span class="symbol">:work_at</span>, <span class="string">"Home"</span>)</div><div class="line">** (UndefinedFunctionError) undefined <span class="symbol">function:</span> Map.put/<span class="number">5</span></div><div class="line">    (elixir) Map.put(%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;, <span class="symbol">:age</span>, <span class="number">26</span>, <span class="symbol">:work_at</span>, <span class="string">"Home"</span>)</div><div class="line"></div><div class="line">iex(<span class="number">15</span>)&gt; Dict.put(bob, <span class="symbol">:salary</span>, <span class="number">5000</span>)</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">salary:</span> <span class="number">5000</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">16</span>)&gt; Dict.put(bob, <span class="symbol">:age</span>, <span class="number">26</span>)</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">26</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">17</span>)&gt; Dict.put(bob, <span class="symbol">:salary</span>, <span class="number">5000</span>, <span class="symbol">:work_at</span>, <span class="string">"Home"</span>)</div><div class="line">** (UndefinedFunctionError) undefined <span class="symbol">function:</span> Dict.put/<span class="number">5</span></div><div class="line">    (elixir) Dict.put(%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;, <span class="symbol">:salary</span>, <span class="number">5000</span>, <span class="symbol">:work_at</span>, <span class="string">"Home"</span>)</div></pre></td></tr></table></figure>
+<p>通常情况下，使用Map模块要比Dict模块的操作速度更快，不过map用于存储少量的元素。因此，其自身提供的方法可以应付很多应用场景。</p>
+<h4 id="map的模式匹配"><a href="#map的模式匹配" class="headerlink" title="map的模式匹配"></a>map的模式匹配</h4><p>毫无疑问，elixir中模式匹配无处不在，map当然也可以进行模式匹配。与列表，元组不一样，map的模式匹配，不需要把所有的key和value都写入模式里, 匹配不存在的key会失败，因而会报错:</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">17</span>)&gt; %&#123;<span class="symbol">name:</span> real_name&#125; = bob</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">18</span>)&gt; real_name</div><div class="line"><span class="string">"Bob"</span></div><div class="line">iex(<span class="number">19</span>)&gt; %&#123;<span class="symbol">name:</span> real_name, <span class="symbol">age:</span> real_age&#125; = bob</div><div class="line">%&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div><div class="line">iex(<span class="number">20</span>)&gt; %&#123;<span class="symbol">name:</span> real_name, <span class="symbol">age:</span> real_age, <span class="symbol">salary:</span> real_salary&#125; = bob</div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> %&#123;<span class="symbol">age:</span> <span class="number">25</span>, <span class="symbol">name:</span> <span class="string">"Bob"</span>, <span class="symbol">work_at:</span> <span class="string">"Initech"</span>&#125;</div></pre></td></tr></table></figure>
+<h3 id="关键字列表-Keyword-List"><a href="#关键字列表-Keyword-List" class="headerlink" title="关键字列表 Keyword List"></a>关键字列表 Keyword List</h3><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>map是标准的哈稀结构，这样的键值字典，elixir还有好几种。Keyword算是一种奇怪的哈稀，有其行而无其实。通常定义一个列表使用中括号。定义一个两个元素的元组。如果元祖的第一个元素是一个atom，那么就可以写成下面类似哈稀的结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(20)&gt; bob = [&#123;:name, &quot;Bob&quot;&#125;, &#123;:age, 25&#125;, &#123;:work_at, &quot;Intiech&quot;&#125;]</div><div class="line">[name: &quot;Bob&quot;, age: 25, work_at: &quot;Intiech&quot;]                         # 返回值就是keyword list的字面方式</div><div class="line">iex(21)&gt; bob2 = [name: &quot;Bob&quot;, age: 25, work_at: Intiech]</div><div class="line">[name: &quot;Bob&quot;, age: 25, work_at: &quot;Intiech&quot;]</div><div class="line">iex(22)&gt; bob === bob2</div><div class="line">true</div><div class="line">iex(25)&gt; tom = [&#123;25, :age&#125;, &#123;:name, &quot;Tom&quot;&#125;]</div><div class="line">[&#123;25, :age&#125;, &#123;:name, &quot;Tom&quot;&#125;]</div></pre></td></tr></table></figure>
+<h4 id="获取keyword的值"><a href="#获取keyword的值" class="headerlink" title="获取keyword的值"></a>获取keyword的值</h4><p>keyword list的读取可以使用 Keyword 模块。通常keyword也是比较小的key-value数据结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">iex(28)&gt; Keyword.get(days, :monday)</div><div class="line">1</div><div class="line">iex(29)&gt; Keyword.get(days, :noday)</div><div class="line">nil</div><div class="line">iex(31)&gt; days[:monday]</div><div class="line">1</div><div class="line">iex(32)&gt; days[:noday]</div><div class="line">nil</div><div class="line">iex(33)&gt; days.monday</div><div class="line">** (ArgumentError) argument error</div><div class="line">    :erlang.apply([monday: 1, tuesday: 2, wednesday: 3], :monday, [])</div></pre></td></tr></table></figure>
+<p>keyword 的读取操作和map及其类似。可是keyword毕竟还是列表，读取某个键的值所消耗的时间复杂度还是O(n)。而map则是O(1)。keyword的应用场景呢？通常用于函数的参数来传递，例如Float.to_string的使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(35)&gt; Float.to_string(1/3)</div><div class="line">&quot;3.33333333333333314830e-01&quot;</div><div class="line">iex(36)&gt; Float.to_string(1/3, [decimals: 2])</div><div class="line">&quot;0.33&quot;</div></pre></td></tr></table></figure>
+<p>实际使用中，elixir往往可以让你省略中苦熬和的书写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(37)&gt; Float.to_string(1/3, decimals: 2, compact: true)</div><div class="line">&quot;0.33&quot;</div><div class="line">iex(38)&gt; Float.to_string(1/3, [decimals: 2, compact: true])</div><div class="line">&quot;0.33&quot;</div></pre></td></tr></table></figure>
+<p>keyword 和 map如此相似，你肯定有疑问到底如何取舍。Elixir中很多函数的可选参数都是keyword，主要原因却有点滑稽。因为Map对于Erlang是比较新的数据结构，在此之前，map所能执行的功能基本都是使用keyword。当然，即使增加了map，两者也不是完全可以替代。比如，keyword允许多个相同的key存在，并且每个key-value是有顺序的。因此实际情况中，他们两者的使用更多的取决于当时你的应用场景。</p>
+<h3 id="HashDict"><a href="#HashDict" class="headerlink" title="HashDict"></a>HashDict</h3><p>map适合元素比较少的key-value结构。当遭遇大量元素的适合，HashDict将会是很好的帮手。</p>
+<h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><p>HashDict是一个模块，用于创建 HashDict 的“实例”结构。使用模块的<code>new</code>方法可以创建一个空的HashDict结构。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iex(39)&gt; HashDict.new</div><div class="line">#HashDict&lt;[]&gt;</div></pre></td></tr></table></figure>
+<p>为了创建多个元素的HashDict，需要借助Enum模块的into方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">iex(47)&gt; days = [monday: 1, tuesday: 2, wednesday: 3] |&gt;</div><div class="line">...(47)&gt;    Enum.into(HashDict.new)</div><div class="line">#HashDict&lt;[monday: 1, tuesday: 2, wednesday: 3]&gt;</div></pre></td></tr></table></figure>
+<p>Enum.into 函数可以将任何可以枚举（enumerable）转换成可以容器化（collectable）的结构。关于可枚举和可容器化将会在协议（protcol）中讨论。此时只需要制知道如何借助其创建一个HashDict。</p>
+<h4 id="读写HashDict"><a href="#读写HashDict" class="headerlink" title="读写HashDict"></a>读写HashDict</h4><p>获取key的值比较简单，使用模块的get方法接口，当key不存在，会返回nil</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(48)&gt; HashDict.get(days, :monday)</div><div class="line">1</div><div class="line">iex(49)&gt; HashDict.get(days, :nodays)</div><div class="line">nil</div></pre></td></tr></table></figure>
+<p>使用 put 方法进行修改和增加新的key-value</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(51)&gt; HashDict.put(days, :thursday, 4)</div><div class="line">#HashDict&lt;[monday: 1, tuesday: 2, wednesday: 3, thursday: 4]&gt;</div><div class="line">iex(52)&gt; HashDict.put(days, :tuesday, &quot;two&quot;)</div><div class="line">#HashDict&lt;[monday: 1, tuesday: &quot;two&quot;, wednesday: 3]&gt;</div></pre></td></tr></table></figure>
+<p>由此可见，类似的容器字典结构，都可以使用 Map，Keyword，HashDict的get方法获取不存在的key的值，使用put方法更新和增加key-value。</p>
+<p>HashDict实现了枚举协议，也就是可枚举，当然可以使用Enum的一些方法，比如枚举key-value</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">iex(54)&gt; days = HashDict.put(days, :thursday, 4)</div><div class="line">#HashDict&lt;[monday: 1, tuesday: 2, wednesday: 3, thursday: 4]&gt;</div><div class="line">iex(55)&gt; Enum.each(</div><div class="line">...(55)&gt;           days,</div><div class="line">...(55)&gt;           fn(key_value) -&gt;</div><div class="line">...(55)&gt;             key = elem(key_value, 0)</div><div class="line">...(55)&gt;             value = elem(key_value, 1)</div><div class="line">...(55)&gt;             IO.puts &quot;#&#123;key&#125; =&gt; #&#123;value&#125;&quot;</div><div class="line">...(55)&gt; end )</div><div class="line">monday =&gt; 1</div><div class="line">tuesday =&gt; 2</div><div class="line">wednesday =&gt; 3</div><div class="line">thursday =&gt; 4</div><div class="line">:ok</div></pre></td></tr></table></figure>
+<p>HashDict和map的差别还是比较好区分，HashDict对于大量的元素集合，其性能会比map好，而map却提供了很多操作上语法糖。</p>
+<p>无论Map，Keyword，HashDict都是实现字典式的操作。可以发现，他们的模块方法，通常配合这Enum模块进行使用。实际上，Enum模块是Elixir中重要模块，它提供了很多对数据结构操作的高级封装。有些函数直接省去了需要递归实现的循环。</p>
+<p>一般的编程语言的介绍，通常流程就是介绍其基本数据结构，然后就介绍一下控制结构。至此，elixir基本数据类型我们都了解了一遍，接下来将会讨论其控制结构。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十三） --- 模块指令/" rel="next" title="Elixir 简明笔记（十三） --- 模块指令">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十三） --- 模块指令
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十五） --- 控制结构之模式匹配/" rel="prev" title="Elixir 简明笔记（十五） --- 控制结构之模式匹配">
+                Elixir 简明笔记（十五） --- 控制结构之模式匹配 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#图-map"><span class="nav-number">1.</span> <span class="nav-text">图 map</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#map-的定义"><span class="nav-number">1.1.</span> <span class="nav-text">map 的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#map-的修改"><span class="nav-number">1.2.</span> <span class="nav-text">map 的修改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#map的模式匹配"><span class="nav-number">1.3.</span> <span class="nav-text">map的模式匹配</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键字列表-Keyword-List"><span class="nav-number">2.</span> <span class="nav-text">关键字列表 Keyword List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取keyword的值"><span class="nav-number">2.2.</span> <span class="nav-text">获取keyword的值</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashDict"><span class="nav-number">3.</span> <span class="nav-text">HashDict</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建"><span class="nav-number">3.1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读写HashDict"><span class="nav-number">3.2.</span> <span class="nav-text">读写HashDict</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

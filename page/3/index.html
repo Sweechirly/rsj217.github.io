@@ -276,6 +276,822 @@
             
               
                 
+                <a class="post-title-link" href="/2016/02/17/python-web-部署：nginx-+-gunicorn-+-supervisor-+-flask-部署笔记/" itemprop="url">
+                  nginx-+-gunicorn-+-supervisor-+-flask-部署笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:11+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="python-web-部署"><a href="#python-web-部署" class="headerlink" title="python web 部署"></a>python web 部署</h3><p>web开发中，各种语言争奇斗艳，web的部署方面，却没有太多的方式。简单而已，大概都是 nginx 做前端代理，中间 webservice 调用程序脚本。大概方式：<code>nginx + webservice + script</code></p>
+<p>nginx 不用多说，一个高性能的web服务器。通常用来在前端做反向代理服务器。所谓正向与反向（reverse），只是英文说法翻译。代理服务，简而言之，一个请求经过代理服务器从局域网发出，然后到达互联网上服务器，这个过程的代理为正向代理。如果一个请求，从互联网过来，先进入代理服务器，再由代理服务器转发给局域网的目标服务器，这个时候，代理服务器为反向代理（相对正向而言）。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/python-web-部署：nginx-+-gunicorn-+-supervisor-+-flask-部署笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-wsgiref-模块源码浅析/" itemprop="url">
+                  Python-wsgiref-模块源码浅析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:09+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>SimpleHTTPServer模块提供了创建一个http服务的例子。Python web领域里却很少这么做，而是使用了另外一个协议 – WSGI协议。Python的wisiref模块提供了demo_app，来演示如何使用wsgi协议。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo_app</span><span class="params">(environ,start_response)</span>:</span></div><div class="line">    <span class="keyword">from</span> StringIO <span class="keyword">import</span> StringIO</div><div class="line">    stdout = StringIO()</div><div class="line">    <span class="keyword">print</span> &gt;&gt;stdout, <span class="string">"Hello world!"</span></div><div class="line">    <span class="keyword">print</span> &gt;&gt;stdout</div><div class="line">    h = environ.items(); h.sort()</div><div class="line">    <span class="keyword">for</span> k,v <span class="keyword">in</span> h:</div><div class="line">        <span class="keyword">print</span> &gt;&gt;stdout, k,<span class="string">'='</span>, repr(v)</div><div class="line">    start_response(<span class="string">"200 OK"</span>, [(<span class="string">'Content-Type'</span>,<span class="string">'text/plain'</span>)])</div><div class="line">    <span class="keyword">return</span> [stdout.getvalue()]</div></pre></td></tr></table></figure>
+<p>demo_app即是一个标准的wsgi app。它接受两个参数，一个包含cgi服务器的环境变量，另外一个参数是一个函数，这个函数也接受两个函数，一个是http状态，另外是http协议的header信息。最后该app返回一个可迭代对象，这个对象即发送给客户端的body内容。demo_app有一些对StringIO的操作，这些都是把environ进行格式化输出。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-wsgiref-模块源码浅析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-SimpleHTTPServer-py-源码分析/" itemprop="url">
+                  Python-SimpleHTTPServer-py-源码分析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:08+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>前面分析BaseServer和BaseHTTPServer，可以知道BaseHTTPRequestHandler中handle_one_request方法将会通过自省的方式，调用HTTP客户端请求的方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_one_request</span><span class="params">(self)</span>:</span></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">        <span class="comment"># 省略... ...</span></div><div class="line"></div><div class="line">        method = getattr(self, mname)</div><div class="line">        method()</div><div class="line">        self.wfile.flush() <span class="comment">#actually send the response if not already done.</span></div><div class="line">    <span class="keyword">except</span> socket.timeout, e:</div><div class="line">        <span class="comment"># 省略... ...</span></div></pre></td></tr></table></figure>
+<p>显然method将会在BaseHTTPRequestHandler的子类中实现。我们已经知道，但凡以Base开头的class，都需要被继承，然后在其子类中实现相关的方法。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-SimpleHTTPServer-py-源码分析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-BaseHTTPServer-py-源码分析/" itemprop="url">
+                  Python-BaseHTTPServer-py-源码分析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:07+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>BaseHTTPServer 模块封装了HTTP协议的基础方法，提供了HTTPServer和BaseHTTPRequestHandler两个类。HTTP是工作在TCP之上的应用层协议，HTTPServer继承TCPServer类。</p>
+<h3 id="HTTPServer"><a href="#HTTPServer" class="headerlink" title="HTTPServer"></a>HTTPServer</h3><p>HTTPServer只有一个方法–server_bind。该方法在TCPServer的<code>__init__</code>方法调用，用于进行socket对象的绑定操作。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-BaseHTTPServer-py-源码分析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（三）/" itemprop="url">
+                  Python-SocketServer-py-源码分析（三）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:04+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>前面我们见识了实现TCPServer的方法。最早关于介绍BaseServer的时候，我们知道python对BaseServer设计的时候，预留了可用于Mixin扩展多线程或多进程的接口。mixin通过复写父类的parse_request方法实现。</p>
+<h3 id="ThreadingMixIn"><a href="#ThreadingMixIn" class="headerlink" title="ThreadingMixIn"></a>ThreadingMixIn</h3><p>ThreadingMixIn 类实现了多线程的方式，它只有两个方法，分别是process_request和 process_request_thread方法。多进程的方式是ForkingMixIn，暂且略过。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（三）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（二）/" itemprop="url">
+                  Python-SocketServer-py-源码分析（二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:03+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>BaseServer 和 BaseRequestHandler是网络处理的两个基类。实际应用中，网络操作更多是使用 TCP 或 HTTP 协议。SocketServer.py 也提供了更高级的TCP、UDP封装。下面就来看下关于TCP方面的网络模块（UDP和TCP的在代码组织上差别不是特别大，暂且忽略）。</p>
+<h3 id="TCPServer"><a href="#TCPServer" class="headerlink" title="TCPServer"></a>TCPServer</h3><p>TCPServer 继承了BaseServer，初始化的时候，进行了socket套接字的创建。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, server_address, RequestHandlerClass, bind_and_activate=True)</span>:</span></div><div class="line">    BaseServer.__init__(self, server_address, RequestHandlerClass)</div><div class="line">    self.socket = socket.socket(self.address_family,</div><div class="line">                                self.socket_type)</div><div class="line">    <span class="keyword">if</span> bind_and_activate:</div><div class="line">        self.server_bind()</div><div class="line">        self.server_activate()</div></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（二）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（一）/" itemprop="url">
+                  Python-SocketServer-py-源码分析（一）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:01+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="BaseServer-和-BaseRequestHandler"><a href="#BaseServer-和-BaseRequestHandler" class="headerlink" title="BaseServer 和 BaseRequestHandler"></a>BaseServer 和 BaseRequestHandler</h2><p>Python为网络编程提高了更高级的封装。SocketServer.py 提供了不少网络服务的类。它们的设计很优雅。Python把网络服务抽象成两个主要的类，一个是Server类，用于处理连接相关的网络操作，另外一个则是RequestHandler类，用于处理数据相关的操作。并且提供两个MixIn 类，用于扩展 Server，实现多进程或多线程。在构建网络服务的时候，Server 和 RequestHandler 并不是分开的，RequestHandler的实例对象在Server 内配合 Server工作。</p>
+<p>改模块的主要几个<code>Server</code>关系如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">+------------+</div><div class="line">| BaseServer |</div><div class="line">+------------+</div><div class="line">      |</div><div class="line">      v</div><div class="line">+-----------+        +------------------+</div><div class="line">| TCPServer |-------&gt;| UnixStreamServer |</div><div class="line">+-----------+        +------------------+</div><div class="line">      |</div><div class="line">      v</div><div class="line">+-----------+        +--------------------+</div><div class="line">| UDPServer |-------&gt;| UnixDatagramServer |</div><div class="line">+-----------+        +--------------------+</div></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（一）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/02/17/Epoll-模型简介/" itemprop="url">
                   Epoll-模型简介
                 </a>
@@ -612,824 +1428,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/17/Socket通信原理简介/" itemprop="url">
-                  Socket通信原理简介
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:02+08:00" content="2016-02-17">
-              2016-02-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="何谓socket"><a href="#何谓socket" class="headerlink" title="何谓socket"></a>何谓socket</h3><p>计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。</p>
-<p>Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。</p>
-<p>在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么就得使用网络套接字（socket）。socket就是在不同计算机之间进行通信的一个抽象。他工作于TCP/IP协议中应用层和传输层之间的一个抽象。如下图：</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Socket通信原理简介/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/17/并发与并行/" itemprop="url">
-                  并发与并行
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:01+08:00" content="2016-02-17">
-              2016-02-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。</p>
-<p>理解并发和并行的主要要理解<strong>同时</strong>和<strong>任务</strong>。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/并发与并行/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/17/Python-第三方库安装技巧/" itemprop="url">
-                  Python-第三方库安装技巧
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T10:43:32+08:00" content="2016-02-17">
-              2016-02-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p> <code>Python</code> 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？</p>
-<p>安装第三方库的方式其实不多。下面就介绍一些技巧。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Python-第三方库安装技巧/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/16/Mac-OS-安装-Python3-5/" itemprop="url">
-                  Mac-OS-安装-Python3-5
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
-              2016-02-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Python 3发布3.5版本，看了PEP新特性，还是非常棒。安装python3.5，并搭建响应的环境。</p>
-<h3 id="安装python3-5"><a href="#安装python3-5" class="headerlink" title="安装python3.5"></a>安装python3.5</h3><p>官网网站下载python3.5的mac<a href="https://www.python.org/ftp/python/3.5.0/python-3.5.0-macosx10.6.pkg">安装文件</a>。安装3的同时，是不会影响2.X的，两个版本可以共存啦。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/16/Mac-OS-安装-Python3-5/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/16/Pycrypto与RSA密码技术笔记/" itemprop="url">
-                  Pycrypto与RSA密码技术笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
-              2016-02-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="密码与通信"><a href="#密码与通信" class="headerlink" title="密码与通信"></a>密码与通信</h3><p>密码技术是一门历史悠久的技术。信息传播离不开加密与解密。密码技术的用途主要源于两个方面，<strong>加密/解密</strong>和<strong>签名/验签</strong></p>
-<p>在信息传播中，通常有<strong>发送者</strong>，<strong>接受者</strong>和<strong>窃听者</strong>三个角色。假设发送者Master想要写信给接受者Ghost，可是又不想信的内容被别人看到，因此Master需要先对信加密，而Ghost收到信之后又能解密。这样别的人即使窃听盗取了密文也无法解密。其次，如果窃听者并不像破译内容，而是伪造Master发消息给Ghost，那么Master发消息前就得先对机密内容进行签名。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/16/Pycrypto与RSA密码技术笔记/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/16/递归与尾递归/" itemprop="url">
-                  递归和尾递归
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
-              2016-02-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。</p>
-<p>编程也类似，核心哲学甚至简单得令人发指，其一是<code>指针</code>，其二是<code>递归</code>。深入理解者两个概念，很多复杂的系统或者设计，都会化繁为简，一目了然。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/16/递归与尾递归/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/09/20/异步任务神器-Celery-简明笔记/" itemprop="url">
-                  异步任务神器-Celery-简明笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-09-20T22:09:00+08:00" content="2015-09-20">
-              2015-09-20
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="异步任务"><a href="#异步任务" class="headerlink" title="异步任务"></a>异步任务</h3><p>异步任务是web开发中一个很常见的方法。对于一些耗时耗资源的操作，往往从主应用中隔离，通过异步的方式执行。简而言之，做一个注册的功能，在用户使用邮箱注册成功之后，需要给该邮箱发送一封激活邮件。如果直接放在应用中，则调用发邮件的过程会遇到网络IO的阻塞，比好优雅的方式则是使用异步任务，应用在业务逻辑中触发一个异步任务。</p>
-<p>实现异步任务的工具有很多，其原理都是使用一个任务队列，比如使用<a href="http://www.jianshu.com/p/9c04890615ba">redis生产消费模型或者发布订阅模式实现一个简单的消息队列</a>。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/20/异步任务神器-Celery-简明笔记/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1470,7 +1473,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-count">52</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1487,7 +1490,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

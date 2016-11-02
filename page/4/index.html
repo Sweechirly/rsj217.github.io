@@ -276,6 +276,819 @@
             
               
                 
+                <a class="post-title-link" href="/2016/02/17/Socket通信原理简介/" itemprop="url">
+                  Socket通信原理简介
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:02+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="何谓socket"><a href="#何谓socket" class="headerlink" title="何谓socket"></a>何谓socket</h3><p>计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。</p>
+<p>Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。</p>
+<p>在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么就得使用网络套接字（socket）。socket就是在不同计算机之间进行通信的一个抽象。他工作于TCP/IP协议中应用层和传输层之间的一个抽象。如下图：</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Socket通信原理简介/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/并发与并行/" itemprop="url">
+                  并发与并行
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:01+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。</p>
+<p>理解并发和并行的主要要理解<strong>同时</strong>和<strong>任务</strong>。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/并发与并行/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/17/Python-第三方库安装技巧/" itemprop="url">
+                  Python-第三方库安装技巧
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T10:43:32+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p> <code>Python</code> 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？</p>
+<p>安装第三方库的方式其实不多。下面就介绍一些技巧。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-第三方库安装技巧/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/16/Pycrypto与RSA密码技术笔记/" itemprop="url">
+                  Pycrypto与RSA密码技术笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
+              2016-02-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="密码与通信"><a href="#密码与通信" class="headerlink" title="密码与通信"></a>密码与通信</h3><p>密码技术是一门历史悠久的技术。信息传播离不开加密与解密。密码技术的用途主要源于两个方面，<strong>加密/解密</strong>和<strong>签名/验签</strong></p>
+<p>在信息传播中，通常有<strong>发送者</strong>，<strong>接受者</strong>和<strong>窃听者</strong>三个角色。假设发送者Master想要写信给接受者Ghost，可是又不想信的内容被别人看到，因此Master需要先对信加密，而Ghost收到信之后又能解密。这样别的人即使窃听盗取了密文也无法解密。其次，如果窃听者并不像破译内容，而是伪造Master发消息给Ghost，那么Master发消息前就得先对机密内容进行签名。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/16/Pycrypto与RSA密码技术笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/16/递归与尾递归/" itemprop="url">
+                  递归和尾递归
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
+              2016-02-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。</p>
+<p>编程也类似，核心哲学甚至简单得令人发指，其一是<code>指针</code>，其二是<code>递归</code>。深入理解者两个概念，很多复杂的系统或者设计，都会化繁为简，一目了然。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/16/递归与尾递归/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/16/Mac-OS-安装-Python3-5/" itemprop="url">
+                  Mac-OS-安装-Python3-5
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
+              2016-02-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>Python 3发布3.5版本，看了PEP新特性，还是非常棒。安装python3.5，并搭建响应的环境。</p>
+<h3 id="安装python3-5"><a href="#安装python3-5" class="headerlink" title="安装python3.5"></a>安装python3.5</h3><p>官网网站下载python3.5的mac<a href="https://www.python.org/ftp/python/3.5.0/python-3.5.0-macosx10.6.pkg">安装文件</a>。安装3的同时，是不会影响2.X的，两个版本可以共存啦。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/16/Mac-OS-安装-Python3-5/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/09/20/异步任务神器-Celery-简明笔记/" itemprop="url">
+                  异步任务神器-Celery-简明笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-09-20T22:09:00+08:00" content="2015-09-20">
+              2015-09-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="异步任务"><a href="#异步任务" class="headerlink" title="异步任务"></a>异步任务</h3><p>异步任务是web开发中一个很常见的方法。对于一些耗时耗资源的操作，往往从主应用中隔离，通过异步的方式执行。简而言之，做一个注册的功能，在用户使用邮箱注册成功之后，需要给该邮箱发送一封激活邮件。如果直接放在应用中，则调用发邮件的过程会遇到网络IO的阻塞，比好优雅的方式则是使用异步任务，应用在业务逻辑中触发一个异步任务。</p>
+<p>实现异步任务的工具有很多，其原理都是使用一个任务队列，比如使用<a href="http://www.jianshu.com/p/9c04890615ba">redis生产消费模型或者发布订阅模式实现一个简单的消息队列</a>。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/09/20/异步任务神器-Celery-简明笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2015/06/22/python-magic-descriptor/" itemprop="url">
                   Python 黑魔法---描述器（descriptor）
                 </a>
@@ -606,841 +1419,11 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/04/29/Python-多线程/" itemprop="url">
-                  Python 多线程
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-04-29T11:31:18+08:00" content="2015-04-29">
-              2015-04-29
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="线程和进程"><a href="#线程和进程" class="headerlink" title="线程和进程"></a>线程和进程</h3><p>计算机，用于计算的机器。计算机的核心是CPU，在现在多核心的电脑很常见了。为了充分利用cpu核心做计算任务，程序实现了多线程模型。通过多线程实现多任务的并行执行。</p>
-<p>现在的操作系统多是多任务操作系统。每个应用程序都有一个自己的进程。操作系统会为这些进程分配一些执行资源，例如内存空间等。在进程中，又可以创建一些线程，他们共享这些内存空间，并由操作系统调用，以便并行计算。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/04/29/Python-多线程/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/04/28/Redis实现简单消息队列/" itemprop="url">
-                  Redis实现简单消息队列
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-04-28T14:22:00+08:00" content="2015-04-28">
-              2015-04-28
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="任务异步化"><a href="#任务异步化" class="headerlink" title="任务异步化"></a>任务异步化</h3><p>打开浏览器，输入地址，按下回车，打开了页面。于是一个<code>HTTP</code>请求（<code>request</code>）就由客户端发送到服务器，服务器处理请求，返回响应（<code>response</code>）内容。</p>
-<p>我们每天都在浏览网页，发送大大小小的请求给服务器。有时候，服务器接到了请求，会发现他也需要给另外的服务器发送请求，或者服务器也需要做另外一些事情，于是最初们发送的请求就被阻塞了，也就是要等待服务器完成其他的事情。</p>
-<p>更多的时候，服务器做的额外事情，并不需要客户端等待，这时候就可以把这些额外的事情异步去做。从事异步任务的工具有很多。主要原理还是处理通知消息，针对通知消息通常采取是队列结构。生产和消费消息进行通信和业务实现。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/04/28/Redis实现简单消息队列/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/03/29/exlixir/" itemprop="url">
-                  异端魔法 --- Elixir
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-03-29T00:22:58+08:00" content="2015-03-29">
-              2015-03-29
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Elixir，一个波兰帅哥José Valim写出来的，José 是谁？rails 的核心开发者。接触web以来发现，Ruby社区一直是一个很有才华的社区。创造性的东西层出不穷。新的理念和方式，巧夺天工。以致于对于其他社区，这些奇淫巧计更像是魔法，异端黑魔法。</p>
-<p>程式语法发展了这么多年，OOP的方式貌似成为了工业标准。大规模网络应用的出现，高并发的应用场景越来越多，古老的函数式语言，仿佛尘封已久的史前怪兽，解除了封印重现人间。当然这么说有点夸张，不过现在函数式语言被人们的关注度越来越高。</p>
-<p>大学期间阅读了《黑客与画家》，作者动情的描述了Lisp的神奇。怀着好奇的心态一边看《魔法书》一边学了Scheme。领略了函数式思想的皮毛，就暂且搁置了。前段时间无聊，又折腾了一下Haskell，很多数学问题用Haskell很顺手，当然好多东西都一知半解。</p>
-<p>于是考察了下热门的所谓下一代编程语言 Clojure，Erlang，Rust，Go。Clojure是lisp方言，生态圈却是java社区，java很好很强大，但我不喜欢。Go很火，项目很多，好像没有带给我新的思想。Rust升级太猛烈，我这样的小民还是先观望。Erlang 的语法对于我实在太诡异。寻寻觅觅。每当你等得绝望的时候，公共汽车才会缓缓开来。没错，我的救命公车就是 Elixir。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/29/exlixir/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/03/06/woyanzhongdechanpinjingli/" itemprop="url">
-                  我眼中的产品经理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-03-06T11:23:06+08:00" content="2015-03-06">
-              2015-03-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/随想录/" itemprop="url" rel="index">
-                    <span itemprop="name">随想录</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="闲言碎语"><a href="#闲言碎语" class="headerlink" title="闲言碎语"></a>闲言碎语</h3><p>猿和狗向来八竿子打不着，可是程序猿和产品狗却从来不乏战争。当然，有时候 社稷狮的也来搅合，三国争端就更加不可开交。</p>
-<p>一只猿来谈论产品和产品经理，不免会让对方阵营鄙夷不屑。我所认识的产品经理并不多，我所崇拜的产品经理却不少，比如某涛子，某耗子，比如你！什么，你不是产品经理，咦？不是说人人都是产品经理么？Are you kidding me？</p>
-<p>是的，曾经有一本书《人人都是产品经理》。非常火爆，光听名字就很风光。 可惜我没有看过。当初 google 这本书的电子版没找到，我舍不得买纸质版。就与圣经擦肩而过，想来很是后悔。说不定要是我看了，就如《功夫》里的 “ 如来神掌 ” ，现在都能改变世界了，不，拯救世界，维护世界的和平。可是眼下，维护猿狗都不易，只能让世界等等了。</p>
-<p>玩笑终归玩笑，我觉得我还是要抽出几分钟思考下人生。曾经，临近毕业的找工作。我的首选的职位是产品经理。主观原因是大学期间弄过普通网站，伪个人站长，注册体验了各大互联网产品，阅读大量创业英雄故事，自我感觉棒极了。客观原因是当时觉得好像产品经理只要能说会扯就行，其他行当，估计看都不看我一眼。</p>
-<p>第一次听说产品经理，源于 “3Q 大战”，来自周教主的口中。神秘感骤然而入，产品经理，干嘛的？它是一种梦想，还能改变世界？人的认知总是从幼稚变成开阔，而当一个人还不懂得谦虚的时候，轻狂和骄傲只是无知的自证。我曾经就是这样的无知。那种狂热的火燃烧了身上的每一个细胞。直到，直到阅读了格勒厄姆的一篇文章《设计者的品味》（源自《黑客与画家》）</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/06/woyanzhongdechanpinjingli/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/03/06/duoyudexuanze/" itemprop="url">
-                  多余的选择
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-03-06T11:18:54+08:00" content="2015-03-06">
-              2015-03-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/随想录/" itemprop="url" rel="index">
-                    <span itemprop="name">随想录</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>闲暇时光，蹉跎电影。</p>
-<p>每次看电影，遇到一些冲突的情节，总喜欢帮里面的角色做选择。</p>
-<blockquote>
-<p>“要是我就……”</p>
-<p>“要是我才不这样”</p>
-<p>“你怎么还能忍啊”</p>
-<p>“真捉急啊”</p>
-<p>“赶紧分了吧”</p>
-<p>“放弃吧，还有另外一条路”</p>
-<p>“永远不会原谅你”</p>
-</blockquote>
-<p>等影片快结束的时候，故事的结局仿佛命中注定。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/06/duoyudexuanze/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/03/03/xianhuananbei/" itemprop="url">
-                  闲话南北
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-03-03T22:18:11+08:00" content="2015-03-03">
-              2015-03-03
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/随想录/" itemprop="url" rel="index">
-                    <span itemprop="name">随想录</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>北方有佳人，绝世而独立。</p>
-<p>南国有佳人，容华若桃李。</p>
-<p>两首汉诗，李延年描述北方的美女给人的气势，倾尽天下不可得，一见不忘。曹植则偏爱南国美人的气质，容颜娇羞，未见已然非非入想。</p>
-<p>南与北大话题，不仅仅是佳人的差别，还有很多不同或有趣的差异。饮食，文化，语言，性格，观念等等，不一而足。有时候会让人觉得完全是两个次元的世界。走南闯北，经年奔波，忽而想想南北差异，尚可为茶余饭后闲话之消遣。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/03/xianhuananbei/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2015/03/03/os-story-4/" itemprop="url">
-                  操作系统的故事（四）--- ​​Symbian 兴衰路
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-03-03T21:56:02+08:00" content="2015-03-03">
-              2015-03-03
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/随想录/" itemprop="url" rel="index">
-                    <span itemprop="name">随想录</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>Linux带了windows的恶梦，在服务器端如此，在移动端呢？对于当时风光无限的塞班(Symbian)系统，同样是一个恶梦。如果说基于Unix的IOS将Symbian骑士挑落下马，那么基于Linux的Android则将这个骑士彻底的一剑封喉。</p>
-<p>Symbian王朝是如何的兴衰的呢？当然，它的兴衰同样牵动了另一个公司的沉浮，曾经移动手机的万王之王—-诺基亚（Nokia）。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2015/03/03/os-story-4/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1481,7 +1464,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-count">52</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1498,7 +1481,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

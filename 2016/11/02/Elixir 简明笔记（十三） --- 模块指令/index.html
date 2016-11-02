@@ -1,0 +1,704 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Elixir 模块指令Elixir的模块能够给开发者提供更好的代码组织。可是在不同的模块中使用模块函数，还涉及到一些模块指令。Elixir提供了好几种使用导入模块的方式，import，require，use，alias这些都可以对模块进行应用。下面就来尝试他们分别有什么用途。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十三） --- 模块指令">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十三） --- 模块指令/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Elixir 模块指令Elixir的模块能够给开发者提供更好的代码组织。可是在不同的模块中使用模块函数，还涉及到一些模块指令。Elixir提供了好几种使用导入模块的方式，import，require，use，alias这些都可以对模块进行应用。下面就来尝试他们分别有什么用途。">
+<meta property="og:updated_time" content="2016-11-02T06:08:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十三） --- 模块指令">
+<meta name="twitter:description" content="Elixir 模块指令Elixir的模块能够给开发者提供更好的代码组织。可是在不同的模块中使用模块函数，还涉及到一些模块指令。Elixir提供了好几种使用导入模块的方式，import，require，use，alias这些都可以对模块进行应用。下面就来尝试他们分别有什么用途。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十三） --- 模块指令/"/>
+
+
+  <title> Elixir 简明笔记（十三） --- 模块指令 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十三） --- 模块指令
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:08:11+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Elixir-模块指令"><a href="#Elixir-模块指令" class="headerlink" title="Elixir 模块指令"></a>Elixir 模块指令</h3><p>Elixir的模块能够给开发者提供更好的代码组织。可是在不同的模块中使用模块函数，还涉及到一些模块指令。Elixir提供了好几种使用导入模块的方式，<code>import</code>，<code>require</code>，<code>use</code>，<code>alias</code>这些都可以对模块进行应用。下面就来尝试他们分别有什么用途。</p>
+<a id="more"></a>
+<h3 id="import-导入模块"><a href="#import-导入模块" class="headerlink" title="import 导入模块"></a>import 导入模块</h3><p>在同一个模块使用函数，直接应用函数名即可。在不同的模块中，则需要导入函数。导入函数的方式很简单，只需要使用<code>import</code>引用模块，该模块下的所有公有函数(def定义的函数)就当前模块域可见了。例如之前我们已经见识到了：</p>
+<p>geometry/geometry.ex<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Geometry</span></span> <span class="keyword">do</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">whoIam?</span></span> <span class="keyword">do</span></div><div class="line">        IO.puts __MODULE_<span class="number">_</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_rectangle</span></span> <span class="keyword">do</span></div><div class="line">    	IO.puts <span class="string">"rectangle"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>main.ex<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">import Geometry</div><div class="line"></div><div class="line">whoIam?</div><div class="line"></div><div class="line">get_rectangle</div></pre></td></tr></table></figure></p>
+<p>elixirc会编译整个文件夹，可以针对整个文件夹进行编译。<code>elixirc geometry</code>,运行 main.ex之后得到如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  learn-elixir  elixir main.ex</div><div class="line">Elixir.Geometry</div><div class="line">rectangle</div></pre></td></tr></table></figure>
+<p>import会导入当前所有的函数，如果只向导入特点的函数，只需要传递一个 only的关键字列表：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">import Geometry, <span class="symbol">only:</span> [<span class="symbol">whoIam?:</span> <span class="number">0</span>]</div><div class="line"></div><div class="line">whoIam?</div><div class="line"></div><div class="line"><span class="comment"># get_rectangle</span></div></pre></td></tr></table></figure>
+<p>如果不注释 <code>get_rectangle</code> ，运行 main.ex的时候将会抛出编译错误，编译的时候找不到<code>get_rectangle/0</code>函数。<code>only</code>之后是一个关键字列表，其中第一个key是函数名，value是参数的个数。<code>import MODULE, only: [function_name: airty]</code></p>
+<p>此外，import还是针对模块只引入函数或者宏：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">import MODULE, only: :function  #  只引入模块中的所有公有函数</div><div class="line"></div><div class="line">import MODULE, only: :macros    #  只引入模块中的宏</div></pre></td></tr></table></figure>
+<p>only 是导入指定的函数，含有另外一个用法 <code>import MODULE, except: [whoIam?: 0]</code>，指导入除了 <code>whoIam?/0</code> 以外的所有其他公有函数。</p>
+<h3 id="alias-别名"><a href="#alias-别名" class="headerlink" title="alias 别名"></a>alias 别名</h3><p>import 可以导入模块的所有函数，如果两个模块具有相同的函数呢？修改 geometry/rectangle/rectangle.ex</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Geometry</span></span>.Rectangle <span class="keyword">do</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">area</span></span>(a, b) <span class="keyword">do</span></div><div class="line">        a * b</div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">whoIam?</span></span> <span class="keyword">do</span></div><div class="line">        IO.puts __MODULE_<span class="number">_</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>main.ex</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">import Geometry, <span class="symbol">only:</span> whoIam?</div><div class="line"></div><div class="line">import Geometry.Rectangle</div><div class="line"></div><div class="line">whoIam?</div><div class="line"></div><div class="line">whoIam?</div></pre></td></tr></table></figure>
+<p>执行之后将会得到下面错误：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">☁  learn-elixir  elixir main.ex</div><div class="line">** (CompileError) main.ex:6: function whoIam?/0 imported from both Geometry.Rectangle and Geometry, call is ambiguous</div><div class="line">    (elixir) src/elixir_dispatch.erl:110: :elixir_dispatch.expand_import/6</div><div class="line">    (elixir) src/elixir_dispatch.erl:81: :elixir_dispatch.dispatch_import/5</div><div class="line">    (stdlib) lists.erl:1352: :lists.mapfoldl/3</div><div class="line">    (stdlib) lists.erl:1353: :lists.mapfoldl/3</div></pre></td></tr></table></figure>
+<p>elixir编译器无法得知到底是那个模块的whoIam?函数，从而报错。很多别的语言后导入的模块可以覆盖，这一点我更喜好直接抛出错误的方式。既然出错了，就需要解决冲突。可以使用elixir的alias别名指令。修改 main.ex</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">import Geometry, <span class="symbol">only:</span> whoIam?</div><div class="line"></div><div class="line"><span class="keyword">alias</span> Geometry.Rectangle</div><div class="line"></div><div class="line">whoIam?</div><div class="line"></div><div class="line">Rectangle.whoIam?</div></pre></td></tr></table></figure>
+<p>执行 main.ex 将会得到正确的结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  learn-elixir  elixir main.ex</div><div class="line">Elixir.Geometry</div><div class="line">Elixir.Geometry.Rectangle</div></pre></td></tr></table></figure>
+<p><code>alias Geometry.Rectangle</code> 这句的含义等价于  <code>alias Geometry.Rectangle, as: Rectangle</code>。等于将模块 <code>Geometry.Rectangle</code> 重新命名为 <code>Rectangle</code>，当然 as 也可以自定义别的名字，不然如果出现 <code>Geometry.Rectangle</code>， <code>Geometry.Other.Rectangle</code>自动命名也会产生冲突。与import不同，alias并不会导入模块中的函数，调用模块的函数需要使用alias的模块别名引用函数调用，即 <code>AliasModule.function_name</code></p>
+<h3 id="USE"><a href="#USE" class="headerlink" title="USE"></a>USE</h3><p>在使用 elixir的一些web框架，例如<code>Plug</code>的时候，经常会看到使用<code>use</code>的对模块的操作。use其实很简单，它除了在Module上调用<code>__using__</code>宏外, 不做其他任何事情. 例如：</p>
+<p>geometry/geometry.ex<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Geometry</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_opts) <span class="keyword">do</span></div><div class="line">        IO.puts <span class="string">"use <span class="subst">#&#123;__MODULE_<span class="number">_</span>&#125;</span>"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">whoIam?</span></span> <span class="keyword">do</span></div><div class="line">        IO.puts __MODULE_<span class="number">_</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>main.ex<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">use</span> Geometry</div></pre></td></tr></table></figure></p>
+<p>编译运行得到输入为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">☁  learn-elixir  elixir main.ex</div><div class="line">use Elixir.Geometry</div></pre></td></tr></table></figure>
+<p>可以比较一下和 import 的差别，修改main.ex</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">use</span> Geometry</div><div class="line">whoIam?</div></pre></td></tr></table></figure>
+<p>可以看到输出错误，编译找不到 whoIam? 函数</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">☁  learn-elixir  elixir main.ex</div><div class="line">use Elixir.Geometry</div><div class="line">** (CompileError) main.ex:4: undefined function whoIam?/0</div><div class="line">    (elixir) expanding macro: Kernel.to_string/1</div><div class="line">    main.ex:4: (file)</div></pre></td></tr></table></figure>
+<p>再次修改 geometry.ex, 在 `<strong>using</strong> 宏中导入当前模块。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Geometry</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">defmacro</span> <span class="title">__using__</span></span>(_opts) <span class="keyword">do</span></div><div class="line">	    <span class="keyword">quote</span> <span class="keyword">do</span></div><div class="line">	        import Geometry</div><div class="line">	    <span class="keyword">end</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">whoIam?</span></span> <span class="keyword">do</span></div><div class="line">        IO.puts __MODULE_<span class="number">_</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>编译运行，可以发现main得到了正确的结果，当使用 <code>use Geometry</code>的时候，调用了Geometry的<code>__using__</code>宏，<code>__using__</code>又展开了导入Geometry。因此等于在main中执行了<code>import Geometry</code> 的操作。</p>
+<h3 id="require"><a href="#require" class="headerlink" title="require"></a>require</h3><p>require 允许使用一个模块的宏, 但并不导入他们. 并且必须通过全名来引用。使用iex 来演示：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">☁  learn-elixir  iex</div><div class="line">Erlang/OTP 17 [erts-6.4] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]</div><div class="line"></div><div class="line">Interactive Elixir (1.0.4) - press Ctrl+C to exit (type h() ENTER for help)</div><div class="line">iex(1)&gt; require Geometry</div><div class="line">nil</div><div class="line">iex(2)&gt; whoIam?</div><div class="line">** (RuntimeError) undefined function: whoIam?/0</div><div class="line"></div><div class="line">iex(2)&gt; Geometry.whoIam?</div><div class="line">Elixir.Geometry</div><div class="line">:ok</div><div class="line">iex(3)&gt;</div></pre></td></tr></table></figure>
+<p>require 相对 import的差别在于并没有真正的导入模块，而是在编译链接的时候，查找对应的共享库。要使用其他模块所提供的函数和宏, 就必须要require进来。即编译加载给定的模块，因为宏展开是在编译的时候。</p>
+<p>require和import有部分重叠的作用，前者更多的是针对宏的操作。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>elixir提供了四个模块指令，用于引用导入模块的函数或宏。import 和 alias比较相近，都是导入模块的函数，其中import可以导入指定的函数，默认导入所有。alias则只是把模块引用名给重命名而已，调用函数的时候还需要把别名加上。use仅执行模块的<strong>using</strong> 宏的代码。require则是对模块宏在编译时加载。关于他们更多的细节，在宏的笔记之后再做介绍。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-管道一试/" rel="next" title="Elixir 管道一试">
+                <i class="fa fa-chevron-left"></i> Elixir 管道一试
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十四） --- 字典容器/" rel="prev" title="Elixir 简明笔记（十四） --- 字典容器">
+                Elixir 简明笔记（十四） --- 字典容器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Elixir-模块指令"><span class="nav-number">1.</span> <span class="nav-text">Elixir 模块指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#import-导入模块"><span class="nav-number">2.</span> <span class="nav-text">import 导入模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#alias-别名"><span class="nav-number">3.</span> <span class="nav-text">alias 别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#USE"><span class="nav-number">4.</span> <span class="nav-text">USE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#require"><span class="nav-number">5.</span> <span class="nav-text">require</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

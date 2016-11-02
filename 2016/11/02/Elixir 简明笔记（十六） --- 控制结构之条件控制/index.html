@@ -1,0 +1,686 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="elixir,函数式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="###
+函数式语言常使用模式匹配来做控制结构，但这并不意味着Elixir就没有通常的if-else结构。在Elixir中，if 却不是语句而是宏。这一点在理解宏之前，暂时把他看出语句表达式吧。一般语句没有返回值，表达式有返回值，elixir中if宏是有返回值的。就像字典结构一样，elixir提供了好几个这样的结构，对于经典的条件结构，elixir同样也提供了 if unless cond 和 ca">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir 简明笔记（十六） --- 控制结构之条件控制">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十六） --- 控制结构之条件控制/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="###
+函数式语言常使用模式匹配来做控制结构，但这并不意味着Elixir就没有通常的if-else结构。在Elixir中，if 却不是语句而是宏。这一点在理解宏之前，暂时把他看出语句表达式吧。一般语句没有返回值，表达式有返回值，elixir中if宏是有返回值的。就像字典结构一样，elixir提供了好几个这样的结构，对于经典的条件结构，elixir同样也提供了 if unless cond 和 ca">
+<meta property="og:updated_time" content="2016-11-02T06:25:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir 简明笔记（十六） --- 控制结构之条件控制">
+<meta name="twitter:description" content="###
+函数式语言常使用模式匹配来做控制结构，但这并不意味着Elixir就没有通常的if-else结构。在Elixir中，if 却不是语句而是宏。这一点在理解宏之前，暂时把他看出语句表达式吧。一般语句没有返回值，表达式有返回值，elixir中if宏是有返回值的。就像字典结构一样，elixir提供了好几个这样的结构，对于经典的条件结构，elixir同样也提供了 if unless cond 和 ca">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Elixir 简明笔记（十六） --- 控制结构之条件控制/"/>
+
+
+  <title> Elixir 简明笔记（十六） --- 控制结构之条件控制 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir 简明笔记（十六） --- 控制结构之条件控制
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:08:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>###</p>
+<p>函数式语言常使用模式匹配来做控制结构，但这并不意味着Elixir就没有通常的<code>if-else</code>结构。在Elixir中，if 却不是语句而是<strong>宏</strong>。这一点在理解宏之前，暂时把他看出语句表达式吧。一般语句没有返回值，表达式有返回值，elixir中if宏是有返回值的。就像字典结构一样，elixir提供了好几个这样的结构，对于经典的条件结构，elixir同样也提供了 <code>if</code> <code>unless</code> <code>cond</code> 和 <code>case</code>好几种方式。</p>
+<a id="more"></a>
+<h4 id="if-宏"><a href="#if-宏" class="headerlink" title="if 宏"></a>if 宏</h4><p>if宏比较简单，和别的编程语言差别不到，其基本语法如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">if condition <span class="keyword">do</span></div><div class="line">	...</div><div class="line">else</div><div class="line">	...</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>条件（condition）表达式求值为ture，则执行其下面的代码，否则执行else里的代码。当然，如果具体执行的逻辑代码是一行，则有如下的简写成一行<br><code>if condition, do: somthing, else: anther_ting</code>。</p>
+<p>可以通过 h 查看 if的用法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; h if</div><div class="line"></div><div class="line">                        defmacro if(condition, clauses)</div><div class="line"></div><div class="line">Provides an if macro. This macro expects the first argument to be a condition</div><div class="line">and the rest are keyword arguments.</div><div class="line"></div><div class="line">One-liner examples</div><div class="line"></div><div class="line">┃ if(foo, do: bar)</div><div class="line"></div><div class="line">In the example above, bar will be returned if foo evaluates to true (i.e. it is</div><div class="line">neither false nor nil). Otherwise, nil will be returned.</div><div class="line"></div><div class="line">An else option can be given to specify the opposite:</div><div class="line"></div><div class="line">┃ if(foo, do: bar, else: baz)</div><div class="line"></div><div class="line">Blocks examples</div><div class="line"></div><div class="line">Elixir also allows you to pass a block to the if macro. The first example above</div><div class="line">would be translated to:</div><div class="line"></div><div class="line">┃ if foo do</div><div class="line">┃   bar</div><div class="line">┃ end</div><div class="line"></div><div class="line">Notice that do/end becomes delimiters. The second example would then translate</div><div class="line">to:</div><div class="line"></div><div class="line">┃ if foo do</div><div class="line">┃   bar</div><div class="line">┃ else</div><div class="line">┃   baz</div><div class="line">┃ end</div><div class="line"></div><div class="line">If you want to compare more than two clauses, you can use the cond/1 macro.</div><div class="line"></div><div class="line">iex(2)&gt;</div></pre></td></tr></table></figure>
+<p>if 本质上是一个宏，这个宏接受参数，第一个参数是 <code>condition</code>，第二个参数可以是一个keyword <code>[do: bar]</code>, 只不过<code>[]</code>可以省略，就写成了 <code>do: bar</code>，keyword列表还可以提供else部分。执行do还是else的逻辑，取决于 condition的求值。if宏的返回值为do或者else执行后的返回值。在尚未了解宏之前，可以把 <code>do else</code> 展成代码块（元编程的精髓）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">iex(2)&gt; if 5 &gt; 0, do: :true</div><div class="line">true</div><div class="line">iex(3)&gt; if 5 &lt; 0, do: :true</div><div class="line">nil</div><div class="line">iex(4)&gt; if 5 &lt; 0, do: :true, else: :false</div><div class="line">false</div><div class="line">iex(5)&gt; if 5 &lt; 0, [do: :true, else: :false]</div><div class="line">false</div><div class="line">iex(6)&gt; if(5 &lt; 0, [do: :true, else: :false])</div><div class="line">false</div><div class="line">iex(7)&gt; if(5 &lt; 0, [&#123;:do, :true&#125;, &#123;:else, :false&#125;])</div><div class="line">false</div><div class="line">iex(8)&gt; if 5 &gt; 0 do</div><div class="line">...(8)&gt;   :ture</div><div class="line">...(8)&gt; else</div><div class="line">...(8)&gt;   :false</div><div class="line">...(8)&gt; end</div><div class="line">:ture</div></pre></td></tr></table></figure>
+<h3 id="cond"><a href="#cond" class="headerlink" title="cond"></a>cond</h3><p>经典的条件控制往往还有if elif else这样的多路条件。elixir也有类似的，即cond宏。cond做条件Lisp用得很频繁。cond没有简写模式，其基本形式为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">cond do</div><div class="line">  expression_1 -&gt;    </div><div class="line">	...</div><div class="line">  expression_2 -&gt;</div><div class="line">    ...</div><div class="line">	</div><div class="line">  ... </div><div class="line"></div><div class="line">end</div></pre></td></tr></table></figure>
+<p>如果没有条件符合，最后会报错，所以通常的做法是写一个default的语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; cond do</div><div class="line">...(1)&gt;     1 + 1 == 1 -&gt;</div><div class="line">...(1)&gt;         &quot;This will never match&quot;</div><div class="line">...(1)&gt;     2 * 2 !=4 -&gt;</div><div class="line">...(1)&gt;         &quot;Nor this&quot;</div><div class="line">...(1)&gt;     true -&gt;</div><div class="line">...(1)&gt;         &quot;This will&quot;</div><div class="line">...(1)&gt; end</div><div class="line">&quot;This will&quot;</div></pre></td></tr></table></figure>
+<h3 id="case"><a href="#case" class="headerlink" title="case"></a>case</h3><p>cond语句在Lisp中大行其道，elixir更多喜好模式匹配，因此还有case宏可以做多路条件判断。case的语法也很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">case expression do</div><div class="line">  pattern_1 -&gt;</div><div class="line">	...</div><div class="line">  pattern_2 -&gt;</div><div class="line">    ...</div><div class="line">  ... </div><div class="line">end</div></pre></td></tr></table></figure>
+<p>case使用expression表达式做为模式匹配的右边，模式匹配成功则执行其代码块内容，并返回代码块中的返回值。无法匹配的，同样也会抛出异常， 比正常的模式匹配更高级的一点在于，case的模式可以接受when这样的gurads语句。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">3</span>)&gt; <span class="keyword">case</span> &#123;<span class="symbol">:ok</span>, <span class="string">"hello"</span>&#125; <span class="keyword">do</span></div><div class="line">...(<span class="number">3</span>)&gt;    &#123;<span class="symbol">:ok</span>, value&#125; <span class="keyword">when</span> is_number(value) -&gt;</div><div class="line">...(<span class="number">3</span>)&gt;       value</div><div class="line">...(<span class="number">3</span>)&gt;    &#123;<span class="symbol">:ok</span>, value&#125; -&gt;</div><div class="line">...(<span class="number">3</span>)&gt;       <span class="string">"OK"</span></div><div class="line">...(<span class="number">3</span>)&gt;    <span class="keyword">true</span> -&gt;</div><div class="line">...(<span class="number">3</span>)&gt;       <span class="string">"always true"</span></div><div class="line">...(<span class="number">3</span>)&gt; <span class="keyword">end</span></div><div class="line"><span class="string">"OK"</span></div></pre></td></tr></table></figure>
+<p>以上就是elixir中的条件控制结构，相对而言，还是比较简单的，和其他语言经典的条件控制非常相似。尽管宏定义的时候，其简写方法有点怪。可是宏不就是为了展开进行元编程嘛。实质上这些宏展开了都是标准的条件判断写法，可见宏编程的强大。</p>
+<p>除了条件控制结构，常用的控制结构就是循环。不同于别的语言，elixir并没有提供直接用于循环的while，for等循环结构，取而代之的是通过函数的递归来实现循环迭代的需求。下一节将会介绍循环的做法—递归和迭代。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/elixir/" rel="tag">#elixir</a>
+          
+            <a href="/tags/函数式/" rel="tag">#函数式</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十五） --- 控制结构之模式匹配/" rel="next" title="Elixir 简明笔记（十五） --- 控制结构之模式匹配">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十五） --- 控制结构之模式匹配
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十七） --- 控制结构之递归与迭代/" rel="prev" title="Elixir 简明笔记（十七） --- 控制结构之递归与迭代">
+                Elixir 简明笔记（十七） --- 控制结构之递归与迭代 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">52</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#if-宏"><span class="nav-number">1.</span> <span class="nav-text">if 宏</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cond"><span class="nav-number"></span> <span class="nav-text">cond</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#case"><span class="nav-number"></span> <span class="nav-text">case</span></a></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
