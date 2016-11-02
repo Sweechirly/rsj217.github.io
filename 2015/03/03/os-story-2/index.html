@@ -1,0 +1,619 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="story,MacOS,Windows," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="毫无疑问，Unix的诞生，对于计算机的发展起到了至关重要的作用。人们可以通过操作系统去使用计算机。然而在当时，尽管DEC生产的小型机PDP系列和VAX系列比起早期的巨无霸已经算是比较苗条了，可是对于个人而言，计算机还是相当大的东西，并且造价昂贵，无法进行民用。
+为了将大型计算机缩小体积，很多公司都在尝试。1975年，IBM推出了早期的PC兼容机。我们知道，操作系统与CPU是有直接关系，不同的CPU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨">
+<meta property="og:url" content="http://rsj217.github.com/2015/03/03/os-story-2/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="毫无疑问，Unix的诞生，对于计算机的发展起到了至关重要的作用。人们可以通过操作系统去使用计算机。然而在当时，尽管DEC生产的小型机PDP系列和VAX系列比起早期的巨无霸已经算是比较苗条了，可是对于个人而言，计算机还是相当大的东西，并且造价昂贵，无法进行民用。
+为了将大型计算机缩小体积，很多公司都在尝试。1975年，IBM推出了早期的PC兼容机。我们知道，操作系统与CPU是有直接关系，不同的CPU">
+<meta property="og:updated_time" content="2016-02-16T07:53:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨">
+<meta name="twitter:description" content="毫无疑问，Unix的诞生，对于计算机的发展起到了至关重要的作用。人们可以通过操作系统去使用计算机。然而在当时，尽管DEC生产的小型机PDP系列和VAX系列比起早期的巨无霸已经算是比较苗条了，可是对于个人而言，计算机还是相当大的东西，并且造价昂贵，无法进行民用。
+为了将大型计算机缩小体积，很多公司都在尝试。1975年，IBM推出了早期的PC兼容机。我们知道，操作系统与CPU是有直接关系，不同的CPU">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/03/03/os-story-2/"/>
+
+
+  <title> 操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-03-03T12:55:02+08:00" content="2015-03-03">
+              2015-03-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>毫无疑问，Unix的诞生，对于计算机的发展起到了至关重要的作用。人们可以通过操作系统去使用计算机。然而在当时，尽管DEC生产的小型机PDP系列和VAX系列比起早期的巨无霸已经算是比较苗条了，可是对于个人而言，计算机还是相当大的东西，并且造价昂贵，无法进行民用。</p>
+<p>为了将大型计算机缩小体积，很多公司都在尝试。1975年，IBM推出了早期的PC兼容机。我们知道，操作系统与CPU是有直接关系，不同的CPU运行的操作系统是不一样的。当时Unix价格昂贵，IBM一台PC兼容机造价2w美元，操作系统都要花4w。这样还是无法民用，因此IBM选择了一家小公司Intel生产的X86系列的cpu。Intel是小公司？没错，当时确实是这样，小到不起眼。而主流生产cpu的却是摩托罗拉，摩托罗拉生产的M6800比Intel的技术和设计上都要先进很多，更重要的是这个可以运行Unix。IBM放弃了兼容机上的Unix，因而不得不自己写出了一个兼容X86的操作系统—PL/M。当然这个东东造价也不菲。</p>
+<a id="more"></a>
+<p>微软联合创始人Allen同学Tim Paterson原本是打算写个东西用来测试的16位Intel 8086 CPU界面，于是花四个星期写了一个操作系统。当Bill Gates得知之后，马上花5W美元买下了这个系统，Tim Paterson欣喜若狂，四个星期就赚了一大笔，简直像做梦，赶紧和Bill签订合同，Bill得到之后并命名为DOS。随后，Bill通过其IBM董事会成员的妈妈，得以和IBM高层谈判。IBM兼容机的操作系统价格昂贵，不适合卖给普通用户，IBM定义的主要对手是如火如荼的Apple，IBM想要压制Apple就需要廉价的计算机。微软可以提供廉价的DOS，当然不是卖操作系统，而是卖操作系统的许可。每台IBM兼容机都捆绑一个DOS。Bill的招数就是捆绑，从DOS到IE都是如出一辙，当然特别奏效。IBM也没想多少，他们认为硬件才是赚钱的根本，DOS也便宜。两者结合，果然市场颇受欢迎，Bill也赚到了千万刀。</p>
+<p>IBM兼容机逐渐推向市场，与Apple一较高下。此前，在一个车库，两个年轻的极客，一个对机器怀有无比的热情，另外一个则对改变世界十分狂热，两个人黏在一起，创立了一家伟大的公司Apple。与IBM兼容机不一样，Apple的早期微机，采用是摩托罗拉的cpu和Unix。Jobs独特的艺术气质与Wozniak的技术天才，让Apple的微机在市场上极受欢迎。</p>
+<p>Jobs对技术和艺术的卓越追求，让他不断的改进Apple的电脑。1973年施乐（Xerox）的PARC研究所开发出GUI接口与鼠标（题外话，历史上有两个著名的雷锋实验室，前面提到的Bell和这个Parc）。但是Xerox本身是生产打印机的，董事会莫名其妙的觉得GUI一旦出现，顾客就不乐意使用打印机，因此对Park实验室的成果冷淡的打入冷宫。</p>
+<p>1979年乔布斯到PARC研究所看到Xerox原型机Alto。敏锐的Jobs立刻发现了GUI和鼠标的商业价值，很快他就说服Xerox公司，以一个极低的价格买下了GUI进行研究。1983年苹果公司推出了Apple Lisa，首次采用GUI的商品化计算机。Lisa一诞生，就震撼了整个微机市场，那个车库里的年轻人因此身价过亿。</p>
+<p>Apple蒸蒸日上，Microsoft的Bill心里可不是滋味。现在人们习惯把Jobs和Bill进行比较，不可否认他们都很伟大，至少在IT领域。不同于Jobs的完美主义和偏执狂的作风，Bill更圆滑和更中庸。Bill找到了Jobs，大加赞赏了Jobs的伟大，然后卑微的祈求一份Apple的GUI，并承诺Microsoft的一切成果都是Apple的。不可一世的Jobs答应了，Bill得到了Lisa原型机，马上组织团队研发，并在1990年5月份推出Windows3.0并一炮而红。商业上取得惊人的成功。打破了任何软件产品的六周内销售记录，从而开始了微软在操作系统上的垄断地位。</p>
+<p>此时Jobs发现了Bill这个小偷，勃然大怒，可是为时已晚。对此，Bill并不否认，反而很得意讥讽乔布斯说：“我们有一个富邻居——Xerox，他家有一台电视。当我们想偷的时候，发现乔布斯早就偷走了，可他却说我们是小偷。”他们两人，都验证毕加索那句著名的格言：“好的艺术家抄袭，伟大的艺术家偷窃。”</p>
+<p>但是Jobs心有不甘，因此着手研发Macintosh，由于Macintosh造价昂贵。在市场上逐步落后与Microsoft的Windows。Windows持续发展着，对于Jobs，Apple正在酝酿着一个地震，1985 Jobs被赶出了Apple。</p>
+<p>此时，Unix在干嘛呢?？Unix正忙着和BSD打官司，也正是这些时间，错过了操作系统发展的黄金时间，当Microsoft和Apple逐渐由小人物变成巨人的时候，Unix已经脱离了商业的主流。尽管如此，Unix先天的优雅并不会就此沉沦，DEC生产的机器，原本是自有操作系统，随着后来Unix的发展，不得不买PDP和VAX的时候添加Unix。其中VAX本身有一个操作系统VMX。由于Unix的入侵，VMX团队面临解散。</p>
+<p>Windows风靡市场，一时洛阳纸贵。可是早期的windows并不稳定，蓝屏是家常便饭。Bill并没有偷到Jobs的核心技术，只获得了GUI。因此windows可谓先天的不足。郁闷的Bill找到了同样郁闷的VMX团队。很快两个失意者结合。Microsoft死活硬凑的将windows和VMX结合，诞生了Windows NT。NT诞生不久又出现了Server版本，Server的诞生，敲响了另一家公司的丧钟。当时网络已经出现，Novell生产网络操作系统占据网络统治地位，可是NT的出现，Novell的生命也走到了尽头。</p>
+<p>被赶出Apple的Jobs同样没有停止他的步伐，Jobs离开Apple之后创办了如今三维动画巅峰旗帜的Pixar公司。并且Apple在对Microsoft的竞争中逐步走向衰败，Apple董事会不得不重新召回Jobs挽救Apple日益颓废的江山。Jobs果然是帮主，他的回归，Apple散发了第二春，几款革命性的产品iPod，iPhone将Apple再一次走到了世界的巅峰。MacOS成为了人们热衷的操作系统，这个曾经败给Windows的操作系统又回来了，并且在移动端，IOS也成为了霸主，后来Google的Android加入争斗，那是后话了。</p>
+<p>Microsoft的 windows xp成为微软史上成功的操作系统。可是Jobs回归之后的Apple，XP丑陋的界面很难和炫目的MacOS较量。Microsoft早期和IBM共同研发OS/2，由于后来和VMX的结合而退出了OS/2。IBM又一次验证了谁跟微软合作谁被坑的规律。可是针对MacOS，Microsoft一直对和VMX的结合产品心有余悸。最终用低价从IBM手下买回了OS/2，并重新拼凑了一个“绚丽”的操作系统Windows Vista。</p>
+<p>显然，OS/2被IBM定义为史上最失败的产品，具有讽刺的是，Vista也不约而同的被Microsoft定义为失败的产品。Microsoft不得不在短时间内重新开发。推出了Xp的取代者–Windows7。先如今，Microsoft在互联网遭遇Google强大的统治，移动方面windows phone也生存在Apple IOS的阴影之下。</p>
+<p>曾经强大到像日不落帝国的Microsoft，也在谋求着新的蜕变。当然，Microsoft依然统治着桌面操作系统，在服务器端，另外一个崛起的不是Unix，不是MacOS，也不是Wndows的操作系统，他已然加冕成为新的王者。那就是Linux的故事，这个故事也很有趣，伴随自由的运动，黑客的分享的精神。比起之前少了很多商业的争斗气息，更多是那些黑客传奇的故事。我们得重新打开历史书，回到1991那年的夏天，阳光明媚的芬兰赫尔辛基大学的校园里…</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/story/" rel="tag">#story</a>
+          
+            <a href="/tags/MacOS/" rel="tag">#MacOS</a>
+          
+            <a href="/tags/Windows/" rel="tag">#Windows</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/03/os-story-1/" rel="next" title="操作系统的故事（一）--- ​​Unix 传奇">
+                <i class="fa fa-chevron-left"></i> 操作系统的故事（一）--- ​​Unix 传奇
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/03/os-story-3/" rel="prev" title="操作系统的故事（三）--- ​​Linux的崛起">
+                操作系统的故事（三）--- ​​Linux的崛起 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Elixir，中文可以翻译为“灵丹妙药”。一门运行在 Erlang 虚拟机上的新语言，称自己为灵丹妙药，可见其霸气。Elixir 尝鲜之后，发现确实是一门博采众长的新语言。下面进行 Elixir 的简单介绍。
+安装 Elixr安装 elixir 相当方便，官方文档给出了不同平台的方法。由于 elixir 是运行在 erlang 虚拟机上的，因此需要安装 erlang。下面介绍在 MacOS 下的安">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（一）-- 初识">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（一）---初识/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Elixir，中文可以翻译为“灵丹妙药”。一门运行在 Erlang 虚拟机上的新语言，称自己为灵丹妙药，可见其霸气。Elixir 尝鲜之后，发现确实是一门博采众长的新语言。下面进行 Elixir 的简单介绍。
+安装 Elixr安装 elixir 相当方便，官方文档给出了不同平台的方法。由于 elixir 是运行在 erlang 虚拟机上的，因此需要安装 erlang。下面介绍在 MacOS 下的安">
+<meta property="og:updated_time" content="2016-02-18T02:31:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（一）-- 初识">
+<meta name="twitter:description" content="Elixir，中文可以翻译为“灵丹妙药”。一门运行在 Erlang 虚拟机上的新语言，称自己为灵丹妙药，可见其霸气。Elixir 尝鲜之后，发现确实是一门博采众长的新语言。下面进行 Elixir 的简单介绍。
+安装 Elixr安装 elixir 相当方便，官方文档给出了不同平台的方法。由于 elixir 是运行在 erlang 虚拟机上的，因此需要安装 erlang。下面介绍在 MacOS 下的安">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（一）---初识/"/>
+
+
+  <title> Elixir-简明笔记（一）-- 初识 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（一）-- 初识
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:01+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>Elixir</strong>，中文可以翻译为“<strong>灵丹妙药</strong>”。一门运行在 Erlang 虚拟机上的新语言，称自己为灵丹妙药，可见其霸气。Elixir 尝鲜之后，发现确实是一门博采众长的新语言。下面进行 Elixir 的简单介绍。</p>
+<h3 id="安装-Elixr"><a href="#安装-Elixr" class="headerlink" title="安装 Elixr"></a>安装 Elixr</h3><p>安装 elixir 相当方便，官方文档给出了不同平台的方法。由于 elixir 是运行在 erlang 虚拟机上的，因此需要安装 erlang。下面介绍在 MacOS 下的安装方法。如果有 homebrew，安装只需要两条命令。</p>
+<a id="more"></a>
+<ul>
+<li><p>安装 erlang</p>
+<pre><code>brew install erlang
+</code></pre></li>
+<li><p>安装 elixir</p>
+<pre><code>brew install elixir
+</code></pre></li>
+</ul>
+<p>打开 Terminal, 输入   </p>
+<pre><code>elixir -v
+</code></pre><p>可以获取安装的版本号，目前最新的是 1.0.2版本</p>
+<h3 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h3><p>Elixir 自带了一个交互解释器，就像Python那样可以直接输入代码就执行，也类似 Ruby 的IRB。这个交互解释器为 <code>IEX</code>。在 Terminal里面直接输入 iex，就可以进入elixir交互环境，按住<code>control+z</code>退出，或者连续安两次<code>control+c</code>。</p>
+<p>进入 iex，会看到下面的样式：</p>
+<pre><code>Erlang/OTP 17 [erts-6.3] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+
+Interactive Elixir (1.0.2) - press Ctrl+C to exit (type h() ENTER for help)
+iex(1)&gt;
+</code></pre><p>输入 <code>&quot;Hello World&quot;</code>, elixir 用双引号来表示字符串。</p>
+<pre><code>&gt; &quot;Hello world&quot;
+&quot;Hello world&quot;
+&gt;
+</code></pre><p>可以用 <code>&lt;&gt;</code> 连接字符串</p>
+<pre><code>&gt; &quot;hello&quot; &lt;&gt; &quot; &quot; &lt;&gt; &quot;elixir&quot;
+&quot;hello elixir&quot;
+&gt;
+</code></pre><p>字符串支持多行，敲回车就可以跳下一行，直到遇到结束的双引号。不需要在前面留白，相当赞的功能。</p>
+<pre><code>&gt; &quot;I
+&gt; like
+&gt; elixir&quot;
+&quot;I\nlike\nelixir&quot;
+&gt;
+</code></pre><h3 id="基本运算"><a href="#基本运算" class="headerlink" title="基本运算"></a>基本运算</h3><p>计算机本来就是用来做计算的，elixir当然也可以做计算，以及定义函数运算。elixir支持常见的数学运算。</p>
+<pre><code>&gt; 1 + 1
+2
+&gt; 2 * 3
+6
+&gt; 10 / 2
+5.0
+&gt; 10 / 3
+3.3333333333333335
+&gt; 10 / 3.0
+3.3333333333333335
+&gt; 3 * (1 + 2) 
+9
+</code></pre><p>注意，elixir的除法总是返回浮点类型，例如上面的 <code>10 / 2</code>返回的是 <code>5.0</code>而不是<code>5</code>。如果你想进行整型除法，或者求余数，可以使用<code>div</code>和<code>rem</code>函数。elixir的函数调用时候的括号是可以省略的，毕竟语言的作者是 rails 的核心成员，具有浓厚的 ruby 风格。</p>
+<pre><code>&gt; div(10, 2)
+5
+&gt; rem 10, 3
+1
+</code></pre><h3 id="匿名函数"><a href="#匿名函数" class="headerlink" title="匿名函数"></a>匿名函数</h3><p>elixir 可以定义匿名函数，并且匿名函数可以匹配某个变量，通过变量调用匿名函数。定义匿名函数的关键字是 <code>fn</code>和 <code>end</code>。</p>
+<pre><code>&gt; sum = fn x, y -&gt; x + y end
+#Function&lt;12.90072148/2 in :erl_eval.expr/5&gt;
+&gt; sum.(10, 9)
+19
+</code></pre><p>elixir是函数式范式编程语言，函数贵为一等公民。既可以直接调用，也可以当参数传入。匿名函数是闭包，因此它们可以访问当前作用域（scope）内的其它变量。并且elixir也可以定义像js那种立即执行的匿名函数</p>
+<pre><code>&gt; x = 9
+&gt; (fn x -&gt; x + 1 end).(x)
+10
+&gt; x
+9
+</code></pre><h3 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h3><p>前面我们尝试了elixir的简单例子，其中发现了<code>=</code>这个符号，在数学里这个是等号，表示左右两边相当，学过编程的人都知道，程序里的<code>=</code>不是等号，而是<code>赋值</code>号，指把右边的表达式或数值赋给左边的变量。<code>elixir</code>与别的语言不一样，<code>=</code>不能称之为赋值号，而是<code>匹配运算符</code>，elixir称之为<code>模式匹配</code>(pattern match)。后面我们再做解释。</p>
+<p>前面我们见识了elixir的基本数据类型中的数字相关的类型。elixir的基本数据类型包括下面的几种：</p>
+<ul>
+<li>布尔（boolean）</li>
+<li>数字（number）<ul>
+<li>整型（integer）</li>
+<li>浮点（float）</li>
+</ul>
+</li>
+<li>原子（atom）</li>
+<li>字符串（string）</li>
+<li>匿名函数（anonymous function）</li>
+<li>列表（list）</li>
+<li>元组（tuple）</li>
+</ul>
+<h4 id="布尔类型"><a href="#布尔类型" class="headerlink" title="布尔类型"></a>布尔类型</h4><p>elixir 用 <code>true</code>和<code>false</code>来表示布尔类型。对于判断类型，python提供了一个 type函数相当方便，可惜elixir并没有这样的type函数。不过elixir提供了不同的函数，用来判断类型，例如判断是否是布尔类型的<code>is_boolean</code>函数。</p>
+<pre><code>&gt; is_boolean(true)
+true
+&gt; is_boolean(false)
+true
+&gt; is_boolean(1)
+false
+&gt; is_number(1)
+true
+</code></pre><p>注意，1 是数字类型，并不是布尔类型，当然在条件判断的时候，1 可以布尔值可以是true。后面会提到。</p>
+<h4 id="函数表示方法"><a href="#函数表示方法" class="headerlink" title="函数表示方法"></a>函数表示方法</h4><pre><code>elixir的文档工作做得也很好，对于语言的概念的描述和应用，也有自己的一套。例如函数的描述方法通常为 `&lt;函数名&gt;/&lt;元数&gt;`(&lt;function name&gt;/&lt;arity&gt;)。上面的判断类型函数可以描述为 `is_boolean/1`, `is_number/1`。元数可以理解为函数的参数。这个描述的好处在于，可以用帮助函数 `h` 来查看一个函数的文档和使用方法。类似python里的 `help` 函数。
+</code></pre><p>使用 h 查看 is_boolean/1。</p>
+<pre><code>&gt; h is_boolean
+                    def is_boolean(term)
+
+Returns true if term is either the atom true or the atom false (i.e. aboolean); otherwise returns false.
+
+Allowed in guard tests. Inlined by the compiler.
+
+&gt;
+</code></pre><p>配合模块的文档和函数的文档，能过构建文档完善的程序，这一点充分借鉴了Python的文档字符串设计。</p>
+<h4 id="原子"><a href="#原子" class="headerlink" title="原子"></a>原子</h4><p><code>原子</code>（atom）是一种常量，变量名就是它的值。ruby、lisp 中称其为<code>符号</code>（symbol）。定义十分简单，只需要在字符前加上<code>:</code>符号。</p>
+<pre><code>&gt; :atom
+:atom
+&gt; :hello
+:hello
+&gt; :123
+** (SyntaxError) iex:29: invalid token: :123
+</code></pre><p>注意，大写字母开头的”变量”，其实是一种原子，是<code>:Elixir.变量名</code>的别名。模块通常是用大小字母开头的，后面会用到。</p>
+<pre><code>&gt; Hello
+Hello
+&gt; Hello == :hello
+false
+&gt; Hello == :Elixir.Hello
+true
+</code></pre><h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4><p>列表是常用的数据类型，很多语言都支持列表或者数组的结构。elixir的列表稍微有点不同。</p>
+<p>列表的声明可以使用一对方括号<code>[]</code>，列表的元素可以是任意的数据类型。通过<code>++</code>或者<code>--</code>可以拼接列表和消除列表</p>
+<pre><code>&gt; list = [1, 2, true, 3]
+[1, 2, true, 3]
+&gt; [1, 2, 3] ++ [4, 5, 6]
+[1, 2, 3, 4, 5, 6]
+&gt; [1, 2, 3, 11, 22, 33, 33, 22, 11] -- [11, 22, 33]
+[1, 2, 3, 33, 22, 11]
+</code></pre><p>列表相减的时候，是按照元素位置进行匹配的。想要获取列表的长度，也就是元素的个数，可以通过函数 <code>lenght</code> 得到，通过 <code>hd</code> 函数，可以获得列表的第一个元素，<code>tl</code>函数则获取除第一个元素的剩余列表元素。这个操作在递归的时候很有用。当列表为空的时候，hd 和 tl 都会报错。</p>
+<pre><code>&gt; list = [1, 2, 3, 4]
+[1, 2, 3, 4]
+&gt; length list
+4
+&gt; hd list
+1
+&gt; tl list
+[2, 3, 4]
+</code></pre><p>列表在内存中是以<strong>链表</strong>的形式存储的，一个元素指向下一个元素，然后再下一个…直到到达列表末尾。我们称这样的一对（元素值+指向下一个元素的指针）为列表的一个单元（cons cell）。 由于列表的存储结构，获取列表的元素，都需要遍历列表，获取列表的长度是一个线性操作。我们必须遍历完整个列表才能知道它的长度而给列表删除和插入元素则相当高效。</p>
+<p><code>|</code>这个操作符可以拼接列表，指在列表前置一个列表。事实上，列表的定义，就是单个列表元素拼接起来的，写出中括号的方式只是语法糖罢了。</p>
+<pre><code>&gt; list = [3, 4, 5]
+[3, 4, 5]
+&gt; [3| [4| [5| []]]]
+[3, 4, 5]
+&gt; [1 | list]
+[1, 3, 4, 5]
+&gt; [[1, 2] | list]
+[[1, 2], 3, 4, 5]
+&gt; [1, 2 | list]
+[1, 2, 3, 4, 5]
+&gt; list = [3|[]]
+</code></pre><h4 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h4><p>elixir 的列表是链式存储的，而元组则是连续存储的，因此可以通过所以的方式访问元组。当然，修改元组，比如插入删除元素则开销很大。元组的作用很大，通过用来存储一些不容易变的数据。</p>
+<p>元组的声明很简单，只需要一对花括号<code>{}</code>，里面的类型也可以是任意类型。可以用 <code>elem</code>函数和索引访问元组。</p>
+<pre><code>&gt; t = {1, :ok, &quot;hello&quot;}
+{1, :ok, &quot;hello&quot;}
+&gt; elem t, 1
+:ok
+</code></pre><p>更多的元组操作，会在后面的内容提及。</p>
+<h4 id="字符列表"><a href="#字符列表" class="headerlink" title="字符列表"></a>字符列表</h4><p>字符串是用双引号定义的，单引号则定义的是字符串列表，可以使用列表的一些函数操作。</p>
+<pre><code>&gt; &apos;hello&apos;
+&apos;hello&apos;
+&gt; list_str = &apos;hello&apos;
+&apos;hello&apos;
+&gt; is_list list_str
+true
+&gt; &apos;hello&apos; ++ &apos;world&apos;
+&apos;helloworld&apos;
+</code></pre><h3 id="Enjoy-Elixir"><a href="#Enjoy-Elixir" class="headerlink" title="Enjoy Elixir"></a>Enjoy Elixir</h3><p>这样就把elixir的基本东西快速瞥了一遍。具体每个数据类型的深入了解和运用，以及强大的函数、模块、宏等概念将会陆续介绍。</p>
+<p>学习Elixir的时候，收获最大的则是《Elixir Programe》这本书。并且也按照自己的理解做了一些基础的翻译(<a href="https://github.com/rsj217/translate/tree/master/ProgrammingElixir" target="_blank" rel="external">github地址</a>)，这些笔记就是在翻译学习之后自己的总结。有兴趣的童鞋可以参考，或者帮忙修正。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/python-web-部署：nginx-+-gunicorn-+-supervisor-+-flask-部署笔记/" rel="next" title="nginx-+-gunicorn-+-supervisor-+-flask-部署笔记">
+                <i class="fa fa-chevron-left"></i> nginx-+-gunicorn-+-supervisor-+-flask-部署笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（二）---运行模式/" rel="prev" title="Elixir-简明笔记（二）-- 运行模式">
+                Elixir-简明笔记（二）-- 运行模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-Elixr"><span class="nav-number">1.</span> <span class="nav-text">安装 Elixr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hello-World"><span class="nav-number">2.</span> <span class="nav-text">Hello World</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本运算"><span class="nav-number">3.</span> <span class="nav-text">基本运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#匿名函数"><span class="nav-number">4.</span> <span class="nav-text">匿名函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本数据类型"><span class="nav-number">5.</span> <span class="nav-text">基本数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#布尔类型"><span class="nav-number">5.1.</span> <span class="nav-text">布尔类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数表示方法"><span class="nav-number">5.2.</span> <span class="nav-text">函数表示方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原子"><span class="nav-number">5.3.</span> <span class="nav-text">原子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#列表"><span class="nav-number">5.4.</span> <span class="nav-text">列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#元组"><span class="nav-number">5.5.</span> <span class="nav-text">元组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符列表"><span class="nav-number">5.6.</span> <span class="nav-text">字符列表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Enjoy-Elixir"><span class="nav-number">6.</span> <span class="nav-text">Enjoy Elixir</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

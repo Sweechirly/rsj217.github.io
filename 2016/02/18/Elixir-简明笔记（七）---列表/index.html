@@ -1,0 +1,618 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="列表是Elixir中重要的数据结构。相信其他编程语言中也有类似列表的结构。Lisp的命名来自对列表的处理。在C，Java语言中，列表类似数组结构。Elixir的列表远比数组强大，它更像高级语言python的列表。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（七）-- 列表">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（七）---列表/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="列表是Elixir中重要的数据结构。相信其他编程语言中也有类似列表的结构。Lisp的命名来自对列表的处理。在C，Java语言中，列表类似数组结构。Elixir的列表远比数组强大，它更像高级语言python的列表。">
+<meta property="og:updated_time" content="2016-02-18T02:35:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（七）-- 列表">
+<meta name="twitter:description" content="列表是Elixir中重要的数据结构。相信其他编程语言中也有类似列表的结构。Lisp的命名来自对列表的处理。在C，Java语言中，列表类似数组结构。Elixir的列表远比数组强大，它更像高级语言python的列表。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（七）---列表/"/>
+
+
+  <title> Elixir-简明笔记（七）-- 列表 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（七）-- 列表
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:07+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>列表是Elixir中重要的数据结构。相信其他编程语言中也有类似列表的结构。Lisp的命名来自对列表的处理。在C，Java语言中，列表类似数组结构。Elixir的列表远比数组强大，它更像高级语言python的列表。</p>
+<a id="more"></a>
+<h3 id="列表的定义"><a href="#列表的定义" class="headerlink" title="列表的定义"></a>列表的定义</h3><p>Elixir中使用方括号<code>[]</code>定义一个列表，列表的元素可以是任意Elixir类型，列表可以没有元素，即空表，也可以是任意多个元素。列表还可以去嵌套。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">iex(<span class="number">1</span>)&gt; l = []</div><div class="line">[]</div><div class="line">iex(<span class="number">2</span>)&gt; is_list l</div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">3</span>)&gt; l1 = [<span class="number">1</span>, <span class="number">2</span>, <span class="symbol">:hello</span>, <span class="string">"word"</span>, [<span class="number">1</span>, <span class="number">3</span>]]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="symbol">:hello</span>, <span class="string">"word"</span>, [<span class="number">1</span>, <span class="number">3</span>]]</div><div class="line">iex(<span class="number">4</span>)&gt;</div></pre></td></tr></table></figure>
+<h3 id="head和tail"><a href="#head和tail" class="headerlink" title="head和tail"></a>head和tail</h3><p>Elixir列表是一个的存储结构是链表。也就是说，当你访问列表的第一个元素的时候，速度会很快。但是要访问其中的某个元素，将会带来比较大的开销。因为访问n个元素的时候，必须先遍历n-1个元素。</p>
+<p>因此，由于列表的第一个元素比较特殊，访问数独快嘛。就单独给了它一个名字，列表头（head），除了head之外，剩下的元素即位列表尾（tail）。只有一个元素的列表head就是那个元素，tail为空，空列表的没有head和tail。Elixir提供了两个内置函数hd和tl分别访问列表的head和tail。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; l = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">iex(<span class="number">2</span>)&gt; hd l</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">3</span>)&gt; tl l</div><div class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">iex(<span class="number">4</span>)&gt; hd []</div><div class="line">** (ArgumentError) argument error</div><div class="line">    <span class="symbol">:erlang</span>.hd([])</div><div class="line">iex(<span class="number">5</span>)&gt; tl []</div><div class="line">** (ArgumentError) argument error</div><div class="line">    <span class="symbol">:erlang</span>.tl([])</div><div class="line">iex(<span class="number">6</span>)&gt; hd [<span class="symbol">:sigle_element</span>]</div><div class="line"><span class="symbol">:sigle_element</span></div><div class="line">iex(<span class="number">7</span>)&gt; tl [<span class="symbol">:sigle_element</span>]</div><div class="line">[]</div></pre></td></tr></table></figure>
+<h3 id="操作符"><a href="#操作符" class="headerlink" title="|操作符"></a><code>|</code>操作符</h3><p>列表的head和tail十分重要。Elixir提供了一个操作符用于把head和tail连接起来。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; head = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">2</span>)&gt; tail = [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">iex(<span class="number">3</span>)&gt; [head | tail]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">iex(<span class="number">4</span>)&gt;</div></pre></td></tr></table></figure>
+<p>实际上，列表就是使用<code>|</code>递归定义的，之前我们写的[]加元素，其实是列表定义的一个语法糖。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">2</span>)&gt; [<span class="number">3</span>|[]]</div><div class="line">[<span class="number">3</span>]</div><div class="line">iex(<span class="number">3</span>)&gt; [<span class="number">1</span>|[<span class="number">2</span>|[<span class="number">3</span>|[]]]]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div></pre></td></tr></table></figure>
+<h3 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h3><p>函数式语言最重要的是一个特性就是模式匹配。Elixir的列表也可以进行模式匹配。<code>|</code>既然可以连接列表的head和tail，实际上也是把列表分为head和tail。那么就可以使用模式匹配。这个技术很强大，尤其是在函数递归调用的时候。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; l = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">iex(<span class="number">2</span>)&gt; [head|tail] = l</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">iex(<span class="number">3</span>)&gt; head</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">4</span>)&gt; tail</div><div class="line">[<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div></pre></td></tr></table></figure>
+<h3 id="列表的操作符"><a href="#列表的操作符" class="headerlink" title="列表的操作符"></a>列表的操作符</h3><p>列表可以通过<code>++</code>符号连接两个列表，也可以通过<code>--</code>把列表进行相减。<code>in</code>判断是否属于成员。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex&gt; [ <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> ] ++ [ <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span> ] </div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</div><div class="line">iex&gt; [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>] -- [<span class="number">2</span>, <span class="number">4</span>] </div><div class="line">[<span class="number">1</span>, <span class="number">3</span>]</div><div class="line">iex&gt; <span class="number">1</span> <span class="keyword">in</span> [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</div><div class="line"><span class="keyword">true</span></div><div class="line">iex&gt; <span class="string">"wombat"</span> <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line"><span class="keyword">false</span></div></pre></td></tr></table></figure>
+<h3 id="列表还是元组"><a href="#列表还是元组" class="headerlink" title="列表还是元组"></a>列表还是元组</h3><p>看起来<code>|</code>和<code>++</code>都可以连接列表，但是在某些应用场景还是有区别的：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; l = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">2</span>)&gt; [<span class="number">0</span>] ++ l</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">3</span>)&gt; [<span class="number">0</span>|l]</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">4</span>)&gt; l ++ [<span class="number">4</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div></pre></td></tr></table></figure>
+<p>我们知道，列表是链表，访问第一个元素很快，可是访问列表中其他的元素会很慢。所以使用<code>++</code>的时候在末尾追加列表会很慢。需要访问链表的最后一个元素，这就重建了原先的列表，让原先列表的末尾元素指向那个新元素。</p>
+<p>还记得元组么，元组的数据结构是顺序的线性表，元组在内存中是连续存储的。因此可以通过元素的下标访问元组的元素，并且这样的操作速度很快，但是元组在修改或添加元素时开销很大，因为这些操作会在内存中对元组的进行整体复制。</p>
+<p>因此，选择列表还是元组，本质上是对顺序线性表和线性链表的选择。</p>
+<h3 id="函数式语言"><a href="#函数式语言" class="headerlink" title="函数式语言"></a>函数式语言</h3><p>本节只是对列表进行简单的介绍。我们不止一次说过列表的强大，模式匹配配合列表将会是Elixir强大的表现力。此外，我们在介绍字典类型结构的是时候，将会介绍键值列表。一种有键值对的列表。在介绍模块，尤其是Enum模块提供了对列表的操作。</p>
+<p>到目前为止，我们希望函数式语言带来不同的编程思想，Think Different。通过对前面的学习介绍，可以对Elixir和函数式编程语言有了比较感性的感觉。可是除了语言的表达操作上与常见的编程语言有所不同，但也没有太大的不同。为了解决这个疑惑，我们将会在下一节介绍所谓的函数式语言。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（六）---元组/" rel="next" title="Elixir-简明笔记（六）-- 元组">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（六）-- 元组
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（八）----变可变，非常变/" rel="prev" title="Elixir-简明笔记（八）-- 变可变，非常变">
+                Elixir-简明笔记（八）-- 变可变，非常变 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#列表的定义"><span class="nav-number">1.</span> <span class="nav-text">列表的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#head和tail"><span class="nav-number">2.</span> <span class="nav-text">head和tail</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作符"><span class="nav-number">3.</span> <span class="nav-text">|操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模式匹配"><span class="nav-number">4.</span> <span class="nav-text">模式匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表的操作符"><span class="nav-number">5.</span> <span class="nav-text">列表的操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列表还是元组"><span class="nav-number">6.</span> <span class="nav-text">列表还是元组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数式语言"><span class="nav-number">7.</span> <span class="nav-text">函数式语言</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,636 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="模块可以定义命名空间。模块里面定义命名函数。他们也可以用来做宏(macros)，结构(structs)，协议(protocols)或者其他模块(modules)的包裹封装。在模块外部调用函数需要加上模块名前缀，在模块内部调用函数的时候，则可以省略前缀，例如：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（十二）-- 模块">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（十二）---模块/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="模块可以定义命名空间。模块里面定义命名函数。他们也可以用来做宏(macros)，结构(structs)，协议(protocols)或者其他模块(modules)的包裹封装。在模块外部调用函数需要加上模块名前缀，在模块内部调用函数的时候，则可以省略前缀，例如：">
+<meta property="og:updated_time" content="2016-02-18T02:38:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（十二）-- 模块">
+<meta name="twitter:description" content="模块可以定义命名空间。模块里面定义命名函数。他们也可以用来做宏(macros)，结构(structs)，协议(protocols)或者其他模块(modules)的包裹封装。在模块外部调用函数需要加上模块名前缀，在模块内部调用函数的时候，则可以省略前缀，例如：">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（十二）---模块/"/>
+
+
+  <title> Elixir-简明笔记（十二）-- 模块 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（十二）-- 模块
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:12+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>模块可以定义命名空间。模块里面定义命名函数。他们也可以用来做宏(macros)，结构(structs)，协议(protocols)或者其他模块(modules)的包裹封装。在模块外部调用函数需要加上模块名前缀，在模块内部调用函数的时候，则可以省略前缀，例如：</p>
+<a id="more"></a>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Mod</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func1</span></span> <span class="keyword">do</span></div><div class="line">		IO.puts <span class="string">"in func1"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func2</span></span> <span class="keyword">do</span></div><div class="line">		func1</div><div class="line">		IO.puts <span class="string">"in func2"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Mod.func1</div><div class="line">Mod.func2</div></pre></td></tr></table></figure>
+<p>在同一模块内，函数func2可以直接调用func1。在模块外，需要写全模块和函数名如<code>Mod.func1</code></p>
+<p>与其他语言一样，Elixir使用模块嵌套来组织代码结构，使代码可读和重用。毕竟，每一个程序员都可以是一个库的作者。</p>
+<p>从模块外部作用域访问嵌套模块，需要使用完整的模块名前缀。在模块内访问函数，可以使用内部模块名的前缀。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Outer</span></span> <span class="keyword">do</span></div><div class="line">	<span class="class"><span class="keyword">defmodule</span> <span class="title">Inner</span></span> <span class="keyword">do</span></div><div class="line">		<span class="function"><span class="keyword">def</span> <span class="title">inner_func</span></span> <span class="keyword">do</span></div><div class="line">		<span class="keyword">end</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">outer_func</span></span> <span class="keyword">do</span></div><div class="line">		Inner.inner_func    <span class="comment"># 使用内部模块前缀</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Outer.outer_func</div><div class="line"></div><div class="line">Outer.Inner.inner_func      <span class="comment"># 使用完整的模块名</span></div></pre></td></tr></table></figure>
+<p><code>Elixir</code>的嵌套模块是相当梦幻。当我们在一个模块中定义另外一个模块，<code>Elixir</code>允许直接写外层模块和内层模块名，使用<code>.</code>隔开。也就是说可以如下定义：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Mix</span></span>.Tasks.Doctest <span class="keyword">do</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">run</span></span> <span class="keyword">do</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Mix.Tasks.Doctest.run</div></pre></td></tr></table></figure>
+<p>不过模块Mix和Mix.Tasks.Doctest没有特殊的关系。</p>
+<h4 id="模块指令-（Directives-for-Modules）"><a href="#模块指令-（Directives-for-Modules）" class="headerlink" title="模块指令 （Directives for Modules）"></a>模块指令 （Directives for Modules）</h4><p>Elixir的模块有三种指令（directives）。三个指令都是在程序允许的时候才执行，并且他们是词法作用域（lexically scoped）。仅其定义的的作用域内有用。可以理解为，模块里定义的指令只在模块内可用，以此类推，函数里的指令只在函数内有用。</p>
+<h4 id="import-导入指令"><a href="#import-导入指令" class="headerlink" title="import 导入指令"></a>import 导入指令</h4><p>import指令可以导入模块的函数或者宏到当前的作用域。如果你经常使用某个模块，可以导入模块的函数，就不要在每个文件都写全模块函数的完整名字，可以让代码不至于杂乱无章。例如，如果你从List模块中导入了flatten函数。你就可以直接调用，无需写全模块和函数的完整名字。</p>
+<p>mm/import.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Example</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func1</span></span> <span class="keyword">do</span></div><div class="line">		List.flatten [<span class="number">1</span>,[<span class="number">2</span>,<span class="number">3</span>],<span class="number">4</span>]</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func2</span></span> <span class="keyword">do</span></div><div class="line">		import List, <span class="symbol">only:</span> [<span class="symbol">flatten:</span> <span class="number">1</span>]</div><div class="line"></div><div class="line">		flatten [<span class="number">5</span>,[<span class="number">6</span>,<span class="number">7</span>],<span class="number">8</span>]</div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>import的完整语法</p>
+<p>import Module [, only:|except: ]<br>import 模块名 [, only: 函数名 | except: 函数名]</p>
+<p>中括号的内容是可选的列表，only表示仅仅导入该函数，except指导入除了该函数以为的其他所有函数。导入的函数写法是 函数名:参数个数。导入少的函数可以使用only，反之则使用except。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import List, <span class="symbol">only:</span> [ <span class="symbol">flatten:</span> <span class="number">1</span>, <span class="symbol">duplicate:</span> <span class="number">2</span> ]</div></pre></td></tr></table></figure>
+<p>或者，你可以在only指明原子类型如 <code>:functions 或者 :macros</code>，那么最后只会导入模块的函数或者宏。</p>
+<h4 id="alias-别名指令"><a href="#alias-别名指令" class="headerlink" title="alias 别名指令"></a>alias 别名指令</h4><p>alias指令可以给模块创建别名，如：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Example</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">		<span class="keyword">alias</span> Mix.Tasks.Doctest, <span class="symbol">as:</span> Doctest</div><div class="line"></div><div class="line">		doc = Doctest.setup</div><div class="line">		doc.run(Doctest.defaults)</div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>我们可以把<code>Mix.Tasks.Doctest</code>设置其别名为<code>Doctest</code>，如果省略<code>as</code>，Elixir是自动命名别名为模块列表的最后一部分，这里是<code>Doctest</code></p>
+<h4 id="require-指令"><a href="#require-指令" class="headerlink" title="require 指令"></a>require 指令</h4><p>如果想使用模块里定义的宏，那么就需要使用require指令引入模块。require可以保证在你的代码尝试使用任何宏的之前引用。介绍宏的时候，将会介绍更多关于require指令的内容。</p>
+<h4 id="模块属性-（Module-Attributes）"><a href="#模块属性-（Module-Attributes）" class="headerlink" title="模块属性 （Module Attributes）"></a>模块属性 （Module Attributes）</h4><p>Elixir的模块都有一些元信息。每一个元数据被当成模块的属性。在模块内，可以使用<code>@</code>前缀加属性名访问。</p>
+<p>自定义属性如下：</p>
+<p>@name value<br>@属性名 属性值</p>
+<p>定义属性只能在模块的最顶层定义，不能在函数内定义属性。但是，可以在函数内访问属性。</p>
+<p>mm/attributes.exs<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Example</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="variable">@author</span> <span class="string">"Dave Thomas"</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">get_author</span></span> <span class="keyword">do</span></div><div class="line">		<span class="variable">@author</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">IO.puts <span class="string">"Example was written by <span class="subst">#&#123;Example.get_author&#125;</span>"</span></div></pre></td></tr></table></figure></p>
+<p>在模块中可以重载属性。如果在命名函数内访问属性，如果在模块的命名函数中访问属性，将会得到最近的一个定义属性的值。</p>
+<p>mm/attributes1.exs<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Example</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="variable">@attr</span> <span class="string">"one"</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">first</span></span>, <span class="symbol">do:</span> <span class="variable">@attr</span></div><div class="line"></div><div class="line">	<span class="variable">@attr</span> <span class="string">"two"</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">second</span></span>, <span class="symbol">do:</span> <span class="variable">@attr</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">IO.puts <span class="string">"<span class="subst">#&#123;Example.first&#125;</span> <span class="subst">#&#123;Example.second&#125;</span>"</span> <span class="comment"># =&gt; one two</span></div></pre></td></tr></table></figure></p>
+<p>有一些属性通常不是可用的。只能用在元信息和配置的时候。</p>
+<h3 id="模块名-Elixir-Erlang-与-原子（Atoms）"><a href="#模块名-Elixir-Erlang-与-原子（Atoms）" class="headerlink" title="模块名 Elixir, Erlang, 与 原子（Atoms）"></a>模块名 Elixir, Erlang, 与 原子（Atoms）</h3><p>在Elixir中使用写模块的时候，有一些命名是<code>String</code>或者<code>PhotoAlbum</code>。可是这样调用 <code>String.length(&quot;abc&quot;)</code>。这很神奇，模块名其实是原子。让你使用的模块开头的例如IO，Elixir内部会把它转成值为Elixir.IO的一个原子。所有模块都是在Elixir名子空间下。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex&gt; is_atom IO</div><div class="line"><span class="keyword">true</span></div><div class="line">iex&gt; to_string IO</div><div class="line"><span class="string">"Elixir.IO"</span></div><div class="line">iex&gt; <span class="symbol">:<span class="string">"Elixir.IO"</span></span> === IO</div><div class="line"><span class="keyword">true</span></div></pre></td></tr></table></figure>
+<p>因此，当使用模块名.函数名调用函数的时候，elixir内部像这样的：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex&gt; IO.puts <span class="number">123</span></div><div class="line"><span class="number">123</span></div><div class="line"><span class="symbol">:ok</span></div><div class="line">iex&gt; <span class="symbol">:<span class="string">"Elixir.IO"</span></span>.puts <span class="number">123</span></div><div class="line"><span class="number">123</span></div><div class="line"><span class="symbol">:ok</span></div></pre></td></tr></table></figure>
+<h3 id="调用Erlang库"><a href="#调用Erlang库" class="headerlink" title="调用Erlang库"></a>调用Erlang库</h3><p>Erlang的库使用了小写的原子命名。例如，当使用timer模块的时候，在Elixir中可以写成:timer。通过:timer.tc调用timer模块下的tc函数。</p>
+<p>有一个需求，我们想把一个浮点数精确到一位小数的浮点数输出。阅读Erlang文档，找到了专门处理格式化字符串函数，即io模块的format函数。因此，在elixir中我们可以使用原子直接引用Erlang的库函数：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">iex&gt; <span class="symbol">:io</span>.format(<span class="string">"The number is ~3.1f~n"</span>, [<span class="number">5.678</span>])</div><div class="line">The number is <span class="number">5.7</span></div><div class="line"><span class="symbol">:ok</span></div></pre></td></tr></table></figure>
+<h3 id="寻找库"><a href="#寻找库" class="headerlink" title="寻找库"></a>寻找库</h3><p>在应用开发的时候使用库，你可以先看下Elixir中已经存在的库。Elixir网站提供了很多内建的库和函数。</p>
+<p>如果没找到合适的，那么可以访问<code>Erlang</code>的网站，寻找<code>Erlang</code>内建的库。这些也可以在<code>Elixir</code>中使用。当然，<code>Erlang</code>的文档中库都是符合其自身的命名习惯，变量是大写的。标示却是用小写的。因此，当你使用<code>Erlang</code>的<code>tomato</code>的时候，在<code>Elixir</code>中可以写成<code>:tomato</code>。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（十一）---神奇的管道/" rel="next" title="Elixir-简明笔记（十一）-- 神奇的管道">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（十一）-- 神奇的管道
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-管道一试/" rel="prev" title="Elixir 管道一试">
+                Elixir 管道一试 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#模块指令-（Directives-for-Modules）"><span class="nav-number">1.</span> <span class="nav-text">模块指令 （Directives for Modules）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#import-导入指令"><span class="nav-number">2.</span> <span class="nav-text">import 导入指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#alias-别名指令"><span class="nav-number">3.</span> <span class="nav-text">alias 别名指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#require-指令"><span class="nav-number">4.</span> <span class="nav-text">require 指令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#模块属性-（Module-Attributes）"><span class="nav-number">5.</span> <span class="nav-text">模块属性 （Module Attributes）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模块名-Elixir-Erlang-与-原子（Atoms）"><span class="nav-number"></span> <span class="nav-text">模块名 Elixir, Erlang, 与 原子（Atoms）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用Erlang库"><span class="nav-number"></span> <span class="nav-text">调用Erlang库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寻找库"><span class="nav-number"></span> <span class="nav-text">寻找库</span></a></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

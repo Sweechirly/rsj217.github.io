@@ -1,0 +1,632 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="因为Python，我见识了优雅。优雅不经在于自己使用，还在于如何设计API给别人使用。
+设计 api 的时候，可以利用 python 的描述符完成很多工作，而这些描述符操作，还有一个名字就是“魔法方法”。前面我们介绍了一个装饰器魔法，现在再来认识一下迭代器神功。
+迭代器（iterator）是访问集合内元素的一种方式，提供了一种遍历类序列对象的方法。对于一般的序列，利用索引从0一直迭代到序列的最后一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 黑魔法 --- 迭代器（iterator）">
+<meta property="og:url" content="http://rsj217.github.com/2015/05/23/python-magic-iterator/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="因为Python，我见识了优雅。优雅不经在于自己使用，还在于如何设计API给别人使用。
+设计 api 的时候，可以利用 python 的描述符完成很多工作，而这些描述符操作，还有一个名字就是“魔法方法”。前面我们介绍了一个装饰器魔法，现在再来认识一下迭代器神功。
+迭代器（iterator）是访问集合内元素的一种方式，提供了一种遍历类序列对象的方法。对于一般的序列，利用索引从0一直迭代到序列的最后一">
+<meta property="og:updated_time" content="2016-02-18T02:59:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python 黑魔法 --- 迭代器（iterator）">
+<meta name="twitter:description" content="因为Python，我见识了优雅。优雅不经在于自己使用，还在于如何设计API给别人使用。
+设计 api 的时候，可以利用 python 的描述符完成很多工作，而这些描述符操作，还有一个名字就是“魔法方法”。前面我们介绍了一个装饰器魔法，现在再来认识一下迭代器神功。
+迭代器（iterator）是访问集合内元素的一种方式，提供了一种遍历类序列对象的方法。对于一般的序列，利用索引从0一直迭代到序列的最后一">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/05/23/python-magic-iterator/"/>
+
+
+  <title> Python 黑魔法 --- 迭代器（iterator） |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python 黑魔法 --- 迭代器（iterator）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-05-23T17:36:46+08:00" content="2015-05-23">
+              2015-05-23
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>因为<code>Python</code>，我见识了优雅。优雅不经在于自己使用，还在于如何设计<code>API</code>给别人使用。</p>
+<p>设计 api 的时候，可以利用 python 的<code>描述符</code>完成很多工作，而这些描述符操作，还有一个名字就是“<code>魔法方法</code>”。前面我们介绍了一个装饰器魔法，现在再来认识一下迭代器神功。</p>
+<p>迭代器（<code>iterator</code>）是访问集合内元素的一种方式，提供了一种遍历类序列对象的方法。对于一般的序列，利用索引从0一直迭代到序列的最后一个元素。对象从集合的第一个元素开始访问，直到所有的元素都被访问一遍后结束。对于字典、文件、自定义对象类型等，可以自定义迭代方式，从而实现对这些对象的遍历。总之，迭起器就是定义了对对象进行遍历的方式。</p>
+<p>一些编程语言C，C++需要实现这样的结构。另外一些高级语言python，ruby则把迭代协议在语言层面就实现了。当然，这样的隐藏了一些细节，有时候明明已经使用了，却浑然不知。</p>
+<a id="more"></a>
+<h3 id="iter-函数"><a href="#iter-函数" class="headerlink" title="iter 函数"></a>iter 函数</h3><p>python提供了一个<code>iter</code>函数用来生成迭代器。这个方法有两个参数，当只有一个参数的时候，若这个参数是一个<code>容器</code>，则返回这个容器的<code>迭代器对象</code>，若这个参数本身就是一个<code>迭代器</code>，则返回其自身。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">In [1]: alist = [1, 2, 3, 4]</div><div class="line"></div><div class="line">In [2]: it = iter(alist)</div><div class="line"></div><div class="line">In [3]: it</div><div class="line">Out[3]: &lt;listiterator at 0x102496e10&gt;</div><div class="line"></div><div class="line">In [4]: it2 = iter(it)</div><div class="line"></div><div class="line">In [5]: id(it) == id(it2)</div><div class="line">Out[5]: True</div></pre></td></tr></table></figure>
+<h3 id="iterator-的特点"><a href="#iterator-的特点" class="headerlink" title="iterator 的特点"></a>iterator 的特点</h3><p>迭代器都有一个<code>next</code>方法，每次调用这个方法而实现计数，当然计数不是通过索引实现，调用了next方法只会，迭代指针会指向下一个元素的位置。若下一个元素没有了，则会抛出<code>StopIteration</code>异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">In [6]: it.next()</div><div class="line">Out[6]: 2</div><div class="line"></div><div class="line">In [7]: it.next()</div><div class="line">Out[7]: 3</div><div class="line"></div><div class="line">In [8]: it.next()</div><div class="line">Out[8]: 4</div><div class="line"></div><div class="line">In [9]: it.next()</div><div class="line">---------------------------------------------------------------------------</div><div class="line">StopIteration                             Traceback (most recent call last)</div><div class="line">&lt;ipython-input-16-54f0920595b2&gt; in &lt;module&gt;()</div><div class="line">----&gt; 1 it.next()</div><div class="line"></div><div class="line">StopIteration:</div><div class="line"></div><div class="line">In [10]:</div></pre></td></tr></table></figure>
+<p>这样做有什么用呢？试想想在迭代指针还没指到的当前元素时候，已经迭代之后的位置元素，那些元素需要计算么？因为只有迭代到当前位置的元素时候，才开始计算元素的值。在迭代之前可以不存在，在迭代之后可以被销毁。实现的迭代器不需要准备所遍历的所有元素，没错，这就是迭代器的一大魅力，惰性计算。</p>
+<h3 id="for-循环"><a href="#for-循环" class="headerlink" title="for 循环"></a>for 循环</h3><p>知道了迭代器大致的用法，我们来遍历一个迭代器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">In [1]: it = iter(range(4))</div><div class="line"></div><div class="line">In [2]: try:</div><div class="line">   ...:     while True:</div><div class="line">   ...:         print it.next()</div><div class="line">   ...: except StopIteration:</div><div class="line">   ...:     pass</div><div class="line">   ...:</div><div class="line">0</div><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line"></div><div class="line">In [3]:</div></pre></td></tr></table></figure>
+<p>上面的遍历看上去比较别扭，更不没有python优雅的感觉，或许，想到遍历一个容器，for in循环更优雅</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">In [3]: it = range(4)</div><div class="line"></div><div class="line">In [4]: for i in it:</div><div class="line">   ...:     print i</div><div class="line">   ...:</div><div class="line">0</div><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line"></div><div class="line">In [5]:</div></pre></td></tr></table></figure>
+<p>两次运算的效果几乎一样，那么for循环的机理是什么呢。前面所言python内置实现了各种迭代协议，for循环就是一个很好的例子。for 循环的时候，首先对循环对象实现迭代器包装，返回一个迭代器对象，然后每循环一步，就调用哪个迭代器对象的next方法，循环结束的时候，自动处理了 StopIteration这个异常。for循环是对迭代器进行迭代的语法糖。无处不在的语法糖。</p>
+<p>当然实现迭代器的时候，有时候会把索引丢掉，在python可以使用内建函数<code>enumerate</code>获取索引。</p>
+<h3 id="iterator-的定义"><a href="#iterator-的定义" class="headerlink" title="iterator 的定义"></a>iterator 的定义</h3><p>对于上面的 it 这个迭代器，是通过 iter方法实现的，那么iter函数到底做了什么呢？简而言之，实现了迭代器协议的对象，就是迭代器。什么事迭代器协议呢？再简而言之，满足下面两个条件即可：</p>
+<ul>
+<li>实现了魔法方法 <code>__iter__()</code>，返回一个迭代对象，这个对象有一个<code>next()</code>方法，</li>
+<li>实现 <code>next()</code> 方法，返回当前的元素，并指向下一个元素的位置，当前位置已经没有元素的时候，抛出<code>StopIteration</code>异常。</li>
+</ul>
+<p>前面我们迭代range(4)是从零开始，现在我们实现一个迭代器对象，可以逆序迭代的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">class ReverseList():</div><div class="line"></div><div class="line">    def __init__(self, item):</div><div class="line">        self.list = range(item)</div><div class="line"></div><div class="line">    def __iter__(self):</div><div class="line">        return self</div><div class="line"></div><div class="line">    def next(self):</div><div class="line"></div><div class="line">        try:</div><div class="line">            return self.list.pop()</div><div class="line">        except:</div><div class="line">            raise StopIteration</div><div class="line">            </div><div class="line">In [1]: it = ReverseList(4)</div><div class="line"></div><div class="line">In [2]: it.next()</div><div class="line">Out[2]: 3</div><div class="line"></div><div class="line">In [3]: it.next()</div><div class="line">Out[3]: 2</div><div class="line"></div><div class="line">In [4]: it.next()</div><div class="line">Out[4]: 1</div><div class="line"></div><div class="line">In [5]: it.next()</div><div class="line">Out[5]: 0</div><div class="line"></div><div class="line">In [6]:</div></pre></td></tr></table></figure>
+<p>更复杂的遍历逻辑，都可以在 next 方法里构造。当然，看到了这里，也就大概知道了迭代器的协议，也已经是python的数据结构实现了的。并且还没见识到惰性计算。其实吧，惰性计算，python有更好的处理魔法，就是生成器，关于生成器，比迭代器神功还有效。</p>
+<p>接下来就是用迭代器的迭代之后销毁元素的特性，做一个练习吧。</p>
+<p>有一个偶数项的列表 <code>a = [&quot;foo&quot;, 2, &quot;bar&quot;, 4, &quot;far&quot;, 6]</code>，希望对每两个相邻的两个元素打包，是为一组, 使得结果如下是这样的 <code>[(&quot;foo&quot;, 2), (&quot;bar&quot;, 4), (&quot;far&quot;, 6)]</code>。如果是要打包是每三个一组呢？</p>
+<p>有很多方法可以解决，下面使用迭代器进行处理，大概代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">a = [&quot;foo&quot;, 2, &quot;bar&quot;, 4, &quot;far&quot;, 6]</div><div class="line">group_adjacent = lambda x, k: zip(*([iter(x)] * k))</div><div class="line"></div><div class="line">In [1]: a = [&quot;foo&quot;, 2, &quot;bar&quot;, 4, &quot;far&quot;, 6]</div><div class="line"></div><div class="line">In [2]: group_adjacent = lambda x, k: zip(*([iter(x)] * k))</div><div class="line"></div><div class="line">In [3]: group_adjacent(a, 2)</div><div class="line">Out[3]: [(&apos;foo&apos;, 2), (&apos;bar&apos;, 4), (&apos;far&apos;, 6)]</div><div class="line"></div><div class="line">In [4]:</div></pre></td></tr></table></figure>
+<p>对于迭代器，python还有很多高级功能，并且还专门有一个<code>itertools</code>标准库用来做迭代器对象的相关处理。</p>
+<p>迭代器魔法没有装饰器那么惊艳，却有着魔幻的力量，配合生成器，更有另一番天地。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/05/23/python-magic-decorator/" rel="next" title="Python 黑魔法 --- 装饰器（decorator）">
+                <i class="fa fa-chevron-left"></i> Python 黑魔法 --- 装饰器（decorator）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/06/22/python-magic-descriptor/" rel="prev" title="Python 黑魔法---描述器（descriptor）">
+                Python 黑魔法---描述器（descriptor） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#iter-函数"><span class="nav-number">1.</span> <span class="nav-text">iter 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iterator-的特点"><span class="nav-number">2.</span> <span class="nav-text">iterator 的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#for-循环"><span class="nav-number">3.</span> <span class="nav-text">for 循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iterator-的定义"><span class="nav-number">4.</span> <span class="nav-text">iterator 的定义</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

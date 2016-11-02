@@ -1,0 +1,653 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="网络I/O模型人多了，就会有问题。web刚出现的时候，光顾的人很少。近年来网络应用规模逐渐扩大，应用的架构也需要随之改变。C10k的问题，让工程师们需要思考服务的性能与应用的并发能力。
+网络应用需要处理的无非就是两大类问题，网络I/O，数据计算。相对于后者，网络I/O的延迟，给应用带来的性能瓶颈大于后者。网络I/O的模型大致有如下几种：
+
+同步模型（synchronous I/O）
+阻塞I/O（b">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简明网络I-O模型---同步异步阻塞非阻塞之惑">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/简明网络I-O模型---同步异步阻塞非阻塞之惑/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="网络I/O模型人多了，就会有问题。web刚出现的时候，光顾的人很少。近年来网络应用规模逐渐扩大，应用的架构也需要随之改变。C10k的问题，让工程师们需要思考服务的性能与应用的并发能力。
+网络应用需要处理的无非就是两大类问题，网络I/O，数据计算。相对于后者，网络I/O的延迟，给应用带来的性能瓶颈大于后者。网络I/O的模型大致有如下几种：
+
+同步模型（synchronous I/O）
+阻塞I/O（b">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-6296a0fe7e80353d.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-393ab84aab39a91c.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-30acb370892f468d.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-751d8b96d391cd43.png">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-7cdb3076fa1a827e.png">
+<meta property="og:updated_time" content="2016-02-17T03:33:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简明网络I-O模型---同步异步阻塞非阻塞之惑">
+<meta name="twitter:description" content="网络I/O模型人多了，就会有问题。web刚出现的时候，光顾的人很少。近年来网络应用规模逐渐扩大，应用的架构也需要随之改变。C10k的问题，让工程师们需要思考服务的性能与应用的并发能力。
+网络应用需要处理的无非就是两大类问题，网络I/O，数据计算。相对于后者，网络I/O的延迟，给应用带来的性能瓶颈大于后者。网络I/O的模型大致有如下几种：
+
+同步模型（synchronous I/O）
+阻塞I/O（b">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-6296a0fe7e80353d.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/简明网络I-O模型---同步异步阻塞非阻塞之惑/"/>
+
+
+  <title> 简明网络I-O模型---同步异步阻塞非阻塞之惑 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                简明网络I-O模型---同步异步阻塞非阻塞之惑
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:10+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="网络I-O模型"><a href="#网络I-O模型" class="headerlink" title="网络I/O模型"></a>网络I/O模型</h3><p>人多了，就会有问题。web刚出现的时候，光顾的人很少。近年来网络应用规模逐渐扩大，应用的架构也需要随之改变。C10k的问题，让工程师们需要思考服务的性能与应用的并发能力。</p>
+<p>网络应用需要处理的无非就是两大类问题，<strong>网络I/O</strong>，<strong>数据计算</strong>。相对于后者，网络I/O的延迟，给应用带来的性能瓶颈大于后者。网络I/O的模型大致有如下几种：</p>
+<ul>
+<li>同步模型（synchronous I/O）<ul>
+<li>阻塞I/O（bloking I/O）</li>
+<li>非阻塞I/O（non-blocking I/O）</li>
+<li>多路复用I/O（multiplexing I/O）</li>
+<li>信号驱动式I/O（signal-driven I/O）</li>
+</ul>
+</li>
+<li>异步I/O（asynchronous I/O）</li>
+</ul>
+<a id="more"></a>
+<p>网络I/O的本质是socket的读取，socket在linux系统被抽象为流，I/O可以理解为对流的操作。这个操作又分为两个阶段：</p>
+<ol>
+<li>等待流数据准备好。</li>
+<li>从内核向进程复制数据。</li>
+</ol>
+<p>对于socket流而已，第一步通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。第二步把数据从内核缓冲区复制到应用进程缓冲区。</p>
+<h3 id="I-O模型"><a href="#I-O模型" class="headerlink" title="I/O模型"></a>I/O模型</h3><p>举个简单比喻，来了解这几种模型。网络IO好比钓鱼，等待鱼上钩就是网络中等待数据准备好的过程，鱼上钩了，把鱼拉上岸就是内核复制数据阶段。钓鱼的人就是一个应用进程。</p>
+<h4 id="阻塞I-O（bloking-I-O）"><a href="#阻塞I-O（bloking-I-O）" class="headerlink" title="阻塞I/O（bloking I/O）"></a>阻塞I/O（bloking I/O）</h4><p>阻塞I/O是最流行的I/O模型。它符合人们最常见的思考逻辑。<strong>阻塞就是进程 “被” 休息, CPU处理其它进程去了</strong>。在网络I/O的时候，进程发起<code>recvform</code>系统调用，然后进程就被阻塞了，什么也不干，直到数据准备好，并且将数据从内核复制到用户进程，最后进程再处理数据，在等待数据到处理数据的两个阶段，整个进程都被阻塞。不能处理别的网络I/O。大致如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-6296a0fe7e80353d.png" alt="1.png"></p>
+<p>这就好比我们去钓鱼，抛竿之后就一直在岸边等，直到等待鱼上钩。然后再一次抛竿，等待下一条鱼上钩，等待的时候，什么事情也不做，大概会胡思乱想吧。</p>
+<h4 id="非阻塞I-O（non-bloking-I-O）"><a href="#非阻塞I-O（non-bloking-I-O）" class="headerlink" title="非阻塞I/O（non-bloking I/O）"></a>非阻塞I/O（non-bloking I/O）</h4><p>在网络I/O时候，非阻塞I/O也会进行recvform系统调用，检查数据是否准备好，与阻塞I/O不一样，”非阻塞将大的整片时间的阻塞分成N多的小的阻塞, 所以进程不断地有机会 ‘被’ CPU光顾”。</p>
+<p>也就是说非阻塞的recvform系统调用调用之后，进程并没有被阻塞，内核马上返回给进程，如果数据还没准备好，此时会返回一个error。进程在返回之后，可以干点别的事情，然后再发起recvform系统调用。重复上面的过程，循环往复的进行recvform系统调用。这个过程通常被称之为<code>轮询</code>。轮询检查内核数据，直到数据准备好，再拷贝数据到进程，进行数据处理。需要注意，拷贝数据整个过程，进程仍然是属于阻塞的状态。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-393ab84aab39a91c.png" alt="2.png"></p>
+<p>我们再用钓鱼的方式来类别，当我们抛竿入水之后，就看下鱼漂是否有动静，如果没有鱼上钩，就去干点别的事情，比如再挖几条蚯蚓。然后不久又来看看鱼漂是否有鱼上钩。这样往返的检查又离开，直到鱼上钩，再进行处理。</p>
+<h4 id="多路复用I-O（multiplexing-I-O）"><a href="#多路复用I-O（multiplexing-I-O）" class="headerlink" title="多路复用I/O（multiplexing I/O）"></a>多路复用I/O（multiplexing I/O）</h4><p>可以看出，由于非阻塞的调用，轮询占据了很大一部分过程，轮询会消耗大量的CPU时间。结合前面两种模式。如果轮询不是进程的用户态，而是有人帮忙就好了。多路复用正好处理这样的问题。</p>
+<p>多路复用有两个特别的系统调用<code>select</code>或<code>poll</code>。select调用是内核级别的，select轮询相对非阻塞的轮询的区别在于—前者可以等待多个socket，当其中任何一个socket的数据准好了，就能返回进行可读，然后进程再进行recvform系统调用，将数据由内核拷贝到用户进程，当然这个过程是阻塞的。多路复用有两种阻塞，select或poll调用之后，会阻塞进程，与第一种阻塞不同在于，此时的select不是等到socket数据全部到达再处理, 而是有了一部分数据就会调用用户进程来处理，也可以理解为”非阻塞”吧。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-30acb370892f468d.png" alt="3.png"></p>
+<p>对于多路复用，也就是轮询多个socket。钓鱼的时候，我们雇了一个帮手，他可以同时抛下多个钓鱼竿，任何一杆的鱼一上钩，他就会拉杆。他只负责帮我们钓鱼，并不会帮我们处理，所以我们还得在一帮等着，等他把收杆。我们再处理鱼。多路复用既然可以处理多个I/O，也就带来了新的问题，多个I/O之间的顺序变得不确定了，当然也可以针对不同的编号。</p>
+<p>了解了前面三种模式，在用户进程进行系统调用的时候，他们在等待数据到来的时候，处理的方式不一样，直接等待，轮询，select或poll轮询，第一个过程有的阻塞，有的不阻塞，有的可以阻塞又可以不阻塞。当时第二个过程都是阻塞的。从整个I/O过程来看，他们都是顺序执行的，因此可以归为同步模型(asynchronous)。都是进程主动向内核检查。</p>
+<h4 id="异步I-O（asynchronous-I-O）"><a href="#异步I-O（asynchronous-I-O）" class="headerlink" title="异步I/O（asynchronous I/O）"></a>异步I/O（asynchronous I/O）</h4><p>相对于同步I/O，异步I/O不是顺序执行。用户进程进行<code>aio_read</code>系统调用之后，无论内核数据是否准备好，都会直接返回给用户进程，然后用户态进程可以去做别的事情。等到socket数据准备好了，内核直接复制数据给进程，然后从内核向进程发送通知。I/O两个阶段，进程都是非阻塞的。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-751d8b96d391cd43.png" alt="4.png"></p>
+<p>比之前的钓鱼方式不一样，这一次我们雇了一个钓鱼高手。他不仅会钓鱼，还会在鱼上钩之后给我们发短信，通知我们鱼已经准备好了。我们只要委托他去抛竿，然后就能跑去干别的事情了，直到他的短信。我们再回来处理已经上岸的鱼。</p>
+<h3 id="同步和异步的区别"><a href="#同步和异步的区别" class="headerlink" title="同步和异步的区别"></a>同步和异步的区别</h3><p>通过对上述几种模型的讨论，需要区分阻塞和非阻塞，同步和异步。他们其实是两组概念。区别前一组比较容易，后一种往往容易和前面混合。在我看来，所谓同步就是在整个I/O过程。尤其是拷贝数据的过程是阻塞进程的，并且都是应用进程态去检查内核态。而异步则是整个过程I/O过程用户进程都是非阻塞的，并且当拷贝数据的时是由内核发送通知给用户进程。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-7cdb3076fa1a827e.png" alt="5.png"></p>
+<p>对于同步模型，主要是第一阶段处理方法不一样。而异步模型，两个阶段都不一样。这里我们忽略了信号驱动模式。这几个名词还是容易让人迷惑，只有同步模型才考虑阻塞和非阻塞，因为异步肯定是非阻塞，异步非阻塞的说法感觉画蛇添足。</p>
+<p>本文所讨论的IO模型来自大名鼎鼎的《unix网络编程：卷1套接字联网API》。单台服务器中的linux系统。分布式的环境或许会不一样。个人学习笔记，参考了网络上大多数文章，做了一点小测试。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/Socket通信原理简介/" rel="next" title="Socket通信原理简介">
+                <i class="fa fa-chevron-left"></i> Socket通信原理简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Select-模型简介/" rel="prev" title="Select-模型简介">
+                Select-模型简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络I-O模型"><span class="nav-number">1.</span> <span class="nav-text">网络I/O模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O模型"><span class="nav-number">2.</span> <span class="nav-text">I/O模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#阻塞I-O（bloking-I-O）"><span class="nav-number">2.1.</span> <span class="nav-text">阻塞I/O（bloking I/O）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#非阻塞I-O（non-bloking-I-O）"><span class="nav-number">2.2.</span> <span class="nav-text">非阻塞I/O（non-bloking I/O）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多路复用I-O（multiplexing-I-O）"><span class="nav-number">2.3.</span> <span class="nav-text">多路复用I/O（multiplexing I/O）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异步I-O（asynchronous-I-O）"><span class="nav-number">2.4.</span> <span class="nav-text">异步I/O（asynchronous I/O）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步和异步的区别"><span class="nav-number">3.</span> <span class="nav-text">同步和异步的区别</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

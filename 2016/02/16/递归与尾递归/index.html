@@ -1,0 +1,651 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。
+编程也类似，核心哲学甚至简单得令人发指，其一是指针，其二是递归。深入理解者两个概念，很多复杂的系统或">
+<meta property="og:type" content="article">
+<meta property="og:title" content="递归和尾递归">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/16/递归与尾递归/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。
+编程也类似，核心哲学甚至简单得令人发指，其一是指针，其二是递归。深入理解者两个概念，很多复杂的系统或">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-94c7ef5025d97614.jpg">
+<meta property="og:updated_time" content="2016-02-17T03:31:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="递归和尾递归">
+<meta name="twitter:description" content="编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。
+编程也类似，核心哲学甚至简单得令人发指，其一是指针，其二是递归。深入理解者两个概念，很多复杂的系统或">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-94c7ef5025d97614.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/16/递归与尾递归/"/>
+
+
+  <title> 递归和尾递归 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                递归和尾递归
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
+              2016-02-16
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。</p>
+<p>编程也类似，核心哲学甚至简单得令人发指，其一是<code>指针</code>，其二是<code>递归</code>。深入理解者两个概念，很多复杂的系统或者设计，都会化繁为简，一目了然。</p>
+<a id="more"></a>
+<h3 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h3><p>递归，一个函数在内部调用自己，就是递归。递归在生活中也很常见，例如我们的眼睛，你看对方的眼睛，对方的眼睛里面有你，而那里面那个你又有她，无限循环。再比如，当你拿着一面镜子，对着另外一面镜子的时候，就会发现镜子之中有你手指的镜子，等等。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-94c7ef5025d97614.jpg" alt="12903486_211n.jpg"></p>
+<h3 id="尾递归"><a href="#尾递归" class="headerlink" title="尾递归"></a>尾递归</h3><p>函数中可以调用自己成为递归，也可以在末尾调用别的函数。如果一个函数里的最后一个动作是一个函数调用的情形：即这个调用的返回值直接被当前函数返回的情形。这样的调用为<code>尾调用</code>。如果是尾调用自己，即为<code>尾递归</code>。</p>
+<blockquote>
+<p>尾递归是一种形式, 这种形式表达出的概念可以被某些编译器优化. 尾递归的特殊形式决定了这种递归代码在执行过程中是可以不需要回溯的(通常的递归都是需要回溯的). 如果编译器针对尾递归形式的递归代码作了这种优化, 就可能把原本需要线性复杂度栈内存空间的执行过程用常数复杂度的空间完成.</p>
+</blockquote>
+<p><code>尾递归</code>通常用于实现以下重复的计算。而一般的语言却不支持<code>尾递归</code>，也就是并没有被优化。例如<code>java</code>, <code>python</code>。它们使用循环迭代来达到同样的效果。</p>
+<h3 id="阶乘计算"><a href="#阶乘计算" class="headerlink" title="阶乘计算"></a>阶乘计算</h3><p>解释递归最常用的例子就是<code>阶乘</code>算法，下面使用 <code>Python</code>，<code>Elixir</code>，<code>Scheme</code>分别实现常用的递归算法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factorial</span><span class="params">(object)</span>:</span></div><div class="line"><span class="meta">    @classmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">recursion</span><span class="params">(cls, n)</span>:</span></div><div class="line">        <span class="keyword">if</span> n == <span class="number">1</span>:</div><div class="line">            <span class="keyword">return</span> <span class="number">1</span></div><div class="line">        <span class="keyword">return</span> n * cls.recursion(n - <span class="number">1</span>)</div><div class="line">        </div><div class="line">Factorial.recursion(<span class="number">5</span>)  <span class="comment"># 输出 120</span></div></pre></td></tr></table></figure>
+<p>魔法书（SICP）中简单的演示了这个调用过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">recursion(5)</div><div class="line">5 * recursion(4)</div><div class="line">5 * (4 * recursion(3))</div><div class="line">5 * (4 * (3 * recursion(2)))</div><div class="line">5 * (4 * (3 * (2 * recursion(1))))</div><div class="line">5 * (4 * (3 * (2 * 1)))</div><div class="line">5 * (4 * (3 * 2))</div><div class="line">5 * (4 * 6)</div><div class="line">5 * 24</div><div class="line">120</div></pre></td></tr></table></figure>
+<p>函数调用之后，会继续调用自身，并在栈里堆积内存。scheme的解法也很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#lang scheme</div><div class="line"></div><div class="line">(define (recursion n)</div><div class="line">  (if (= n 1)</div><div class="line">      1</div><div class="line">      (* n (recursion (- n 1)))))</div><div class="line"></div><div class="line">(recursion 5) ; 输出 120</div></pre></td></tr></table></figure>
+<p>同样，elixir也很容易实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">defmodule Factorial do</div><div class="line">    def recursion(n) when n == 1 do</div><div class="line">        1</div><div class="line">    end</div><div class="line"></div><div class="line">    def recursion(n) do</div><div class="line">        n * recursion(n-1)</div><div class="line">    end</div><div class="line">end</div><div class="line"></div><div class="line">IO.puts Factorial.recursion(5) # 输出 120</div></pre></td></tr></table></figure>
+<p>上述是递归调用，并不是尾递归，如果使用尾递归，python代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">class Factorial(object):</div><div class="line"></div><div class="line">    @classmethod</div><div class="line">    def tail_recursion(cls, n, acc=1):</div><div class="line">        if n == 1:</div><div class="line">            return acc</div><div class="line">        return cls.tail_recursion(n - 1, n * acc)</div><div class="line"></div><div class="line">Factorial.tail_recursion(5)</div></pre></td></tr></table></figure>
+<p>尾递归的调用过程大致是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">tail_recursion(5, 1)</div><div class="line">tail_recursion(4, 20)</div><div class="line">tail_recursion(3, 60)</div><div class="line">tail_recursion(2, 120)</div><div class="line">tail_recursion(1, 120)</div><div class="line">120</div></pre></td></tr></table></figure>
+<p>编译器会根据尾递归的方式，进行优化，使得递归调用的时候并不会向线性递归那样堆积内存。就和循环迭代的效果一样。这样也是函数式编程语言处理迭代的问题。</p>
+<blockquote>
+<p>尾递归优化主要是对栈内存空间的优化, 这个优化是O(n)到O(1)的; 至于时间的优化, 其实是由于对空间的优化导致内存分配的工作减少所产生的, 是一个常数优化, 不会带来质的变化。</p>
+</blockquote>
+<p>那么看看scheme的实现方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">(define (tail-recursion n acc)</div><div class="line">  (if (= n 1)</div><div class="line">      acc</div><div class="line">      (tail-recursion (- n 1) (* n acc))))</div><div class="line"></div><div class="line">(tail-recursion 5 1)</div></pre></td></tr></table></figure>
+<p>看了两个例子，尾递归还是很好理解。形式上盘的就是最后一个return的时候，是单纯的返回一个函数调用，还是返回函数计算。即</p>
+<ul>
+<li>尾递归返回  <code>return cls.tail_recursion(n - 1, n * acc)</code>    只返回纯函数</li>
+<li>普通递归返回 <code>return n * cls.recursion(n - 1)</code>             返回函数和别的表达式运算 </li>
+</ul>
+<p>函数式语言基本上都支持尾递归，用来做迭代功能，下面是elixir的例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">defmodule Factorial do</div><div class="line">    def tail_recursion(n, acc) when n == 1 do</div><div class="line">        acc</div><div class="line">    end</div><div class="line"></div><div class="line">    def tail_recursion(n, acc \\ 1) do</div><div class="line">        tail_recursion(n-1, n * acc)</div><div class="line">    end </div><div class="line">end</div><div class="line"></div><div class="line">IO.puts Factorial.tail_recursion(5)</div></pre></td></tr></table></figure>
+<h3 id="迭代与递归"><a href="#迭代与递归" class="headerlink" title="迭代与递归"></a>迭代与递归</h3><p>函数式编程语言，通常没有其他语言所谓的循环关键字。需要迭代的时候，可以用递归实现。最初也比较难理解递归如何实现？实际上，处理循环的时候，都是通过循环因子控制循环条件，在循环体内进行处理计算。递归也可以这样做，递归的条件终止的条件可以用递归的参数设置。</p>
+<p>下面演示给一个列表，遍历每一个列表的元素，并给每个元素的值翻倍。同样使用三种语言代表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">class Double(object):</div><div class="line">    @classmethod</div><div class="line">    def recursion(cls, lst):</div><div class="line">        if not lst:</div><div class="line">            return []</div><div class="line">        else:</div><div class="line">            head, tail = lst.pop(0), lst</div><div class="line">            return [2 * head] + cls.recursion(lst)</div><div class="line"></div><div class="line">    @classmethod</div><div class="line">    def tail_recursion(cls, lst, new_lst=[]):</div><div class="line">        if not lst:</div><div class="line">            return new_lst</div><div class="line">        else:</div><div class="line">            head, tail = lst.pop(0), lst</div><div class="line">            new_lst.append(2 * head)</div><div class="line">            return cls.tail_recursion(tail, new_lst)</div><div class="line"></div><div class="line"></div><div class="line">Double.recursion([1, 2, 3, 4, 5])</div><div class="line">Double.tail_recursion([1, 2, 3, 4, 5])</div></pre></td></tr></table></figure>
+<p>Scheme</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">(define (recursion lst)</div><div class="line">  (if (null? lst)</div><div class="line">      `()</div><div class="line">      (cons (* 2 (car lst)) (recursion (cdr lst)))))</div><div class="line"></div><div class="line"></div><div class="line">(define (tail-recursion lst new-lst)</div><div class="line">  (if (null? lst)</div><div class="line">      new-lst</div><div class="line">      (tail-recursion (cdr lst) (append new-lst (list (* 2 (car lst)))))))</div><div class="line"></div><div class="line">(recursion (list 1 2 3 4 5))</div><div class="line">(tail-recursion (list 1 2 3 4 5) `())</div></pre></td></tr></table></figure>
+<p>Elixir</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">defmodule Double do</div><div class="line">    def recurssion([head|tail]) do</div><div class="line">        [2 * head | recurssion(tail)]</div><div class="line">    end</div><div class="line"></div><div class="line">    def recurssion([]) do</div><div class="line">        []</div><div class="line">    end</div><div class="line"></div><div class="line">    def tail_recursion([head|tail], new_list) do</div><div class="line">        new_list = new_list ++ [2 * head]</div><div class="line">        tail_recursion(tail, new_list)</div><div class="line">    end</div><div class="line"></div><div class="line">    def tail_recursion([], new_list) do</div><div class="line">        new_list</div><div class="line">    end</div><div class="line">end</div><div class="line"></div><div class="line">Double.recurssion([1, 2, 3, 4, 5])</div><div class="line">Double.tail_recursion([1, 2, 3, 4, 5], [])</div></pre></td></tr></table></figure>
+<p>了解递归和尾递归之后，另外一个需要了解就是并不是每个语言都支持尾递归。上述的 <code>python</code>就不支持。Python使用尾递归，在数据量稍大的时候会溢出。此外，像 Scheme和Elixir这些语言则很好的支持。当需要在遍历的时候写逻辑，可以抽象出逻辑为一个个函数，更有利于代码的模块化和复用。</p>
+<p>总结一下，普通递归过程是函数调用，涉及返回地址、函数参数、寄存器值等压栈等，而尾递归压栈操作并无必要，不会有中间结果需要缓存。通常是语言层面是否支持，编译器或解释器中进行优化。</p>
+<p>参考资料</p>
+<ul>
+<li><a href="http://zh.wikipedia.org/wiki/%E5%B0%BE%E8%B0%83%E7%94%A8" target="_blank" rel="external">维基百科: 尾调用</a> </li>
+<li><a href="http://www.zhihu.com/question/20761771" target="_blank" rel="external">知乎: 什么是尾递归</a></li>
+<li><a href="http://www.cnblogs.com/JeffreyZhao/archive/2009/03/26/tail-recursion-and-continuation.html" target="_blank" rel="external">尾递归与Continuation</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/09/20/异步任务神器-Celery-简明笔记/" rel="next" title="异步任务神器-Celery-简明笔记">
+                <i class="fa fa-chevron-left"></i> 异步任务神器-Celery-简明笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/16/Pycrypto与RSA密码技术笔记/" rel="prev" title="Pycrypto与RSA密码技术笔记">
+                Pycrypto与RSA密码技术笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#递归"><span class="nav-number">1.</span> <span class="nav-text">递归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#尾递归"><span class="nav-number">2.</span> <span class="nav-text">尾递归</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#阶乘计算"><span class="nav-number">3.</span> <span class="nav-text">阶乘计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#迭代与递归"><span class="nav-number">4.</span> <span class="nav-text">迭代与递归</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

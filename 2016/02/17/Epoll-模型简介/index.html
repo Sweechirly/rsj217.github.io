@@ -1,0 +1,604 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="网络IO的模型中，之前介绍了select模型。select 确实是一个简明好用的模型。可是现在的服务器却越来越少采取这样的模型，原因之一就是它的性能让人担忧。虽然后来升级了poll模型，本质上还是和select模型类似。当然，当一个技术逐渐被人放弃的时候，很大程度上是有了更好的替代方案。没错，还有select/poll模型更好的网络IO模型，就是今天介绍的主角—Epoll。在很多地方，epoll都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Epoll-模型简介">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Epoll-模型简介/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="网络IO的模型中，之前介绍了select模型。select 确实是一个简明好用的模型。可是现在的服务器却越来越少采取这样的模型，原因之一就是它的性能让人担忧。虽然后来升级了poll模型，本质上还是和select模型类似。当然，当一个技术逐渐被人放弃的时候，很大程度上是有了更好的替代方案。没错，还有select/poll模型更好的网络IO模型，就是今天介绍的主角—Epoll。在很多地方，epoll都">
+<meta property="og:updated_time" content="2016-02-17T03:36:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Epoll-模型简介">
+<meta name="twitter:description" content="网络IO的模型中，之前介绍了select模型。select 确实是一个简明好用的模型。可是现在的服务器却越来越少采取这样的模型，原因之一就是它的性能让人担忧。虽然后来升级了poll模型，本质上还是和select模型类似。当然，当一个技术逐渐被人放弃的时候，很大程度上是有了更好的替代方案。没错，还有select/poll模型更好的网络IO模型，就是今天介绍的主角—Epoll。在很多地方，epoll都">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Epoll-模型简介/"/>
+
+
+  <title> Epoll-模型简介 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Epoll-模型简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:21+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>网络IO的模型中，之前介绍了<a href="http://www.jianshu.com/p/edb9ddd51c3d" target="_blank" rel="external">select模型</a>。select 确实是一个简明好用的模型。可是现在的服务器却越来越少采取这样的模型，原因之一就是它的性能让人担忧。虽然后来升级了poll模型，本质上还是和select模型类似。当然，当一个技术逐渐被人放弃的时候，很大程度上是有了更好的替代方案。没错，还有select/poll模型更好的网络IO模型，就是今天介绍的主角—Epoll。在很多地方，epoll都是高性能代名词，准确的说epoll是Linux内核升级的多路复用IO模型，在Unix和MacOS上类似的则是 Kqueue。</p>
+<a id="more"></a>
+<h3 id="epoll优点"><a href="#epoll优点" class="headerlink" title="epoll优点"></a>epoll优点</h3><p>select的缺点之一就是在网络IO流到来的时候，线程会轮询监控文件数组，并且是线性扫描，还有最大值的限制。相比select，epoll则无需如此。服务器主线程创建了epoll对象，并且注册socket和文件事件即可。当数据抵达的时候，也就是对于事件发生，则会调用此前注册的那个io文件。</p>
+<p>先看一个python的epoll例子，采用了网络上一段著名的code：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">import socket</div><div class="line">import select</div><div class="line"></div><div class="line">EOL1 = b&apos;\n\n&apos;</div><div class="line">EOL2 = b&apos;\n\r\n&apos;</div><div class="line">response = b&apos;HTTP/1.0 200 OK\r\nDate: Mon, 1 Jan 1996 01:01:01 GMT\r\n&apos;</div><div class="line">response += b&apos;Content-Type: text/plain\r\nContent-Length: 13\r\n\r\n&apos;</div><div class="line">response += b&apos;Hello, world!&apos;</div><div class="line"></div><div class="line"># 创建套接字对象并绑定监听端口</div><div class="line">serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</div><div class="line">serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)</div><div class="line">serversocket.bind((&apos;0.0.0.0&apos;, 8080))</div><div class="line">serversocket.listen(1)</div><div class="line">serversocket.setblocking(0)</div><div class="line"></div><div class="line"># 创建epoll对象，并注册socket对象的 epoll可读事件</div><div class="line">epoll = select.epoll()</div><div class="line">epoll.register(serversocket.fileno(), select.EPOLLIN)</div><div class="line"></div><div class="line">try:</div><div class="line">    connections = &#123;&#125;</div><div class="line">    requests = &#123;&#125;</div><div class="line">    responses = &#123;&#125;</div><div class="line">    while True:</div><div class="line">        # 主循环，epoll的系统调用，一旦有网络IO事件发生，poll调用返回。这是和select系统调用的关键区别</div><div class="line">        events = epoll.poll(1)</div><div class="line">        # 通过事件通知获得监听的文件描述符，进而处理</div><div class="line">        for fileno, event in events:</div><div class="line">            # 注册监听的socket对象可读，获取连接，并注册连接的可读事件</div><div class="line">            if fileno == serversocket.fileno():</div><div class="line">                connection, address = serversocket.accept()</div><div class="line">                connection.setblocking(0)</div><div class="line">                epoll.register(connection.fileno(), select.EPOLLIN)</div><div class="line">                connections[connection.fileno()] = connection</div><div class="line">                requests[connection.fileno()] = b&apos;&apos;</div><div class="line">                responses[connection.fileno()] = response</div><div class="line">            elif event &amp; select.EPOLLIN:</div><div class="line">                # 连接对象可读，处理客户端发生的信息，并注册连接对象可写</div><div class="line">                requests[fileno] += connections[fileno].recv(1024)</div><div class="line">                if EOL1 in requests[fileno] or EOL2 in requests[fileno]:</div><div class="line">                    epoll.modify(fileno, select.EPOLLOUT)</div><div class="line">                    print(&apos;-&apos; * 40 + &apos;\n&apos; + requests[fileno].decode()[:-2])</div><div class="line">            elif event &amp; select.EPOLLOUT:</div><div class="line">                # 连接对象可写事件发生，发送数据到客户端</div><div class="line">                byteswritten = connections[fileno].send(responses[fileno])</div><div class="line">                responses[fileno] = responses[fileno][byteswritten:]</div><div class="line">                if len(responses[fileno]) == 0:</div><div class="line">                    epoll.modify(fileno, 0)</div><div class="line">                    connections[fileno].shutdown(socket.SHUT_RDWR)</div><div class="line">            elif event &amp; select.EPOLLHUP:</div><div class="line">                epoll.unregister(fileno)</div><div class="line">                connections[fileno].close()</div><div class="line">                del connections[fileno]</div><div class="line">finally:</div><div class="line">    epoll.unregister(serversocket.fileno())</div><div class="line">    epoll.close()</div><div class="line">    serversocket.close()</div></pre></td></tr></table></figure></p>
+<p>可见epoll使用也很简单，并没有过多复杂的逻辑，当然主要是在系统层面封装的好。至于Epoll的原理，也不是三言两语可以解释清楚，作为开发者，先学会如何使用API。</p>
+<h3 id="epoll与tornado"><a href="#epoll与tornado" class="headerlink" title="epoll与tornado"></a>epoll与tornado</h3><p>既然epoll是一种高性能的网络io模型，很多web框架也采取epoll模型。大名鼎鼎tornado是python框架中一个高性能的异步框架，其底层也是来者epoll的IO模型。<br>当然，tornado是跨平台的，因此他的网络io，在linux下是epoll，unix下则是kqueue。幸好tornado都做了封装，对于开发者及其友好，下面看一个tornado写的回显例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">import errno</div><div class="line">import functools</div><div class="line">import tornado.ioloop</div><div class="line">import socket</div><div class="line"></div><div class="line"></div><div class="line">def handle_connection(connection, address):</div><div class="line">    &quot;&quot;&quot; 处理请求，返回数据给客户端 &quot;&quot;&quot;</div><div class="line">    data = connection.recv(2014)</div><div class="line">    print data</div><div class="line">    connection.send(data)</div><div class="line"></div><div class="line"></div><div class="line">def connection_ready(sock, fd, events):</div><div class="line">    &quot;&quot;&quot; 事件回调函数，主要用于socket可读事件，用于获取socket的链接 &quot;&quot;&quot;</div><div class="line">    while True:</div><div class="line">        try:</div><div class="line">            connection, address = sock.accept()</div><div class="line">        except socket.error as e:</div><div class="line">            if e.args[0] not in (errno.EWOULDBLOCK, errno.EAGAIN):</div><div class="line">                raise</div><div class="line">            return</div><div class="line">        connection.setblocking(0)</div><div class="line">        handle_connection(connection, address)</div><div class="line"></div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)</div><div class="line">    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)</div><div class="line">    sock.setblocking(0)</div><div class="line">    sock.bind((&quot;&quot;, 5000))</div><div class="line">    sock.listen(128)</div><div class="line">    # 使用tornado封装好的epoll接口，即IOLoop对象</div><div class="line">    io_loop = tornado.ioloop.IOLoop.current()</div><div class="line">    callback = functools.partial(connection_ready, sock)</div><div class="line">    # io_loop对象注册网络io文件描述符和回调函数与io事件的绑定</div><div class="line">    io_loop.add_handler(sock.fileno(), callback, io_loop.READ)</div><div class="line">    io_loop.start()</div></pre></td></tr></table></figure>
+<p>上面的代码来者tornado的模块IOLoop源码的文档，很简明的介绍了在tornado中如何使用网络IO。当然具体的封装实现，可以参考tornado源码获知，在此不做介绍了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/Select-模型简介/" rel="next" title="Select-模型简介">
+                <i class="fa fa-chevron-left"></i> Select-模型简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Python-SocketServer-py-源码分析（一）/" rel="prev" title="Python-SocketServer-py-源码分析（一）">
+                Python-SocketServer-py-源码分析（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll优点"><span class="nav-number">1.</span> <span class="nav-text">epoll优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll与tornado"><span class="nav-number">2.</span> <span class="nav-text">epoll与tornado</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

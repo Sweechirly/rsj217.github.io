@@ -1,0 +1,629 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="多路复用I/O在简明网络I/O模型文章可以知道常用的IO模型。其中同步模型中，使用多路复用I/O可以提高服务器的性能。
+在多路复用的模型中，比较常用的有select模型和poll模型。这两个都是系统接口，由操作系统提供。当然，Python的select模块进行了更高级的封装。select与poll的底层原理都差不多。下面就介绍select。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Select-模型简介">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Select-模型简介/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="多路复用I/O在简明网络I/O模型文章可以知道常用的IO模型。其中同步模型中，使用多路复用I/O可以提高服务器的性能。
+在多路复用的模型中，比较常用的有select模型和poll模型。这两个都是系统接口，由操作系统提供。当然，Python的select模块进行了更高级的封装。select与poll的底层原理都差不多。下面就介绍select。">
+<meta property="og:updated_time" content="2016-02-17T03:35:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Select-模型简介">
+<meta name="twitter:description" content="多路复用I/O在简明网络I/O模型文章可以知道常用的IO模型。其中同步模型中，使用多路复用I/O可以提高服务器的性能。
+在多路复用的模型中，比较常用的有select模型和poll模型。这两个都是系统接口，由操作系统提供。当然，Python的select模块进行了更高级的封装。select与poll的底层原理都差不多。下面就介绍select。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Select-模型简介/"/>
+
+
+  <title> Select-模型简介 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Select-模型简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:20+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="多路复用I-O"><a href="#多路复用I-O" class="headerlink" title="多路复用I/O"></a>多路复用I/O</h3><p>在<a href="http://www.jianshu.com/p/55eb83d60ab1" target="_blank" rel="external">简明网络I/O模型</a>文章可以知道常用的<code>IO</code>模型。其中同步模型中，使用多路复用<code>I/O</code>可以提高服务器的性能。</p>
+<p>在多路复用的模型中，比较常用的有<code>select</code>模型和<code>poll</code>模型。这两个都是系统接口，由操作系统提供。当然，<code>Python</code>的<code>select</code>模块进行了更高级的封装。<code>select</code>与<code>poll</code>的底层原理都差不多。下面就介绍<code>select</code>。</p>
+<a id="more"></a>
+<h3 id="select-原理"><a href="#select-原理" class="headerlink" title="select 原理"></a>select 原理</h3><p>网络通信被<code>Unix</code>系统抽象为文件的读写，通常是一个设备，由设备驱动程序提供，驱动可以知道自身的数据是否可用。支持阻塞操作的设备驱动通常会实现一组自身的等待队列，如读/写等待队列用于支持上层(用户层)所需的<code>block</code>或<code>non-block</code>操作。设备的文件的资源如果可用（可读或者可写）则会通知进程，反之则会让进程睡眠，等到数据到来可用的时候，再唤醒进程。</p>
+<p>这些设备的文件描述符被放在一个数组中，然后<code>select</code>调用的时候遍历这个数组，如果对于的文件描述符可读则会返回改文件描述符。当遍历结束之后，如果仍然没有一个可用设备文件描述符，<code>select</code>让用户进程则会睡眠，直到等待资源可用的时候在唤醒，遍历之前那个监视的数组。每次遍历都是线性的。</p>
+<h3 id="select-回显服务器"><a href="#select-回显服务器" class="headerlink" title="select 回显服务器"></a>select 回显服务器</h3><p><code>select</code>涉及系统调用和操作系统相关的知识，因此单从字面上理解其原理还是比较乏味。用代码来演示最好不过了。使用<code>python</code>的<code>select</code>模块很容易写出下面一个回显服务器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> select</div><div class="line"><span class="keyword">import</span> socket</div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">HOST = <span class="string">'localhost'</span></div><div class="line">PORT = <span class="number">5000</span></div><div class="line">BUFFER_SIZE = <span class="number">1024</span></div><div class="line"></div><div class="line">server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</div><div class="line">server.bind((HOST, PORT))</div><div class="line">server.listen(<span class="number">5</span>)</div><div class="line"></div><div class="line">inputs = [server, sys.stdin]</div><div class="line">running = <span class="keyword">True</span></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        <span class="comment"># 调用 select 函数，阻塞等待</span></div><div class="line">        readable, writeable, exceptional = select.select(inputs, [], [])</div><div class="line">    <span class="keyword">except</span> select.error, e:</div><div class="line">        <span class="keyword">break</span></div><div class="line"></div><div class="line">    <span class="comment"># 数据抵达，循环</span></div><div class="line">    <span class="keyword">for</span> sock <span class="keyword">in</span> readable:</div><div class="line">        <span class="comment"># 建立连接</span></div><div class="line">        <span class="keyword">if</span> sock == server:</div><div class="line">            conn, addr = server.accept()</div><div class="line">            <span class="comment"># select 监听的socket</span></div><div class="line">            inputs.append(conn)</div><div class="line">        <span class="keyword">elif</span> sock == sys.stdin:</div><div class="line">            junk = sys.stdin.readlines()</div><div class="line">            running = <span class="keyword">False</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">try</span>:</div><div class="line">                <span class="comment"># 读取客户端连接发送的数据</span></div><div class="line">                data = sock.recv(BUFFER_SIZE)</div><div class="line">                <span class="keyword">if</span> data:</div><div class="line">                    sock.send(data)</div><div class="line">                    <span class="keyword">if</span> data.endswith(<span class="string">'\r\n\r\n'</span>):</div><div class="line">                        <span class="comment"># 移除select监听的socket</span></div><div class="line">                        inputs.remove(sock)</div><div class="line">                        sock.close()</div><div class="line">                <span class="keyword">else</span>:</div><div class="line">                    <span class="comment"># 移除select监听的socket</span></div><div class="line">                    inputs.remove(sock)</div><div class="line">                    sock.close()</div><div class="line">            <span class="keyword">except</span> socket.error, e:</div><div class="line">                inputs.remove(sock)</div><div class="line"></div><div class="line">server.close()</div></pre></td></tr></table></figure>
+<p>运行上述代码，使用<code>curl</code>访问<code>http://localhost:5000</code>，即可看命令行返回请求的<code>HTTP request</code>信息。</p>
+<p>下面详细解析上述代码的原理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</div><div class="line">server.bind((HOST, PORT))</div><div class="line">server.listen(5)</div></pre></td></tr></table></figure>
+<p>上述代码使用<code>socket</code>初始化一个<code>TCP</code>套接字，并绑定主机地址和端口，然后设置服务器监听。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">inputs = [server, sys.stdin]</div></pre></td></tr></table></figure>
+<p>这里定义了一个需要<code>select</code>监听的列表，列表里面是需要监听的对象（等于系统监听的文件描述符）。这里监听<code>socket</code>套接字和用户的输入。</p>
+<p>然后代码进行一个服务器无线循环。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">try:</div><div class="line">    # 调用 select 函数，阻塞等待</div><div class="line">    readable, writeable, exceptional = select.select(inputs, [], [])</div><div class="line">except select.error, e:</div><div class="line">    break</div></pre></td></tr></table></figure>
+<p>调用了<code>select</code>函数，开始循环遍历监听传入的列表<code>inputs</code>。如果没有<code>curl</code>服务器，此时没有建立<code>tcp</code>客户端连接，因此改列表内的对象都是数据资源不可用。因此<code>select</code>阻塞不返回。</p>
+<p>客户端输入<code>curl http://localhost:5000</code>之后，一个套接字通信开始，此时<code>input</code>中的第一个对象<code>server</code>由不可用变成可用。因此<code>select</code>函数调用返回，此时的<code>readable</code>有一个套接字对象（文件描述符可读）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">for sock in readable:</div><div class="line">    # 建立连接</div><div class="line">    if sock == server:</div><div class="line">        conn, addr = server.accept()</div><div class="line">        # select 监听的socket</div><div class="line">        inputs.append(conn)</div></pre></td></tr></table></figure>
+<p><code>select</code>返回之后，接下来遍历可读的文件对象，此时的可读中只有一个套接字连接，调用套接字的<code>accept()</code>方法建立<code>TCP</code>三次握手的连接，然后把该连接对象追加到<code>inputs</code>监视列表中，表示我们要监视该连接是否有数据<code>IO</code>操作。</p>
+<p>由于此时<code>readable</code>只有一个可用的对象，因此遍历结束。再回到主循环，再次调用<code>select</code>，此时调用的时候，不仅会遍历监视是否有新的连接需要建立，还是监视刚才追加的连接。如果<code>curl</code>的数据到了，<code>select</code>再返回到<code>readable</code>，此时在进行<code>for</code>循环。如果没有新的套接字，将会执行下面的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">try:</div><div class="line">    # 读取客户端连接发送的数据</div><div class="line">    data = sock.recv(BUFFER_SIZE)</div><div class="line">    if data:</div><div class="line">        sock.send(data)</div><div class="line">        if data.endswith(&apos;\r\n\r\n&apos;):</div><div class="line">            # 移除select监听的socket</div><div class="line">            inputs.remove(sock)</div><div class="line">            sock.close()</div><div class="line">    else:</div><div class="line">        # 移除select监听的socket</div><div class="line">        inputs.remove(sock)</div><div class="line">        sock.close()</div><div class="line">except socket.error, e:</div><div class="line">    inputs.remove(sock)</div></pre></td></tr></table></figure>
+<p>通过套接字连接调用<code>recv</code>函数，获取客户端发送的数据，当数据传输完毕，再把监视的<code>inputs</code>列表中除去该连接。然后关闭连接。</p>
+<p>整个网络交互过程就是如此，当然这里如果用户在命令行中输入中断，<code>inputs</code>列表中监视的<code>sys.stdin</code>也会让<code>select</code>返回，最后也会执行下面的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">elif sock == sys.stdin:</div><div class="line">    junk = sys.stdin.readlines()</div><div class="line">    running = False</div></pre></td></tr></table></figure>
+<p>有人可能有疑问，在程序处理<code>sock</code>连接的是时候，假设又输入了<code>curl</code>对服务器请求，将会怎么办？此时毫无疑问，<code>inputs</code>里面的<code>server</code>套接字会变成可用。等现在的<code>for</code>循环处理完毕，此时<code>select</code>调用就会返回<code>server</code>。如果<code>inputs</code>里面还有上一个过程的<code>conn</code>连接，那么也会循环遍历<code>inputs</code>的时候，再一次针对新的套接字<code>accept</code>到<code>inputs</code>列表进行监视，然后继续循环处理之前的<code>conn</code>连接。如此有条不紊的进行，直到<code>for</code>循环结束，进入主循环调用<code>select</code>。</p>
+<p>任何时候，<code>inputs</code>监听的对象有数据，下一次调用<code>select</code>的时候，就会繁返回<code>readable</code>，只要返回，就会对<code>readable</code>进行<code>for</code>循环，直到<code>for</code>循环结束在进行下一次<code>select</code>。</p>
+<p>主要注意，套接字建立连接是一次<code>IO</code>，连接的数据抵达也是一次<code>IO</code>。</p>
+<h3 id="select的不足"><a href="#select的不足" class="headerlink" title="select的不足"></a>select的不足</h3><p>尽管<code>select</code>用起来挺爽，跨平台的特性。但是<code>select</code>还是存在一些问题。<br><code>select</code>需要遍历监视的文件描述符，并且这个描述符的数组还有最大的限制。随着文件描述符数量的增长，用户态和内核的地址空间的复制所引发的开销也会线性增长。即使监视的文件描述符长时间不活跃了，<code>select</code>还是会线性扫描。</p>
+<p>为了解决这些问题，操作系统又提供了<code>poll</code>方案，但是<code>poll</code>的模型和<code>select</code>大致相当，只是改变了一些限制。目前<code>Linux</code>最先进的方式是<code>epoll</code>模型。</p>
+<p>许多高性能的软件如<code>nginx</code>, <code>nodejs</code>都是基于<code>epoll</code>进行的异步。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/简明网络I-O模型---同步异步阻塞非阻塞之惑/" rel="next" title="简明网络I-O模型---同步异步阻塞非阻塞之惑">
+                <i class="fa fa-chevron-left"></i> 简明网络I-O模型---同步异步阻塞非阻塞之惑
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Epoll-模型简介/" rel="prev" title="Epoll-模型简介">
+                Epoll-模型简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#多路复用I-O"><span class="nav-number">1.</span> <span class="nav-text">多路复用I/O</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select-原理"><span class="nav-number">2.</span> <span class="nav-text">select 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select-回显服务器"><span class="nav-number">3.</span> <span class="nav-text">select 回显服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select的不足"><span class="nav-number">4.</span> <span class="nav-text">select的不足</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

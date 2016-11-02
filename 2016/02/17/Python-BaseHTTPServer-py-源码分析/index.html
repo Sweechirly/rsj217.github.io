@@ -1,0 +1,624 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="BaseHTTPServer 模块封装了HTTP协议的基础方法，提供了HTTPServer和BaseHTTPRequestHandler两个类。HTTP是工作在TCP之上的应用层协议，HTTPServer继承TCPServer类。
+HTTPServerHTTPServer只有一个方法–server_bind。该方法在TCPServer的__init__方法调用，用于进行socket对象的绑定操作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python-BaseHTTPServer-py-源码分析">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Python-BaseHTTPServer-py-源码分析/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="BaseHTTPServer 模块封装了HTTP协议的基础方法，提供了HTTPServer和BaseHTTPRequestHandler两个类。HTTP是工作在TCP之上的应用层协议，HTTPServer继承TCPServer类。
+HTTPServerHTTPServer只有一个方法–server_bind。该方法在TCPServer的__init__方法调用，用于进行socket对象的绑定操作。">
+<meta property="og:updated_time" content="2016-02-17T09:31:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python-BaseHTTPServer-py-源码分析">
+<meta name="twitter:description" content="BaseHTTPServer 模块封装了HTTP协议的基础方法，提供了HTTPServer和BaseHTTPRequestHandler两个类。HTTP是工作在TCP之上的应用层协议，HTTPServer继承TCPServer类。
+HTTPServerHTTPServer只有一个方法–server_bind。该方法在TCPServer的__init__方法调用，用于进行socket对象的绑定操作。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Python-BaseHTTPServer-py-源码分析/"/>
+
+
+  <title> Python-BaseHTTPServer-py-源码分析 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python-BaseHTTPServer-py-源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:07+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>BaseHTTPServer 模块封装了HTTP协议的基础方法，提供了HTTPServer和BaseHTTPRequestHandler两个类。HTTP是工作在TCP之上的应用层协议，HTTPServer继承TCPServer类。</p>
+<h3 id="HTTPServer"><a href="#HTTPServer" class="headerlink" title="HTTPServer"></a>HTTPServer</h3><p>HTTPServer只有一个方法–server_bind。该方法在TCPServer的<code>__init__</code>方法调用，用于进行socket对象的绑定操作。</p>
+<a id="more"></a>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">server_bind</span><span class="params">(self)</span>:</span></div><div class="line">    <span class="string">"""Override server_bind to store the server name."""</span></div><div class="line">    SocketServer.TCPServer.server_bind(self)</div><div class="line">    host, port = self.socket.getsockname()[:<span class="number">2</span>]</div><div class="line">    self.server_name = socket.getfqdn(host)</div><div class="line">    self.server_port = port</div></pre></td></tr></table></figure>
+<p>HTTPServer重写server_bind方法，用于绑定主机地址和监听端口两个字段。</p>
+<h3 id="BaseHTTPRequestHandler"><a href="#BaseHTTPRequestHandler" class="headerlink" title="BaseHTTPRequestHandler"></a>BaseHTTPRequestHandler</h3><p>BaseHTTPServer模块的主要内容是BaseHTTPRequestHandler，凡是Base开头的类，都会涉及比较多的东西，毕竟是基础嘛。万丈高楼平地起，基础不好，就难说扩展了。</p>
+<p>BaseHTTPRequestHandler大体说来有三类方法，第一类用户跟其父类进行接口通信，第二类则是对请求数据读写的方法，第三类就是对数据进行parse和log的方法。</p>
+<h4 id="handler"><a href="#handler" class="headerlink" title="handler"></a>handler</h4><p>前面介绍BaseReqeustHadnler方法时候，就提到了其handle方法实现了客户端实现处理请求的接口。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle</span><span class="params">(self)</span>:</span></div><div class="line">    self.close_connection = <span class="number">1</span></div><div class="line"></div><div class="line">    self.handle_one_request()</div><div class="line">    <span class="keyword">while</span> <span class="keyword">not</span> self.close_connection:</div><div class="line">        self.handle_one_request()</div></pre></td></tr></table></figure>
+<p>handle 方法会判断close_connection字段，通过该字段是否需要重复调用handle_one_request方法，close_connection在handle_one_request会被改变，解析HTTP中header的keep-alive来决定是否需啊哟实现长连接。</p>
+<h4 id="handle-one-request"><a href="#handle-one-request" class="headerlink" title="handle_one_request"></a>handle_one_request</h4><p>handle调用handle_one_request来处理请求。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_one_request</span><span class="params">(self)</span>:</span></div><div class="line"></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        self.raw_requestline = self.rfile.readline(<span class="number">65537</span>)</div><div class="line">        <span class="keyword">if</span> len(self.raw_requestline) &gt; <span class="number">65536</span>:</div><div class="line">            self.requestline = <span class="string">''</span></div><div class="line">            self.request_version = <span class="string">''</span></div><div class="line">            self.command = <span class="string">''</span></div><div class="line">            self.send_error(<span class="number">414</span>)</div><div class="line">            <span class="keyword">return</span></div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.raw_requestline:</div><div class="line">            self.close_connection = <span class="number">1</span></div><div class="line">            <span class="keyword">return</span></div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.parse_request():</div><div class="line">            <span class="comment"># An error code has been sent, just exit</span></div><div class="line">            <span class="keyword">return</span></div><div class="line">        mname = <span class="string">'do_'</span> + self.command</div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hasattr(self, mname):</div><div class="line">            self.send_error(<span class="number">501</span>, <span class="string">"Unsupported method (%r)"</span> % self.command)</div><div class="line">            <span class="keyword">return</span></div><div class="line">        method = getattr(self, mname)</div><div class="line">        method()</div><div class="line">        self.wfile.flush() <span class="comment">#actually send the response if not already done.</span></div><div class="line">    <span class="keyword">except</span> socket.timeout, e:</div><div class="line">        <span class="comment">#a read or a write timed out.  Discard this connection</span></div><div class="line">        self.log_error(<span class="string">"Request timed out: %r"</span>, e)</div><div class="line">        self.close_connection = <span class="number">1</span></div><div class="line">        <span class="keyword">return</span></div></pre></td></tr></table></figure>
+<p>该方法首先会从缓存可读文件中读取第一行数据，这一行通常是HTTP协议的第一行，例如<code>GET / HTTP/1.1</code>。如果超过了65537字节(65537是IPv4数据报的大小)，则会设置requestline（请求数据行）， request_version（http版本），command（http方法）三个字段。并发送414错误。其中414表示请求的uri过长。如果没有数据，就修改close_connection为1，并直接返回。结束请求的处理。接着调用父类的finish方法，最后结束tcp连接。如果有数据且没有超过uri的长度设置，就对请求的数据进行解析，调用parse_request方法。parse_request解析之后，再通过自省的方式，判断是否绑定了处理HTTP的具体方法，例如do_GET,do_POST之类，有即调用，没有则会发送一个501错误。一切正常的话，则会更新可写缓冲区。给客户端发送数据。</p>
+<h4 id="send-error-和-一些log方法"><a href="#send-error-和-一些log方法" class="headerlink" title="send_error 和 一些log方法"></a>send_error 和 一些log方法</h4><p>handle_one_request中，除了解析客户端数据，还有针对错误处理的send_error方法。下面先分析这个方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_error</span><span class="params">(self, code, message=None)</span>:</span></div><div class="line"></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        short, long = self.responses[code]</div><div class="line">    <span class="keyword">except</span> KeyError:</div><div class="line">        short, long = <span class="string">'???'</span>, <span class="string">'???'</span></div><div class="line">    <span class="keyword">if</span> message <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        message = short</div><div class="line">    explain = long</div><div class="line">    self.log_error(<span class="string">"code %d, message %s"</span>, code, message)</div><div class="line">    <span class="comment"># 对html编码，防止跨站攻击</span></div><div class="line">    content = (self.error_message_format %</div><div class="line">               &#123;<span class="string">'code'</span>: code, <span class="string">'message'</span>: _quote_html(message), <span class="string">'explain'</span>: explain&#125;)</div><div class="line">    self.send_response(code, message)</div><div class="line">    self.send_header(<span class="string">"Content-Type"</span>, self.error_content_type)</div><div class="line">    self.send_header(<span class="string">'Connection'</span>, <span class="string">'close'</span>)</div><div class="line">    self.end_headers()</div><div class="line">    <span class="keyword">if</span> self.command != <span class="string">'HEAD'</span> <span class="keyword">and</span> code &gt;= <span class="number">200</span> <span class="keyword">and</span> code <span class="keyword">not</span> <span class="keyword">in</span> (<span class="number">204</span>, <span class="number">304</span>):</div><div class="line">        self.wfile.write(content)</div></pre></td></tr></table></figure>
+<p>send_error方法会向客户端发送错误信息，并且通过log记录下来。它接受两个参数，一个师错误码，另外一个师错误的消息。因为它会发送一个响应给客户，因此在任何输出内容之前被调用。</p>
+<p>send_error通过错误码获取错误信息，在通过_quote_html方法对html实体进行编码，防止CSRF跨站攻击。然后分步调用send_response，send_header，end_headers构造响应的header，最后把响应的错误内容写入缓冲文件中。</p>
+<h4 id="send-response"><a href="#send-response" class="headerlink" title="send_response"></a>send_response</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_response</span><span class="params">(self, code, message=None)</span>:</span></div><div class="line">    self.log_request(code)</div><div class="line">    <span class="keyword">if</span> message <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">        <span class="keyword">if</span> code <span class="keyword">in</span> self.responses:</div><div class="line">            message = self.responses[code][<span class="number">0</span>]</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            message = <span class="string">''</span></div><div class="line">    <span class="keyword">if</span> self.request_version != <span class="string">'HTTP/0.9'</span>:</div><div class="line">        self.wfile.write(<span class="string">"%s %d %s\r\n"</span> %</div><div class="line">                         (self.protocol_version, code, message))</div><div class="line">        <span class="comment"># print (self.protocol_version, code, message)</span></div><div class="line">    self.send_header(<span class="string">'Server'</span>, self.version_string())</div><div class="line">    self.send_header(<span class="string">'Date'</span>, self.date_time_string())</div></pre></td></tr></table></figure>
+<p>send_response用于构造响应的的header头信，向缓冲区写入response第一行，息。并调用log_request方法， log_request调用log_message方法吧错误信息输入到标准错误输出。最后调用send_header方法。后者将发送MIME 的header信息到缓冲区。</p>
+<h4 id="send-header"><a href="#send-header" class="headerlink" title="send_header"></a>send_header</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_header</span><span class="params">(self, keyword, value)</span>:</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> self.request_version != <span class="string">'HTTP/0.9'</span>:</div><div class="line">        self.wfile.write(<span class="string">"%s: %s\r\n"</span> % (keyword, value))</div><div class="line"></div><div class="line">    <span class="keyword">if</span> keyword.lower() == <span class="string">'connection'</span>:</div><div class="line">        <span class="keyword">if</span> value.lower() == <span class="string">'close'</span>:</div><div class="line">            self.close_connection = <span class="number">1</span></div><div class="line">        <span class="keyword">elif</span> value.lower() == <span class="string">'keep-alive'</span>:</div><div class="line">            self.close_connection = <span class="number">0</span></div></pre></td></tr></table></figure>
+<h4 id="parse-requset"><a href="#parse-requset" class="headerlink" title="parse_requset"></a>parse_requset</h4><p>parse_requset 方法对http请求的header进行解析处理。请求数据存储在self.raw_requestline 字段中，解析结果分别使用 command，path，request_version 存储。并通过 MessageClass构造响应的headers。解析构造成功之后返回True，否则发送错误信息给客户端和log到标准错误输出。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_request</span><span class="params">(self)</span>:</span></div><div class="line">	</div><div class="line">    self.command = <span class="keyword">None</span>  <span class="comment"># set in case of error on the first line</span></div><div class="line">    self.request_version = version = self.default_request_version</div><div class="line">    self.close_connection = <span class="number">1</span></div><div class="line">    requestline = self.raw_requestline</div><div class="line">    requestline = requestline.rstrip(<span class="string">'\r\n'</span>)</div><div class="line">    self.requestline = requestline</div><div class="line">    words = requestline.split()</div><div class="line"></div><div class="line">    <span class="comment"># 解析raw_requestline，验证HTTPrequest是否符合协议标准</span></div><div class="line">    <span class="keyword">if</span> len(words) == <span class="number">3</span>:</div><div class="line">        command, path, version = words</div><div class="line">        <span class="keyword">if</span> version[:<span class="number">5</span>] != <span class="string">'HTTP/'</span>:</div><div class="line">            self.send_error(<span class="number">400</span>, <span class="string">"Bad request version (%r)"</span> % version)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            base_version_number = version.split(<span class="string">'/'</span>, <span class="number">1</span>)[<span class="number">1</span>]</div><div class="line">            version_number = base_version_number.split(<span class="string">"."</span>)</div><div class="line">            <span class="keyword">if</span> len(version_number) != <span class="number">2</span>:</div><div class="line">                <span class="keyword">raise</span> ValueError</div><div class="line">            version_number = int(version_number[<span class="number">0</span>]), int(version_number[<span class="number">1</span>])</div><div class="line">        <span class="keyword">except</span> (ValueError, IndexError):</div><div class="line">            self.send_error(<span class="number">400</span>, <span class="string">"Bad request version (%r)"</span> % version)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">        <span class="keyword">if</span> version_number &gt;= (<span class="number">1</span>, <span class="number">1</span>) <span class="keyword">and</span> self.protocol_version &gt;= <span class="string">"HTTP/1.1"</span>:</div><div class="line">            self.close_connection = <span class="number">0</span></div><div class="line">        <span class="keyword">if</span> version_number &gt;= (<span class="number">2</span>, <span class="number">0</span>):</div><div class="line">            self.send_error(<span class="number">505</span>,</div><div class="line">                      <span class="string">"Invalid HTTP Version (%s)"</span> % base_version_number)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">elif</span> len(words) == <span class="number">2</span>:</div><div class="line">        command, path = words</div><div class="line">        self.close_connection = <span class="number">1</span></div><div class="line">        <span class="keyword">if</span> command != <span class="string">'GET'</span>:</div><div class="line">            self.send_error(<span class="number">400</span>,</div><div class="line">                            <span class="string">"Bad HTTP/0.9 request type (%r)"</span> % command)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">elif</span> <span class="keyword">not</span> words:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        self.send_error(<span class="number">400</span>, <span class="string">"Bad request syntax (%r)"</span> % requestline)</div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    self.command, self.path, self.request_version = command, path, version</div><div class="line"></div><div class="line">    <span class="comment"># 解析的headers，将 socket可读文件传入，解析其中缓冲区内容，然后构造header返回</span></div><div class="line">    self.headers = self.MessageClass(self.rfile, <span class="number">0</span>)</div><div class="line"></div><div class="line">    <span class="comment"># 判断是否支持使用了长连接</span></div><div class="line">    conntype = self.headers.get(<span class="string">'Connection'</span>, <span class="string">""</span>)</div><div class="line">    <span class="keyword">if</span> conntype.lower() == <span class="string">'close'</span>:</div><div class="line">        self.close_connection = <span class="number">1</span></div><div class="line">    <span class="keyword">elif</span> (conntype.lower() == <span class="string">'keep-alive'</span> <span class="keyword">and</span></div><div class="line">          self.protocol_version &gt;= <span class="string">"HTTP/1.1"</span>):</div><div class="line">        self.close_connection = <span class="number">0</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">True</span></div></pre></td></tr></table></figure>
+<p>parse_request返回之后，handle_one_request会判断结束当前请求还是再进行自省操作。最终返回给客户端，断开连接。</p>
+<p>大概流程如下，一些分支逻辑中的错误处理省略：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">HTTPServer - BaseHttpRequestHandler</div><div class="line"></div><div class="line">__init__(server_address, RequestHandlerClass): </div><div class="line">    BaseServer.server_address</div><div class="line">    BaseServer.RequestHandlerClass</div><div class="line"></div><div class="line">    TCPServer.socket = socket.socket(self.address_family, self.socket_type)</div><div class="line">    HTTPServer.server_bind()    </div><div class="line">    	HTTPServer.server_name</div><div class="line">    	HTTPServer.server_port</div><div class="line"></div><div class="line">    TCPServer.server_activate()</div><div class="line"></div><div class="line">serve_forever(): </div><div class="line"></div><div class="line">    select() </div><div class="line"></div><div class="line">    BaseServer._handle_request_noblock()</div><div class="line"></div><div class="line">        TCPServer.get_request() -&gt; request, client_addres</div><div class="line">            socket.accept()</div><div class="line"></div><div class="line">        BaseServer.verify_request()</div><div class="line"></div><div class="line">            BaseServer.process_request()</div><div class="line"></div><div class="line">                BaseServer.process_request()</div><div class="line"></div><div class="line">                    BaseServer.finish_request(request, client_address)</div><div class="line"></div><div class="line">                        BaseServer.RequestHandlerClass()</div><div class="line"></div><div class="line">                            BaseRequestHandler.__init__(request)</div><div class="line"></div><div class="line">                                BaseRequestHandler.request</div><div class="line">                                BaseRequestHandler.client_address = client_address</div><div class="line"></div><div class="line">                                StreamRequestHandler.setup()</div><div class="line"></div><div class="line">                                    StreamRequestHandler.connection = StreamRequestHandler.request</div><div class="line">                                    StreamRequestHandler.rfile</div><div class="line">                                    StreamRequestHandler.wfile</div><div class="line"></div><div class="line">                                BaseHttpRequestHandler.handle()        # 入口</div><div class="line">                                	BaseHttpRequestHandler.handle_one_request</div><div class="line">                                		if raw_requestline &gt; 65537</div><div class="line">                                			BaseHttpRequestHandler.send_error</div><div class="line">                                				BaseHttpRequestHandler.send_response()</div><div class="line">                                					BaseHttpRequestHandler.log_request</div><div class="line">                                						sys.stderr.write()</div><div class="line">                                					wfile.write()</div><div class="line">	                                				BaseHttpRequestHandler.send_header()</div><div class="line">	                                					wfile.write()</div><div class="line">	                                			BaseHttpRequestHandler.send_header()</div><div class="line">                                					wfile.write()</div><div class="line">                                		else:</div><div class="line">	                                		BaseHttpRequestHandler.parse_request</div><div class="line">	                                			BaseHttpRequestHandler.headers = MessageClass(BaseHttpRequestHandler.rfile, 0) -&gt; True</div><div class="line"></div><div class="line">		                                		mname = 'do_' + self.command</div><div class="line"></div><div class="line">		                                		if hasattr(self, mname)</div><div class="line">		                                			method()</div><div class="line">		                                		else</div><div class="line">		                                			BaseHttpRequestHandler.send_error</div><div class="line"></div><div class="line"></div><div class="line">                                StreamRequestHandler.finsih()</div><div class="line">                                    StreamRequestHandler.wfile.close()</div><div class="line">                                    StreamRequestHandler.rfile.close()</div><div class="line"></div><div class="line">                    BaseServer.shutdown_request(request)</div><div class="line">                        TCPServer.shutdown()</div><div class="line">                            request.shutdown()</div><div class="line">                        TCPServer.close_request(request)</div><div class="line">                            request.close()</div><div class="line"></div><div class="line">            TCPServer.shutdown_request(request)</div><div class="line">                TCPServer.shutdown(request)</div><div class="line">                    request.shutdown()</div><div class="line">                TCPServer.close_request(request)</div><div class="line">                    request.close()</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/Python-SocketServer-py-源码分析（三）/" rel="next" title="Python-SocketServer-py-源码分析（三）">
+                <i class="fa fa-chevron-left"></i> Python-SocketServer-py-源码分析（三）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Python-SimpleHTTPServer-py-源码分析/" rel="prev" title="Python-SimpleHTTPServer-py-源码分析">
+                Python-SimpleHTTPServer-py-源码分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPServer"><span class="nav-number">1.</span> <span class="nav-text">HTTPServer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BaseHTTPRequestHandler"><span class="nav-number">2.</span> <span class="nav-text">BaseHTTPRequestHandler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#handler"><span class="nav-number">2.1.</span> <span class="nav-text">handler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#handle-one-request"><span class="nav-number">2.2.</span> <span class="nav-text">handle_one_request</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#send-error-和-一些log方法"><span class="nav-number">2.3.</span> <span class="nav-text">send_error 和 一些log方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#send-response"><span class="nav-number">2.4.</span> <span class="nav-text">send_response</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#send-header"><span class="nav-number">2.5.</span> <span class="nav-text">send_header</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#parse-requset"><span class="nav-number">2.6.</span> <span class="nav-text">parse_requset</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

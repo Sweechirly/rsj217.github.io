@@ -1,0 +1,663 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Python黑魔法，前面已经介绍了两个魔法，装饰器和迭代器，通常还有个生成器。生成器固然也是一个很优雅的魔法。生成器更像是函数的行为。而连接类行为和函数行为的时候，还有一个描述器魔法，也称之为描述符。
+我们不止一次说过，Python的优雅，很大程度在于如何设计成优雅的API。黑魔法则是一大利器。或者说Python的优雅很大程度上是建立在这些魔法巧技基础上。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 黑魔法---描述器（descriptor）">
+<meta property="og:url" content="http://rsj217.github.com/2015/06/22/python-magic-descriptor/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Python黑魔法，前面已经介绍了两个魔法，装饰器和迭代器，通常还有个生成器。生成器固然也是一个很优雅的魔法。生成器更像是函数的行为。而连接类行为和函数行为的时候，还有一个描述器魔法，也称之为描述符。
+我们不止一次说过，Python的优雅，很大程度在于如何设计成优雅的API。黑魔法则是一大利器。或者说Python的优雅很大程度上是建立在这些魔法巧技基础上。">
+<meta property="og:updated_time" content="2016-02-17T02:41:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python 黑魔法---描述器（descriptor）">
+<meta name="twitter:description" content="Python黑魔法，前面已经介绍了两个魔法，装饰器和迭代器，通常还有个生成器。生成器固然也是一个很优雅的魔法。生成器更像是函数的行为。而连接类行为和函数行为的时候，还有一个描述器魔法，也称之为描述符。
+我们不止一次说过，Python的优雅，很大程度在于如何设计成优雅的API。黑魔法则是一大利器。或者说Python的优雅很大程度上是建立在这些魔法巧技基础上。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/06/22/python-magic-descriptor/"/>
+
+
+  <title> Python 黑魔法---描述器（descriptor） |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python 黑魔法---描述器（descriptor）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-06-22T00:22:58+08:00" content="2015-06-22">
+              2015-06-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/default/" itemprop="url" rel="index">
+                    <span itemprop="name">default</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Python黑魔法，前面已经介绍了两个魔法，装饰器和迭代器，通常还有个生成器。生成器固然也是一个很优雅的魔法。生成器更像是函数的行为。而连接类行为和函数行为的时候，还有一个描述器魔法，也称之为描述符。</p>
+<p>我们不止一次说过，Python的优雅，很大程度在于如何设计成优雅的API。黑魔法则是一大利器。或者说Python的优雅很大程度上是建立在这些魔法巧技基础上。</p>
+<a id="more"></a>
+<h3 id="何谓描述器"><a href="#何谓描述器" class="headerlink" title="何谓描述器"></a>何谓描述器</h3><p>当定义迭代器的时候，描述是实现迭代协议的对象，即实现<code>__iter__</code>方法的对象。同理，所谓描述器，即实现了描述符协议，即<code>__get__</code>, <code>__set__</code>, 和 <code>__delete__</code>方法的对象。</p>
+<p>单看定义，还是比较抽象的。talk is cheap。看代码吧：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WebFramework</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name=<span class="string">'Flask'</span>)</span>:</span></div><div class="line">        self.name = name</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, owner)</span>:</span></div><div class="line">        <span class="keyword">return</span> self.name</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, instance, value)</span>:</span></div><div class="line">        self.name = value</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PythonSite</span><span class="params">(object)</span>:</span></div><div class="line"></div><div class="line">    webframework = WebFramework()</div><div class="line"></div><div class="line">In [<span class="number">1</span>]: PythonSite.webframework</div><div class="line">Out[<span class="number">1</span>]: <span class="string">'Flask'</span></div><div class="line"></div><div class="line">In [<span class="number">2</span>]: PythonSite.webframework = <span class="string">'Tornado'</span></div><div class="line"></div><div class="line">In [<span class="number">3</span>]: PythonSite.webframework</div><div class="line">Out[<span class="number">3</span>]: <span class="string">'Tornado'</span></div></pre></td></tr></table></figure>
+<p>定义了一个类WebFramework，它实现了描述符协议<code>__get__</code>和<code>__set__</code>，该对象（类也是对象，一切都是对象）即成为了一个描述器。同时实现<code>__get__</code>和<code>__set__</code>的称之为资料描述器（data descriptor）。仅仅实现<code>__get__</code>的则为非描述器。两者的差别是相对于实例的字典的优先级。</p>
+<blockquote>
+<p>如果实例字典中有与描述器同名的属性，如果描述器是资料描述器，优先使用资料描述器，如果是非资料描述器，优先使用字典中的属性。</p>
+</blockquote>
+<h3 id="描述器的调用"><a href="#描述器的调用" class="headerlink" title="描述器的调用"></a>描述器的调用</h3><p>对于这类魔法，其调用方法往往不是直接使用的。例如装饰器需要用 @ 符号调用。迭代器通常在迭代过程，或者使用 next 方法调用。描述器则比较简单，对象属性的时候会调用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">15</span>]: webframework = WebFramework()</div><div class="line"></div><div class="line">In [<span class="number">16</span>]: webframework.__get__(webframework, WebFramework)</div><div class="line">Out[<span class="number">16</span>]: <span class="string">'Flask'</span></div></pre></td></tr></table></figure>
+<h3 id="描述器与对象属性"><a href="#描述器与对象属性" class="headerlink" title="描述器与对象属性"></a>描述器与对象属性</h3><p>OOP的理论中，类的成员变量包括属性和方法。那么在Python里什么是属性？修改上面的PythonSite类如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PythonSite</span><span class="params">(object)</span>:</span></div><div class="line"></div><div class="line">    webframework = WebFramework()</div><div class="line"></div><div class="line">    version = <span class="number">0.01</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, site)</span>:</span></div><div class="line">        self.site = site</div></pre></td></tr></table></figure>
+<p>这里增加了一个version的类属性，以及一个实例属性site。分别查看一下类和实例对象的属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">1</span>]: pysite = PythonSite(<span class="string">'ghost'</span>)</div><div class="line"></div><div class="line">In [<span class="number">2</span>]: vars(PythonSite).items()</div><div class="line">Out[<span class="number">2</span>]:</div><div class="line">[(<span class="string">'__module__'</span>, <span class="string">'__main__'</span>),</div><div class="line"> (<span class="string">'version'</span>, <span class="number">0.01</span>),</div><div class="line"> (<span class="string">'__dict__'</span>, &lt;attribute <span class="string">'__dict__'</span> of <span class="string">'PythonSite'</span> objects&gt;),</div><div class="line"> (<span class="string">'webframework'</span>, &lt;__main__.WebFramework at <span class="number">0x10d55be90</span>&gt;),</div><div class="line"> (<span class="string">'__weakref__'</span>, &lt;attribute <span class="string">'__weakref__'</span> of <span class="string">'PythonSite'</span> objects&gt;),</div><div class="line"> (<span class="string">'__doc__'</span>, <span class="keyword">None</span>),</div><div class="line"> (<span class="string">'__init__'</span>, &lt;function __main__.__init__&gt;)]</div><div class="line"></div><div class="line">In [<span class="number">3</span>]: vars(pysite)</div><div class="line">Out[<span class="number">3</span>]: &#123;<span class="string">'site'</span>: <span class="string">'ghost'</span>&#125;</div><div class="line">In [<span class="number">4</span>]: PythonSite.__dict__</div><div class="line">Out[<span class="number">4</span>]:</div><div class="line">&lt;dictproxy &#123;<span class="string">'__dict__'</span>: &lt;attribute <span class="string">'__dict__'</span> of <span class="string">'PythonSite'</span> objects&gt;,</div><div class="line"> <span class="string">'__doc__'</span>: <span class="keyword">None</span>,</div><div class="line"> <span class="string">'__init__'</span>: &lt;function __main__.__init__&gt;,</div><div class="line"> <span class="string">'__module__'</span>: <span class="string">'__main__'</span>,</div><div class="line"> <span class="string">'__weakref__'</span>: &lt;attribute <span class="string">'__weakref__'</span> of <span class="string">'PythonSite'</span> objects&gt;,</div><div class="line"> <span class="string">'version'</span>: <span class="number">0.01</span>,</div><div class="line"> <span class="string">'webframework'</span>: &lt;__main__.WebFramework at <span class="number">0x10d55be90</span>&gt;&#125;&gt;</div></pre></td></tr></table></figure>
+<p>vars方法用于查看对象的属性，等价于对象的<code>__dict__</code>内容。从上面的显示结果，可以看到类PythonSite和实例pysite的属性差别在于前者有 webframework，version两个属性，以及 <code>__init__</code>方法，后者仅有一个site属性。</p>
+<h4 id="类与实例的属性"><a href="#类与实例的属性" class="headerlink" title="类与实例的属性"></a>类与实例的属性</h4><p>类属性可以使用对象和类访问，多个实例对象共享一个类变量。但是只有类才能修改。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">6</span>]: pysite1 = PythonSite(<span class="string">'ghost'</span>)</div><div class="line"></div><div class="line">In [<span class="number">7</span>]: pysite2 = PythonSite(<span class="string">'admin'</span>)</div><div class="line"></div><div class="line">In [<span class="number">8</span>]: PythonSite.version</div><div class="line">Out[<span class="number">8</span>]: <span class="number">0.01</span></div><div class="line"></div><div class="line">In [<span class="number">9</span>]: pysite1.version</div><div class="line">Out[<span class="number">9</span>]: <span class="number">0.01</span></div><div class="line"></div><div class="line">In [<span class="number">10</span>]: pysite2.version</div><div class="line">Out[<span class="number">10</span>]: <span class="number">0.01</span></div><div class="line"></div><div class="line">In [<span class="number">11</span>]: pysite1.version <span class="keyword">is</span> pysite2.version</div><div class="line">Out[<span class="number">11</span>]: <span class="keyword">True</span></div><div class="line"></div><div class="line">In [<span class="number">12</span>]: pysite1.version = <span class="string">'pysite1'</span></div><div class="line"></div><div class="line">In [<span class="number">13</span>]: vars(pysite1)</div><div class="line">Out[<span class="number">13</span>]: &#123;<span class="string">'site'</span>: <span class="string">'ghost'</span>, <span class="string">'version'</span>: <span class="string">'pysite1'</span>&#125;</div><div class="line"></div><div class="line">In [<span class="number">14</span>]: vars(pysite2)</div><div class="line">Out[<span class="number">14</span>]: &#123;<span class="string">'site'</span>: <span class="string">'admin'</span>&#125;</div><div class="line"></div><div class="line">In [<span class="number">15</span>]: PythonSite.version = <span class="number">0.02</span></div><div class="line"></div><div class="line">In [<span class="number">16</span>]: pysite1.version</div><div class="line">Out[<span class="number">16</span>]: <span class="string">'pysite1'</span></div><div class="line"></div><div class="line">In [<span class="number">17</span>]: pysite2.version</div><div class="line">Out[<span class="number">17</span>]: <span class="number">0.02</span></div></pre></td></tr></table></figure>
+<p>正如上面的代码显示，两个实例对象都可以访问version类属性，并且是同一个类属性。当pysite1修改了version，实际上是给自己添加了一个version属性。类属性并没有被改变。当PythonSite改变了version属性的时候，pysite2的该属性也对应被改变。</p>
+<h3 id="属性访问的原理与描述器"><a href="#属性访问的原理与描述器" class="headerlink" title="属性访问的原理与描述器"></a>属性访问的原理与描述器</h3><p>知道了属性访问的结果。这个结果都是基于<code>Python</code>的描述器实现的。通常，类或者实例通过<code>.</code>操作符访问属性。例如<code>pysite1.site</code>和<code>pysite1.version</code>的访问。先访问对象的<code>__dict__</code>，如果没有再访问类（或父类，元类除外）的<code>__dict__</code>。如果最后这个<code>__dict__</code>的对象是一个描述器，则会调用描述器的<code>__get__</code>方法。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">In [21]: pysite1.site</div><div class="line">Out[21]: 'ghost'</div><div class="line"></div><div class="line">In [22]: pysite1.__dict__['site']</div><div class="line">Out[22]: 'ghost'</div><div class="line"></div><div class="line">In [23]: pysite2.version</div><div class="line">Out[23]: 0.02</div><div class="line"></div><div class="line">In [24]: pysite2.__dict__['version']</div><div class="line">---------------------------------------------------------------------------</div><div class="line">KeyError                                  Traceback (most recent call last)</div><div class="line">&lt;ipython-input-24-73ef6aeba259&gt; in &lt;module&gt;()</div><div class="line">----&gt; 1 pysite2.__dict__['version']</div><div class="line"></div><div class="line">KeyError: 'version'</div><div class="line"></div><div class="line">In [25]: type(pysite2).__dict__['version']</div><div class="line">Out[25]: 0.02</div><div class="line"></div><div class="line">In [32]: type(pysite1).__dict__['webframework']</div><div class="line">Out[32]: &lt;__main__.WebFramework at 0x103426e90&gt;</div><div class="line"></div><div class="line">In [38]: type(pysite1).__dict__['webframework'].__get__(None, PythonSite)</div><div class="line">Out[38]: 'Flask'</div></pre></td></tr></table></figure>
+<h3 id="实例方法，类方法，静态方法与描述器"><a href="#实例方法，类方法，静态方法与描述器" class="headerlink" title="实例方法，类方法，静态方法与描述器"></a>实例方法，类方法，静态方法与描述器</h3><p>调用描述器的时候，实际上会调用<code>object.__getattribute__()</code>。这取决于调用描述其器的是对象还是类，如果是对象<code>obj.x</code>，则会调用<code>type(obj).__dict__[&#39;x&#39;].__get__(obj, type(obj))</code>。如果是类，class.x， 则会调用<code>type(class).__dict__[&#39;x&#39;].__get__(None, type(class)</code>。</p>
+<p>这样说还是比较抽象，下面来分析Python的方法，静态方法和类方法。把PythonSite重构一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PythonSite</span><span class="params">(object)</span>:</span></div><div class="line">    webframework = WebFramework()</div><div class="line"></div><div class="line">    version = <span class="number">0.01</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, site)</span>:</span></div><div class="line">        self.site = site</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_site</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> self.site</div><div class="line"></div><div class="line"><span class="meta">    @classmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_version</span><span class="params">(cls)</span>:</span></div><div class="line">        <span class="keyword">return</span> cls.version</div><div class="line"></div><div class="line"><span class="meta">    @staticmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">find_version</span><span class="params">()</span>:</span></div><div class="line">        <span class="keyword">return</span> PythonSite.version</div></pre></td></tr></table></figure>
+<h4 id="类方法，-classmethod装饰器"><a href="#类方法，-classmethod装饰器" class="headerlink" title="类方法，@classmethod装饰器"></a>类方法，@classmethod装饰器</h4><p>先看类方法，类方法使用@classmethod装饰器定义。经过该装饰器的方法是一个描述器。类和实例都可以调用类方法：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">In [1]: ps = PythonSite('ghost')</div><div class="line"></div><div class="line">In [2]: ps.get_version</div><div class="line">Out[2]: &lt;bound method type.get_version of &lt;class '__main__.PythonSite'&gt;&gt;</div><div class="line"></div><div class="line">In [3]: ps.get_version()</div><div class="line">Out[3]: 0.01</div><div class="line"></div><div class="line">In [4]: PythonSite.get_version</div><div class="line">Out[4]: &lt;bound method type.get_version of &lt;class '__main__.PythonSite'&gt;&gt;</div><div class="line"></div><div class="line">In [5]: PythonSite.get_version()</div><div class="line">Out[5]: 0.01</div></pre></td></tr></table></figure>
+<p>get_version 是一个bound方法。下面再看下<code>ps.get_version</code>这个调用，会先查找它·的<code>__dict__</code>是否有<code>get_version</code>这个属性，如果没有，则查找其类。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">In [6]: vars(ps)</div><div class="line">Out[6]: &#123;'site': 'ghost'&#125;</div><div class="line"></div><div class="line">In [7]: type(ps).__dict__['get_version']</div><div class="line">Out[7]: &lt;classmethod at 0x108952e18&gt;</div><div class="line"></div><div class="line">In [8]: type(ps).__dict__['get_version'].__get__(ps, type(ps))</div><div class="line">Out[8]: &lt;bound method type.get_version of &lt;class '__main__.PythonSite'&gt;&gt;</div><div class="line"></div><div class="line">In [9]: type(ps).__dict__['get_version'].__get__(ps, type(ps)) == ps.get_version</div><div class="line">Out[9]: True</div></pre></td></tr></table></figure>
+<p>并且vars(ps)中，<code>__dict__</code>并没有<code>get_version</code>这个属性，依据描述器协议，将会调用<code>type(ps).__dict__[&#39;get_version&#39;]</code>描述器的<code>__get__</code>方法，因为ps是实例，因此<code>object.__getattribute__()</code>会这样调用<code>__get__(obj, type(obj))</code>。</p>
+<p>现在再看类方法的调用:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">In [10]: PythonSite.__dict__['get_version']</div><div class="line">Out[10]: &lt;classmethod at 0x108952e18&gt;</div><div class="line"></div><div class="line">In [11]: PythonSite.__dict__['get_version'].__get__(None, PythonSite)</div><div class="line">Out[11]: &lt;bound method type.get_version of &lt;class '__main__.PythonSite'&gt;&gt;</div><div class="line"></div><div class="line">In [12]: PythonSite.__dict__['get_version'].__get__(None, PythonSite) == PythonSite.get_version</div><div class="line">Out[12]: True</div></pre></td></tr></table></figure>
+<p>因为这次调用get_version的是一个类对象，而不是实例对象，因此<code>object.__getattribute__()</code>会这样调用<code>__get__(None, Class)</code>。</p>
+<h4 id="静态方法，-staticmethod"><a href="#静态方法，-staticmethod" class="headerlink" title="静态方法，@staticmethod"></a>静态方法，@staticmethod</h4><p>实例和类也可以调用静态方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">In [<span class="number">13</span>]: ps.find_version</div><div class="line">Out[<span class="number">13</span>]: &lt;function __main__.find_version&gt;</div><div class="line"></div><div class="line">In [<span class="number">14</span>]: ps.find_version()</div><div class="line">Out[<span class="number">14</span>]: <span class="number">0.01</span></div><div class="line"></div><div class="line">In [<span class="number">15</span>]: vars(ps)</div><div class="line">Out[<span class="number">15</span>]: &#123;<span class="string">'site'</span>: <span class="string">'ghost'</span>&#125;</div><div class="line"></div><div class="line">In [<span class="number">16</span>]: type(ps).__dict__[<span class="string">'find_version'</span>]</div><div class="line">Out[<span class="number">16</span>]: &lt;staticmethod at <span class="number">0x108952d70</span>&gt;</div><div class="line"></div><div class="line">In [<span class="number">17</span>]: type(ps).__dict__[<span class="string">'find_version'</span>].__get__(ps, type(ps))</div><div class="line">Out[<span class="number">17</span>]: &lt;function __main__.find_version&gt;</div><div class="line"></div><div class="line">In [<span class="number">18</span>]: type(ps).__dict__[<span class="string">'find_version'</span>].__get__(ps, type(ps)) == ps.find_version</div><div class="line">Out[<span class="number">18</span>]: <span class="keyword">True</span></div><div class="line"></div><div class="line">In [<span class="number">19</span>]: PythonSite.find_version()</div><div class="line">Out[<span class="number">19</span>]: <span class="number">0.01</span></div><div class="line"></div><div class="line">In [<span class="number">20</span>]: PythonSite.find_version</div><div class="line">Out[<span class="number">20</span>]: &lt;function __main__.find_version&gt;</div><div class="line"></div><div class="line">In [<span class="number">21</span>]: type(ps).__dict__[<span class="string">'find_version'</span>].__get__(<span class="keyword">None</span>, type(ps))</div><div class="line">Out[<span class="number">21</span>]: &lt;function __main__.find_version&gt;</div><div class="line"></div><div class="line">In [<span class="number">22</span>]: type(ps).__dict__[<span class="string">'find_version'</span>].__get__(<span class="keyword">None</span>, type(ps)) == PythonSite.find_version</div><div class="line">Out[<span class="number">22</span>]: <span class="keyword">True</span></div></pre></td></tr></table></figure>
+<p>和类方法差别不大，他们的主要差别是在类方法内部的时候，类方法可以有<code>cls</code>的类引用，静态访问则没有，如果静态方法想使用类变量，只能硬编码类名。</p>
+<h4 id="实例方法"><a href="#实例方法" class="headerlink" title="实例方法"></a>实例方法</h4><p>实例方法最为复杂，是专门属于实例的，使用类调用的时候，会是一个<code>unbound</code>方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">In [<span class="number">2</span>]: ps.get_site</div><div class="line">Out[<span class="number">2</span>]: &lt;bound method PythonSite.get_site of &lt;__main__.PythonSite object at <span class="number">0x1054ae2d0</span>&gt;&gt;</div><div class="line"></div><div class="line">In [<span class="number">3</span>]: ps.get_site()</div><div class="line">Out[<span class="number">3</span>]: <span class="string">'ghost'</span></div><div class="line"></div><div class="line">In [<span class="number">4</span>]: type(ps).__dict__[<span class="string">'get_site'</span>]</div><div class="line">Out[<span class="number">4</span>]: &lt;function __main__.get_site&gt;</div><div class="line"></div><div class="line">In [<span class="number">5</span>]: type(ps).__dict__[<span class="string">'get_site'</span>].__get__(ps, type(ps))</div><div class="line">Out[<span class="number">5</span>]: &lt;bound method PythonSite.get_site of &lt;__main__.PythonSite object at <span class="number">0x1054ae2d0</span>&gt;&gt;</div><div class="line"></div><div class="line">In [<span class="number">6</span>]: type(ps).__dict__[<span class="string">'get_site'</span>].__get__(ps, type(ps)) == ps.get_site</div><div class="line">Out[<span class="number">6</span>]: <span class="keyword">True</span></div></pre></td></tr></table></figure>
+<p>一切工作正常，实例方法也是类的一个属性，但是对于类，描述器使其变成了<code>unbound</code>方法：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">In [7]: PythonSite.get_site</div><div class="line">Out[7]: &lt;unbound method PythonSite.get_site&gt;</div><div class="line"></div><div class="line">In [8]: PythonSite.get_site()</div><div class="line">---------------------------------------------------------------------------</div><div class="line">TypeError                                 Traceback (most recent call last)</div><div class="line">&lt;ipython-input-8-99c7d7607137&gt; in &lt;module&gt;()</div><div class="line">----&gt; 1 PythonSite.get_site()</div><div class="line"></div><div class="line">TypeError: unbound method get_site() must be called with PythonSite instance as first argument (got nothing instead)</div><div class="line"></div><div class="line">In [9]: PythonSite.get_site(ps)</div><div class="line">Out[9]: 'ghost'</div><div class="line"></div><div class="line">In [10]: PythonSite.__dict__['get_site']</div><div class="line">Out[10]: &lt;function __main__.get_site&gt;</div><div class="line"></div><div class="line">In [11]: PythonSite.__dict__['get_site'].__get__(None, PythonSite)</div><div class="line">Out[11]: &lt;unbound method PythonSite.get_site&gt;</div><div class="line"></div><div class="line">In [12]: PythonSite.__dict__['get_site'].__get__(None, PythonSite) == PythonSite.get_site</div><div class="line">Out[12]: True</div><div class="line"></div><div class="line">In [14]: PythonSite.__dict__['get_site'].__get__(ps, PythonSite)</div><div class="line">Out[14]: &lt;bound method PythonSite.get_site of &lt;__main__.PythonSite object at 0x1054ae2d0&gt;&gt;</div><div class="line"></div><div class="line">In [15]: PythonSite.__dict__['get_site'].__get__(ps, PythonSite)()</div><div class="line">Out[15]: 'ghost'</div></pre></td></tr></table></figure>
+<p>由此可见，类不能直接调用实例方法，除非在描述器手动绑定一个类实例。因为使用类对象调用描述器的时候，<code>__get__</code>的第一个参数是None，想要成功调用，需要把这个参数替换为实例<code>ps</code>，这个过程就是对方法的bound过程。</p>
+<h3 id="描述器的应用"><a href="#描述器的应用" class="headerlink" title="描述器的应用"></a>描述器的应用</h3><p>描述器的作用主要在方法和属性的定义上。既然我们可以重新描述类的属性，那么这个魔法就可以改变类的一些行为。最简单的应用则是可以配合装饰器，写一个类属性的缓存。Flask的作者写了一个werkzeug网络工具库，里面就使用描述器的特性，实现了一个缓存器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">_Missing</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="string">'no value'</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="string">'_missing'</span></div><div class="line"></div><div class="line"></div><div class="line">_missing = _Missing()</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">cached_property</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, func, name=None, doc=None)</span>:</span></div><div class="line">        self.__name__ = name <span class="keyword">or</span> func.__name__</div><div class="line">        self.__module__ = func.__module__</div><div class="line">        self.__doc__ = doc <span class="keyword">or</span> func.__doc__</div><div class="line">        self.func = func</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, obj, type=None)</span>:</span></div><div class="line">        <span class="keyword">if</span> obj <span class="keyword">is</span> <span class="keyword">None</span>:</div><div class="line">            <span class="keyword">return</span> self</div><div class="line">        value = obj.__dict__.get(self.__name__, _missing)</div><div class="line">        <span class="keyword">if</span> value <span class="keyword">is</span> _missing:</div><div class="line">            value = self.func(obj)</div><div class="line">            obj.__dict__[self.__name__] = value</div><div class="line">        <span class="keyword">return</span> value</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span><span class="params">(object)</span>:</span></div><div class="line"><span class="meta">    @cached_property</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">'first calculate'</span></div><div class="line">        result = <span class="string">'this is result'</span></div><div class="line">        <span class="keyword">return</span> result</div><div class="line"></div><div class="line"></div><div class="line">f = Foo()</div><div class="line"></div><div class="line"><span class="keyword">print</span> f.foo   <span class="comment"># first calculate this is result</span></div><div class="line"><span class="keyword">print</span> f.foo   <span class="comment"># this is result</span></div></pre></td></tr></table></figure>
+<p>运行结果可见，<code>first calculate</code>只在第一次调用时候被计算之后就把结果缓存起来了。这样的好处是在网络编程中，对HTTP协议的解析，通常会把HTTP的header解析成python的一个字典，而在视图函数的时候，可能不知一次的访问这个header，因此把这个header使用描述器缓存起来，可以减少多余的解析。</p>
+<p>描述器在python的应用十分广泛，通常是配合装饰器一起使用。强大的魔法来自强大的责任。描述器还可以用来实现ORM中对sql语句的”预编译”。恰当的使用描述器，可以让自己的Python代码更优雅。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/05/23/python-magic-iterator/" rel="next" title="Python 黑魔法 --- 迭代器（iterator）">
+                <i class="fa fa-chevron-left"></i> Python 黑魔法 --- 迭代器（iterator）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/09/20/异步任务神器-Celery-简明笔记/" rel="prev" title="异步任务神器-Celery-简明笔记">
+                异步任务神器-Celery-简明笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#何谓描述器"><span class="nav-number">1.</span> <span class="nav-text">何谓描述器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#描述器的调用"><span class="nav-number">2.</span> <span class="nav-text">描述器的调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#描述器与对象属性"><span class="nav-number">3.</span> <span class="nav-text">描述器与对象属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类与实例的属性"><span class="nav-number">3.1.</span> <span class="nav-text">类与实例的属性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性访问的原理与描述器"><span class="nav-number">4.</span> <span class="nav-text">属性访问的原理与描述器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例方法，类方法，静态方法与描述器"><span class="nav-number">5.</span> <span class="nav-text">实例方法，类方法，静态方法与描述器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#类方法，-classmethod装饰器"><span class="nav-number">5.1.</span> <span class="nav-text">类方法，@classmethod装饰器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#静态方法，-staticmethod"><span class="nav-number">5.2.</span> <span class="nav-text">静态方法，@staticmethod</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实例方法"><span class="nav-number">5.3.</span> <span class="nav-text">实例方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#描述器的应用"><span class="nav-number">6.</span> <span class="nav-text">描述器的应用</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

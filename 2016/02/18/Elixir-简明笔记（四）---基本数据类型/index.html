@@ -1,0 +1,650 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="学习一门语言，如何才能算是学会呢？如同写一篇文章，最简单的就是得先学会如何遣词造句。文章的词组，就像编程语言的基本数据结构。
+编程的本质是数据结构加算法。想要使用Elixir编程，当然少不了它的数据结构。所幸Elixir提供了丰富的数据结构。其基本的数据结构大致可分为值类型，系统类型和容器类型：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（四）-- 基本数据类型">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（四）---基本数据类型/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="学习一门语言，如何才能算是学会呢？如同写一篇文章，最简单的就是得先学会如何遣词造句。文章的词组，就像编程语言的基本数据结构。
+编程的本质是数据结构加算法。想要使用Elixir编程，当然少不了它的数据结构。所幸Elixir提供了丰富的数据结构。其基本的数据结构大致可分为值类型，系统类型和容器类型：">
+<meta property="og:updated_time" content="2016-02-18T02:34:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（四）-- 基本数据类型">
+<meta name="twitter:description" content="学习一门语言，如何才能算是学会呢？如同写一篇文章，最简单的就是得先学会如何遣词造句。文章的词组，就像编程语言的基本数据结构。
+编程的本质是数据结构加算法。想要使用Elixir编程，当然少不了它的数据结构。所幸Elixir提供了丰富的数据结构。其基本的数据结构大致可分为值类型，系统类型和容器类型：">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（四）---基本数据类型/"/>
+
+
+  <title> Elixir-简明笔记（四）-- 基本数据类型 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（四）-- 基本数据类型
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:04+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>学习一门语言，如何才能算是学会呢？如同写一篇文章，最简单的就是得先学会如何遣词造句。文章的词组，就像编程语言的基本数据结构。</p>
+<p>编程的本质是数据结构加算法。想要使用Elixir编程，当然少不了它的数据结构。所幸Elixir提供了丰富的数据结构。其基本的数据结构大致可分为值类型，系统类型和容器类型：</p>
+<a id="more"></a>
+<ul>
+<li><p>值类型</p>
+<ul>
+<li>数字（Number） <ul>
+<li>整型（Integer）</li>
+<li>浮点类型（Float）</li>
+</ul>
+</li>
+<li>原子（Atom）</li>
+<li>范围（Range）</li>
+<li>正则表达式（Regular expressions）</li>
+</ul>
+</li>
+<li><p>系统类型：</p>
+<ul>
+<li>进程（PID）和 端口（port）</li>
+<li>引用（References）</li>
+</ul>
+</li>
+<li><p>容器类型</p>
+<ul>
+<li>元组（Tuple）</li>
+<li>列表（List）</li>
+<li>图（Map）</li>
+<li>二进制 （Binary）</li>
+</ul>
+</li>
+</ul>
+<h3 id="数字类型"><a href="#数字类型" class="headerlink" title="数字类型"></a>数字类型</h3><p>数字类型包括整型和浮点型，与其他编程语言类似，它们也没有特别之处。Elixir中可以直接书写它们。当然，我们很熟悉书写十进制的数字。对于八进制，十六进制，Elixir也支持字面量书写的方式。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; n = <span class="number">10</span></div><div class="line"><span class="number">10</span></div><div class="line">iex(<span class="number">2</span>)&gt; n = <span class="number">0x10</span></div><div class="line"><span class="number">16</span></div><div class="line">iex(<span class="number">3</span>)&gt; n = 0o1<span class="number">0</span></div><div class="line"><span class="number">8</span></div></pre></td></tr></table></figure>
+<p>使用0x前缀写十六进制的数字，使用0o前缀定义八进制的数字。对于十进制，还可以使用<code>_</code>符号来对数字分组阅读，例如：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; n = <span class="number">1000000</span></div><div class="line"><span class="number">1000000</span></div><div class="line">iex(<span class="number">2</span>)&gt; a = <span class="number">1_000_000</span></div><div class="line"><span class="number">1000000</span></div><div class="line">iex(<span class="number">3</span>)&gt; n = a</div><div class="line"><span class="number">1000000</span></div><div class="line">iex(<span class="number">4</span>)&gt; n == a</div><div class="line"><span class="keyword">true</span></div></pre></td></tr></table></figure>
+<p>可见 <em>n</em> 和 <em>a</em> 的值相等，不然<code>a=n</code>的模式匹配则会失败，正好复习一下模式匹配，<code>==</code>则是逻辑运算符，后面再做介绍了。</p>
+<p>需要注意的是Elixir的整型的大小是没有限制的。数字类型中的另外一种则是浮点类型，Elixir的浮点类型符合IEEE 754 双进度标准。可以保证16位精确。</p>
+<h3 id="原子类型"><a href="#原子类型" class="headerlink" title="原子类型"></a>原子类型</h3><p>原子（Atoms）的定义使用一个冒号加上任意Elixir字符（非数字开头， 非<code>.</code>）。</p>
+<p>原子和Lisp或者Ruby的符号类型类似。其值就是原子名本身。下面看几个例子：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; <span class="symbol">:hello</span></div><div class="line"><span class="symbol">:hello</span></div><div class="line">iex(<span class="number">2</span>)&gt; <span class="symbol">:rsj217</span></div><div class="line"><span class="symbol">:rsj217</span></div><div class="line">iex(<span class="number">3</span>)&gt; <span class="symbol">:do_you_love_me?</span></div><div class="line"><span class="symbol">:do_you_love_me?</span></div><div class="line">iex(<span class="number">4</span>)&gt; <span class="symbol">:yes!</span></div><div class="line"><span class="symbol">:yes!</span></div><div class="line">iex(<span class="number">5</span>)&gt; <span class="symbol">:<span class="string">"Thank God"</span></span></div><div class="line"><span class="symbol">:<span class="string">"Thank God"</span></span></div><div class="line">iex(<span class="number">6</span>)&gt; <span class="symbol">:</span><span class="number">123</span></div><div class="line">** (SyntaxError) <span class="symbol">iex:</span><span class="number">6</span>: invalid <span class="symbol">token:</span> <span class="symbol">:</span><span class="number">123</span></div><div class="line">iex(<span class="number">6</span>)&gt; <span class="symbol">:</span><span class="number">123</span>A</div><div class="line">** (SyntaxError) <span class="symbol">iex:</span><span class="number">6</span>: invalid <span class="symbol">token:</span> <span class="symbol">:</span><span class="number">123</span>A</div></pre></td></tr></table></figure>
+<p>两个同名的原子其值总是相等。即使他们是被不同的程序、不同的计算机哪跨洋创建的。原子很有用，通常用于当tag的值。</p>
+<p>原子类型很常见，最常见的一类莫过于布尔类型。Elixir中的布尔值只有两个，分别是true表示逻辑真，用false用来表示逻辑非。布尔类型的值就是其本身，即true的值是true，false的值是false，对吧，这就是原子。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; <span class="keyword">true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">2</span>)&gt; <span class="symbol">:true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">3</span>)&gt; a = <span class="keyword">true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">4</span>)&gt; b = <span class="symbol">:true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">5</span>)&gt; a = b</div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">6</span>)&gt; a == b</div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">7</span>)&gt;</div></pre></td></tr></table></figure>
+<h3 id="范围"><a href="#范围" class="headerlink" title="范围"></a>范围</h3><p>范围（range）是一类数字或者字母的值，表示一个范围，使用<code>起始值..终止值</code>定义。例如：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; r = <span class="number">0</span>..<span class="number">9</span></div><div class="line"><span class="number">0</span>..<span class="number">9</span></div><div class="line">iex(<span class="number">2</span>)&gt; r = <span class="symbol">:a</span>..<span class="symbol">:z</span></div><div class="line"><span class="symbol">:a</span>..<span class="symbol">:z</span></div></pre></td></tr></table></figure>
+<p>范围可以用于迭代。</p>
+<h3 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h3><p>也许把范围和正则表达归结为值类型欠妥。实际上他们确实不是值类型，只是一种结构。只不过，把他们看成值类型，现在比较好理解。</p>
+<p>正则表达式通常用于处理文本。Elixir中当然也有字符串（String）类型，可是为何没有出现在上面的介绍中呢？实际上，字符串不是基本类型，他们是由基本类型复合构成的，伴随更深了的了解Elixir，再对正则和字符串进行介绍。</p>
+<h3 id="系统类型"><a href="#系统类型" class="headerlink" title="系统类型"></a>系统类型</h3><p>Elixir是运行在Erlang虚拟机上的语言。其中并发能力主要来自Elixir可以开启成千上万给进程。这些进程之间通过消息通信。进程（PID）和端口（Port）这两个系统类型则是用于处理Elixir进程所用的基本数据类型。关于他们的介绍，等学到了Elixir进程相关的知识再做介绍。</p>
+<p>引用（References）也是一种系统类型，目前还没搞明白。</p>
+<h3 id="容器类型"><a href="#容器类型" class="headerlink" title="容器类型"></a>容器类型</h3><p>容器类型是Elixir中最常用的类型。常见的元组（Tuple）和列表（List）和图（Map）以及二进制 （Binary）。这些内容将会下一节介绍。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（三）---模式匹配/" rel="next" title="Elixir-简明笔记（三）-- 模式匹配">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（三）-- 模式匹配
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（五）---运算符和操作符/" rel="prev" title="Elixir-简明笔记（五）-- 运算符和操作符">
+                Elixir-简明笔记（五）-- 运算符和操作符 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数字类型"><span class="nav-number">1.</span> <span class="nav-text">数字类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原子类型"><span class="nav-number">2.</span> <span class="nav-text">原子类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#范围"><span class="nav-number">3.</span> <span class="nav-text">范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则表达式"><span class="nav-number">4.</span> <span class="nav-text">正则表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统类型"><span class="nav-number">5.</span> <span class="nav-text">系统类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容器类型"><span class="nav-number">6.</span> <span class="nav-text">容器类型</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

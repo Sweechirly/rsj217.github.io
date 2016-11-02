@@ -1,0 +1,640 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="编程语言都有类似集合的容器类型。最典型的莫过于数组和哈希结构。
+通常数组是一些列有序元素的集合。有的语言的数组需要初始化大小，有的则是动态变化。那些动态变化的数组，在高级语言通常是列表。当然也有一些序列集合一旦创建了，就不能改变，这类序列通常称之为元组（tuple）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（六）-- 元组">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（六）---元组/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="编程语言都有类似集合的容器类型。最典型的莫过于数组和哈希结构。
+通常数组是一些列有序元素的集合。有的语言的数组需要初始化大小，有的则是动态变化。那些动态变化的数组，在高级语言通常是列表。当然也有一些序列集合一旦创建了，就不能改变，这类序列通常称之为元组（tuple）。">
+<meta property="og:updated_time" content="2016-11-01T10:48:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（六）-- 元组">
+<meta name="twitter:description" content="编程语言都有类似集合的容器类型。最典型的莫过于数组和哈希结构。
+通常数组是一些列有序元素的集合。有的语言的数组需要初始化大小，有的则是动态变化。那些动态变化的数组，在高级语言通常是列表。当然也有一些序列集合一旦创建了，就不能改变，这类序列通常称之为元组（tuple）。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（六）---元组/"/>
+
+
+  <title> Elixir-简明笔记（六）-- 元组 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（六）-- 元组
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:06+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/categories/" itemprop="url" rel="index">
+                    <span itemprop="name">categories</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>编程语言都有类似集合的容器类型。最典型的莫过于数组和哈希结构。</p>
+<p>通常数组是一些列有序元素的集合。有的语言的数组需要初始化大小，有的则是动态变化。那些动态变化的数组，在高级语言通常是列表。当然也有一些序列集合一旦创建了，就不能改变，这类序列通常称之为元组（tuple）。</p>
+<a id="more"></a>
+<h3 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h3><p>Elixir中的元组是一组有序的数据集合。元组的项目元素可以是任意的Elixir数据类型，元组还可以嵌套。</p>
+<p>元组使用花括号定义，这个估计是Elixir特有，大多数语言如Python，Swift的元组都使用小括号。而使用花括号定义字典（python）或者对象（javascript）这样的哈希结构。</p>
+<p>实际上，Elixir的元组使用也类似这样的字典。怎么说呢，先看几个元组的例子了：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; &#123;<span class="number">1</span>, <span class="number">2</span>&#125;</div><div class="line">&#123;<span class="number">1</span>, <span class="number">2</span>&#125;</div><div class="line">iex(<span class="number">2</span>)&gt; &#123;<span class="number">1</span>, <span class="string">"2"</span>&#125;</div><div class="line">&#123;<span class="number">1</span>, <span class="string">"2"</span>&#125;</div><div class="line">iex(<span class="number">3</span>)&gt; &#123;<span class="symbol">:ok</span>, <span class="number">42</span>, <span class="string">"next"</span>, <span class="string">'elixr'</span>&#125;</div><div class="line">&#123;<span class="symbol">:ok</span>, <span class="number">42</span>, <span class="string">"next"</span>, <span class="string">'elixr'</span>&#125;</div><div class="line">iex(<span class="number">4</span>)&gt; &#123;<span class="symbol">:error</span>, <span class="symbol">:enoent</span>&#125;</div><div class="line">&#123;<span class="symbol">:error</span>, <span class="symbol">:enoent</span>&#125;</div></pre></td></tr></table></figure>
+<p>可以看到，Elixir的元组很灵活，可是，通常定义的元组都是2~4个元素。这样的定义，恰好和字典很像。例如这个<code>{:ok, &quot;message&quot;}</code> 第一个元素是一个原子，第二个元素是一个字符串。之所以这样定义，是因为编程的时候，函数返回的可能不仅仅是一个值，而是好几个值，那么就可以把返回的好几个值放入元组之中。返回的值又可以使用元组来做模式匹配。这样一个单元的小对，后面还可以用来组成关键字列表。</p>
+<h3 id="元组与模式匹配"><a href="#元组与模式匹配" class="headerlink" title="元组与模式匹配"></a>元组与模式匹配</h3><p>我们知道，凡是数据结构一致，就可以使用模式匹配。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; &#123;status, count, action&#125; = &#123;<span class="symbol">:ok</span>, <span class="number">42</span>, <span class="string">"next"</span>&#125;</div><div class="line">&#123;<span class="symbol">:ok</span>, <span class="number">42</span>, <span class="string">"next"</span>&#125;</div><div class="line">iex(<span class="number">2</span>)&gt; status</div><div class="line"><span class="symbol">:ok</span></div><div class="line">iex(<span class="number">3</span>)&gt; count</div><div class="line"><span class="number">42</span></div><div class="line">iex(<span class="number">4</span>)&gt; action</div><div class="line"><span class="string">"next"</span></div></pre></td></tr></table></figure>
+<p>正如上面提到，可以把函数返回的多个值放入元组内。通过元组的模式匹配获得返回的值。例如文件的API操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; &#123;status, file&#125; = File.open(&quot;hello.exs&quot;)</div><div class="line">&#123;:ok, #PID&lt;0.60.0&gt;&#125;</div><div class="line">iex(2)&gt; &#123;status, file&#125; = File.open(&quot;nofile&quot;)</div><div class="line">&#123;:error, :enoent&#125;</div></pre></td></tr></table></figure>
+<p>File模块的open方法，接受一个文件路径作为参赛，返回一个元组，元组的第一个元素为打开文件的状态。<code>:ok</code>表示打开成功，<code>:error</code>则打开失败。第二个元素对于打开成功的文件，返回一个文件资源的句柄。</p>
+<p>通过元组的模式匹配，很容易的就解包函数的返回值。</p>
+<h3 id="元组的基本操作"><a href="#元组的基本操作" class="headerlink" title="元组的基本操作"></a>元组的基本操作</h3><p>元组都有下标索引，索引从零开始。可以借助函数elem通过索引访问元素。<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">5</span>)&gt; t</div><div class="line">&#123;<span class="symbol">:ok</span>, <span class="number">1</span>, <span class="string">"hello"</span>, &#123;<span class="number">1</span>, <span class="number">2</span>&#125;&#125;</div><div class="line">iex(<span class="number">6</span>)&gt; elem t, <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">7</span>)&gt; elem t, <span class="number">0</span></div><div class="line"><span class="symbol">:ok</span></div></pre></td></tr></table></figure></p>
+<p>在Elixir中，函数调用的小括号是可以省略的。<code>elem t, 1</code>等价于 <code>elem(t, 1)</code>。</p>
+<p>可以使用tuple_size 获取元组的元素个数</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">8</span>)&gt; tuple_size t</div><div class="line"><span class="number">4</span></div></pre></td></tr></table></figure>
+<p>可以使用 put_elem “改变”元组元素的值。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">9</span>)&gt; t</div><div class="line">&#123;<span class="symbol">:ok</span>, <span class="number">1</span>, <span class="string">"hello"</span>, &#123;<span class="number">1</span>, <span class="number">2</span>&#125;&#125;</div><div class="line">iex(<span class="number">10</span>)&gt; elem t, <span class="number">2</span></div><div class="line"><span class="string">"hello"</span></div><div class="line">iex(<span class="number">11</span>)&gt; pelem t, <span class="number">2</span></div><div class="line">put_elem/<span class="number">3</span>    put_in/<span class="number">2</span>      put_in/<span class="number">3</span>      pwd/<span class="number">0</span></div><div class="line">iex(<span class="number">11</span>)&gt; put_elem t, <span class="number">2</span>, <span class="string">"hello world"</span></div><div class="line">&#123;<span class="symbol">:ok</span>, <span class="number">1</span>, <span class="string">"hello world"</span>, &#123;<span class="number">1</span>, <span class="number">2</span>&#125;&#125;</div><div class="line">iex(<span class="number">12</span>)&gt; t</div><div class="line">&#123;<span class="symbol">:ok</span>, <span class="number">1</span>, <span class="string">"hello"</span>, &#123;<span class="number">1</span>, <span class="number">2</span>&#125;&#125;</div></pre></td></tr></table></figure>
+<p>注意这里的”改变”的含义。元组与其他Elixir数据结构一样，都是不可变的。这也是函数式语言的一大特性。put_elem 并没有改变元素的元组t，而是返回了一个新的元组，新的元组的第三个元素与旧的不一样。</p>
+<p>至于为什么这样的更新而又不改变，如何理解Elixir中的不可变性呢？下一节我们再来探讨。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（五）---运算符和操作符/" rel="next" title="Elixir-简明笔记（五）-- 运算符和操作符">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（五）-- 运算符和操作符
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（七）---列表/" rel="prev" title="Elixir-简明笔记（七）-- 列表">
+                Elixir-简明笔记（七）-- 列表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#元组"><span class="nav-number">1.</span> <span class="nav-text">元组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元组与模式匹配"><span class="nav-number">2.</span> <span class="nav-text">元组与模式匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元组的基本操作"><span class="nav-number">3.</span> <span class="nav-text">元组的基本操作</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

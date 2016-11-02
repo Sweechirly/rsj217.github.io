@@ -1,0 +1,618 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。
+理解并发和并行的主要要理解同时和任务。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发与并行">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/并发与并行/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。
+理解并发和并行的主要要理解同时和任务。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。">
+<meta property="og:updated_time" content="2016-02-17T03:26:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="并发与并行">
+<meta name="twitter:description" content="并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。
+理解并发和并行的主要要理解同时和任务。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/并发与并行/"/>
+
+
+  <title> 并发与并行 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                并发与并行
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:01+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。</p>
+<p>理解并发和并行的主要要理解<strong>同时</strong>和<strong>任务</strong>。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。</p>
+<a id="more"></a>
+<h3 id="任务"><a href="#任务" class="headerlink" title="任务"></a>任务</h3><p>当然，由于餐馆机器人还是第一版，机器人还未能完全自主控制。需要一个管理员，也就是餐厅经理控制机器人。也正因为第一版，还没有量产，餐厅只有一个机器人和一个经理。</p>
+<p>有一天，几乎同时来了两个顾客用餐。因为只有一个机器人，那么来得稍晚的就拿了一张票等候。另外一个幸运的顾客则坐在餐桌上。经理控制机器人招呼客人，机器人先拿出菜单让顾客点菜。等点完菜后，然后机器人走到厨房。没错，我们的是智能餐厅，机器人除了能做服务员，当然还能当厨师。</p>
+<p>于是机器人大厨在厨房洗碗刷锅。随后开始做饭，最后再把佳肴端给第一个顾客。再然后才去招待第二个顾客了。从餐厅接待一个客人，到给客人做好饭整个过程是一个任务，当然在这个时间断，完成该任务需要机器人做很多事情，这一连串的事才组成了一个任务。</p>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><p>当然，即使餐厅标榜自己智能系统，机器人替人工逼格很高。可是明眼人马上就能看出其中的问题。这样的餐厅，工作效率太低，早晚要倒闭。于是，餐厅加大投入，生产了好几个机器人。可惜老板抠门，只雇一个经理。经理就得控制好多机器人，看起来挺风光，其实蛮苦逼的。</p>
+<p>餐馆生意逐渐被人熟悉，顾客也多了。今天同时来了3个客人。经理马上控制A机器人招呼第一个客人坐下，剩下两个客人等待。客人看着菜单，犹豫不决，于是A机器人一直等待。经理看了，觉得这个客人还得等一会，于是招呼B机器人去厨房洗碗刷锅。当此时，顾客已经把菜点好。B还在刷碗，看起来够累的。那么经理就让B休息一会，控制C机器人去做饭。由于只有一个经理，每次只能控制一个机器人做事情。这次C在煲汤，需要等待，经理再让休息好的B继续刷碗。最后C也完成了任务，A机器人把菜端给了客人。然后经理再控制机器人去招待第二个客人。我们的三个机器人相互配合，终于照顾好了客人。三个机器人，明显比一个机器人干活效率高了。只要在等待客人点菜的时候，可以先把碗给刷了。要是还是一个机器人，那顾客想吃上饭，估计等得都差不多饿圆寂了。</p>
+<p>三个机器人招呼一个客人大概要10分钟，完成一个任务。可以称之为三个机器人并发的完成了这个任务。按照这样计算，一天餐厅营业10小时，那么餐厅能够接纳60个客人（oh my god）。对于同一天，不管每天来多少人，餐厅的并发能力（接纳客人的能力）为每天接纳60个客人。</p>
+<h3 id="并行"><a href="#并行" class="headerlink" title="并行"></a>并行</h3><p>通过上面的例子，大致可以理解什么是并发。并发就是同一时间内应对（dealing with）多件事情的能力，同一时间内应对多件事情的能力，同一时间内应对多件事情的能力。重要的话要讲三遍。那么问题来了，什么叫并行呢？并行就是同一时间执行多件（doing）事情的能力。省略剩下的两遍。</p>
+<p>对于智能餐厅，第一版运转良好，基本可以提供量产了。前面我们也知道，机器人多了能够省时间，可是机器人还不够自能，还需要经理操控。餐厅为了提供效率，一个直观的办法就是雇更多的经理。</p>
+<p>于是，另外一天同时来了好几个客人，餐厅雇了三个经理，三个经理可以同时分别控制三个机器人去接纳客人。机器人可以同时接纳客人点菜，也可以安排其他机器人刷锅洗碗，甚至在刷锅的时候就可以做饭了。多个经理就是好。这几个机器人正在并行工作。这有比前一种情况效率高了，毕竟机器人同时工作啦。这就是并行了。对于每个机器人所做的事情，则不是并发，因为只有一个任务要做，就是招呼一个客人。</p>
+<p>当然，由于机器人和经理都多了。多余的经理可以在招呼多个客人。这个时候既有并发，也有并行。多个任务同时进行了。</p>
+<h3 id="线程、进程、CPU"><a href="#线程、进程、CPU" class="headerlink" title="线程、进程、CPU"></a>线程、进程、CPU</h3><p>上述介绍的智能餐厅，只是一个计算机处理任务的比喻。机器人可以类比为执行任务的线程，经理就像是CPU。同一个CPU在同一时刻只能处理一个线程，多个CPU可以让多个线程同时执行。这里只针对多线程模型，暂时忽略多进程模型。</p>
+<p>第一种情况单cpu单线程的情况下，并发能力很弱。增加了多线程之后，并发能力有所提升。当多核的时候，并发能力进一步提高了。</p>
+<p>线程和进程是两个概念，上述的比喻也没有很好的区分。如果转换成进程的话，可以理解为把多个机器人分组，每个经理控制一个组。也就是一个进程包含多个线程，多核cpu可以同时运行多个进程，在进程内，多个线程也可以并发执行计算任务。</p>
+<p>通常我们使用电脑的时候，即使是单核cpu。也能一边刷网页，一边听歌，甚至还可以聊天，看起来多个程序（进程）就是在同时运行。产生这样的感觉，主要由于程序所运行的每个进程所使用的时间片段很少，进程在相互切换，人根本感觉不出来切换的变化。因此可以看成是多个进程同时在运行。</p>
+<p>对于同时的理解，可以看成一个经理控制的机器人在一天之内是“同时”在工作的。所谓的同时本质是时间片段，只是计算机的时间片段很小，人们根本察觉不出来。如果扩大这个时间片段，例如一天为单位作为时间片段，那么可以看成一天之内的机器人都是在“同时”工作，“同时”完成任务。别以为一天很长，对于仙人，天上一天，地上一年，地上的一天，对于他们也差不多就十多秒。十多秒内同时完成一个任务啦。</p>
+<p>并发主要针对计算机处理计算任务。对于网络编程而言，处理一个请求即完成一个任务。同一时间能过处理的请求越多，即并发能力越高。并发编程的模型很多，涉及概念有单线程，多线程，多进程，异步，同步，协程等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/Python-第三方库安装技巧/" rel="next" title="Python-第三方库安装技巧">
+                <i class="fa fa-chevron-left"></i> Python-第三方库安装技巧
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Socket通信原理简介/" rel="prev" title="Socket通信原理简介">
+                Socket通信原理简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#任务"><span class="nav-number">1.</span> <span class="nav-text">任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发"><span class="nav-number">2.</span> <span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并行"><span class="nav-number">3.</span> <span class="nav-text">并行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程、进程、CPU"><span class="nav-number">4.</span> <span class="nav-text">线程、进程、CPU</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

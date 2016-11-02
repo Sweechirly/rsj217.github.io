@@ -1,0 +1,634 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="story,Linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="我是你可怕的恶梦                                                                                        ————Eric Raymond
+
+Eric Raymond，黑客，他写了一篇论文《大教堂与市集》，也写过一本书叫《unix编程艺术》。于是整个世界都改变了。
+纪录片《Revolution OS》描述，一次">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统的故事（三）--- ​​Linux的崛起">
+<meta property="og:url" content="http://rsj217.github.com/2015/03/03/os-story-3/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="我是你可怕的恶梦                                                                                        ————Eric Raymond
+
+Eric Raymond，黑客，他写了一篇论文《大教堂与市集》，也写过一本书叫《unix编程艺术》。于是整个世界都改变了。
+纪录片《Revolution OS》描述，一次">
+<meta property="og:updated_time" content="2015-03-03T06:21:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="操作系统的故事（三）--- ​​Linux的崛起">
+<meta name="twitter:description" content="我是你可怕的恶梦                                                                                        ————Eric Raymond
+
+Eric Raymond，黑客，他写了一篇论文《大教堂与市集》，也写过一本书叫《unix编程艺术》。于是整个世界都改变了。
+纪录片《Revolution OS》描述，一次">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/03/03/os-story-3/"/>
+
+
+  <title> 操作系统的故事（三）--- ​​Linux的崛起 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                操作系统的故事（三）--- ​​Linux的崛起
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-03-03T12:56:02+08:00" content="2015-03-03">
+              2015-03-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>我是你可怕的恶梦<br>                                                                                        ————Eric Raymond</p>
+</blockquote>
+<p>Eric Raymond，黑客，他写了一篇论文《大教堂与市集》，也写过一本书叫《unix编程艺术》。于是整个世界都改变了。</p>
+<p>纪录片《Revolution OS》描述，一次开发者大会，他遇到一个微软工程师，看见衣服上Microsoft的标志便询问对方：“你为微软工作？”当那位西装革履的工程师带有嘲讽和鄙视看着这个衣着普通的黑客回复：“是啊，你呢？”Raymond送去了一个微笑：我是你们可怕的恶梦。。。</p>
+<a id="more"></a>
+<p>黑客是Microsoft的恶梦？不，不仅仅是，黑客是一切不自由的恶梦。电脑和网络，已经成为现代社会和文明不可或缺的产品。很多人电脑使用Microsoft的windows系统，而这些机器所访问的web页面。其背后的服务器系统却是Windows的死敌—Linux。相比Windows成为家喻户晓并家家都在使用的操作系统。Linux很少被普通人知道，但是这并不妨碍它的伟大。他们分别在桌面和服务器两个环境，各自称霸着世界。</p>
+<p>谈到Linux的起源，这个故事平凡却扣人心弦。1991那年，对于芬兰人绝对是一个有意思的一年。世界上首次全球通对话在诺基亚的Radiolinja网络中完成，诺基亚征服世界的脚步已经无法遏制。</p>
+<p>与此同时，阳光明媚的芬兰赫尔辛基大学的校园里，一个少年正好拥有了一台完全属于自己的电脑，不必再忍受学校机房漫长的等待。他深深着迷于当时安德鲁·塔南鲍姆（Andrew Tanenbaum）的著作《操作系统：设计与实现》——一本Minix操作指南。</p>
+<p>由于AT&amp;T对于Unix商业化，而后将Unix进行了闭源。Andrew所教授的课程《操作系统》却没有了“操作系统”。对此Andrew一咬牙，狠狠心，写出了一个兼容Unix的操作系统。人家就是厉害，你不给我使用，我自己写一个出来用。尽管Andrew的成果很简单，但是还是具备了Unix的基本功能，当然比较mini，因此命名为Minix。Minix作为Unix的变种，彼时的Minix正凭借低廉的价格和简易的操作在大学大行其道。</p>
+<p>Minix由于过于短小精悍，只能运行这一种机器，其他机器没有驱动。Andrew的学生就写了好多好用驱动来扩展Minix。可是，教授Andrew却觉得自己的操作系统要保持纯洁，不能有其他的代码来源。于是学生们就很郁闷，其中就有个叫Linus的同学。</p>
+<p>拥有自己的PC的Linus却不能将Minix运行在自己的电脑上。Linus也不得不走上了他无数前辈的道路，不让用，不给用，那就自己写一个操作系统来用。仅仅两个月后，一个“千疮百孔但却碰巧可以使用”的磁盘驱动程序和一个小到不能再小的文件系统就诞生了，这就是第0.01版的Linux。随后Linus将操作系统上传至FTP，并公布了全部源代码。后来Linus阐述其初衷：在新操作系统中，“人们可以自己编写驱动程序，可以随意修改操作系统以适应不同需求，可以尝试在Minix上运行所有程序，这是Minix从未有过的美好一天。”</p>
+<p>美好的日子渐渐来临，Unix生态还是老样子，在商业的争斗中裹足不前。Microsoft和Apple的争斗也逐渐明朗，Microsoft靠卖软件大发特发。这让一个黑客很不满。</p>
+<p>理查德·斯托曼（Richard Stallman）登场，他认为所有软件都是人类智慧和思想的结晶。软件应该自由的让人们使用。1983年，Stallman发起了“GNU（GNU’s Not Unix的递归缩写）”计划，目的是创建一套完全自由的操作系统，以“重现软件界合作互助的团结精神”。他以“著佐权”（copyleft）标准为范本拟定了一份通用公用版权协议(General Public License，GPL)。与强调个人版权但限制自由传播的著作权（copyright）不同，GPL更强调公共版权和鼓励自由传播，它允许修改程序、复制软件和销售获利。但前提是公布修改后的全部源代码，必须保证自由思想的传递。GNU计划激发了软件界极大的热情，世界各地的软件奇才们纷纷参与其中。并且开发出包括文字编辑器Emacs、C语言编译器，gcc以及大部分UNIX系统程序库和工具在内的绝大多数软件。</p>
+<p>可是问题又来了，GNU编写了很多自由免费的软件，可是这些免费软件却运行在不自由的Unix上，这真是一个巨大的讽刺。Stallman承诺大家要两年内重新写一个操作系统，可是五年过去了，依然看不清成功的那一天。</p>
+<p>与前面很多故事一样，事情总是环环相扣，可是谁也不知道这环将会扣向哪一环。Stallman苦于没有操作系统，芬兰的那边，Linus只有一个操作系统内核而没有应用软件。</p>
+<p>于是，他们在各自的领域奋斗多年之后，命运终于安排他们走到了一起，Linus率领Linux加盟Stallman的GNU计划，上帝说要有光，于是牛顿出生了；人类需要自由，于是Linux与GUN结婚。这一“联姻”堪称是软件界的天作之合。</p>
+<p>1992年，在Linux Kernel平台上工作的开发者只有100位，平台中的核心代码只有几万行。如今，在平台上工作的开发者已经多达1000人，人员的背景也从最初的黑客扩散至更多的行业，平台中的核心代码则已经超过千万行。</p>
+<p>1998年，全球前500台超级计算机中还只有1台运行Linux。今天在全球前500台超级计算机中，有400多台选用Linux。这些计算机遍布世界各地的多个行业，共同主宰着这个智慧的地球。</p>
+<p>大到航天科技，小到IC卡芯片，无不存在Linux的影子。在移动领域，Android来势汹汹，已经逾越IOS成为移动的王者，完成了对windows的完美复仇。</p>
+<p>Linux“可自由扩散”并不等同于“缺乏支持”和“业余水平”，恰恰相反，正是起开发的政策，让无数天才黑客参与进来，这是自由的胜利。</p>
+<p>就连商业软件公司也参与进来，这些公司技术雄厚又善于市场运作，开创了新的商业模式—-销售服务而不是软件。使Linux从网络黑客和业余爱好者自娱自乐的工具，变成了一个具有全球影响力的软件帝国。</p>
+<p>98年的奥斯卡颁奖典礼上，当卡梅隆手握“最佳导演奖”的小金人，模仿《泰坦尼克》中的男主角Jack发出“我是世界之王”的宣言时，全世界为之倾倒。影片中“唯美”海难，使人们惊叹于卡氏的神奇。但完美的电影也使人们忽略了另一个伟大事实：电影史上崭新的技术时代悄然来临。而这一时代，是由Linux开启的。</p>
+<blockquote>
+<p>从那时开始，梦工厂、迪斯尼、皮克斯等公司都逐渐将各自的工作平台转向Linux，无数伟大的银幕经典因此横空出世。从《魔戒》到《金刚》，从《哈利波特》到《霍比特人》，再从《指环王》到《阿凡达》，Linux几乎以一己之力缔造了无数人梦中的玄幻王国。也是从那时开始，Linux终将埋葬Microsoft就开始成为江湖中著名的传说之一。</p>
+</blockquote>
+<p>悠悠苍天，传来一股由弱变强的声音—– 我是你可怕的恶梦！！！</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/story/" rel="tag">#story</a>
+          
+            <a href="/tags/Linux/" rel="tag">#Linux</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/03/os-story-2/" rel="next" title="操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨">
+                <i class="fa fa-chevron-left"></i> 操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/03/os-story-4/" rel="prev" title="操作系统的故事（四）--- ​​Symbian 兴衰路">
+                操作系统的故事（四）--- ​​Symbian 兴衰路 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

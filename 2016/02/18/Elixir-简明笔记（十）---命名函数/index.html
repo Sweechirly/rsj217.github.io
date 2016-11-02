@@ -1,0 +1,686 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="程序由几行代码开始，逐渐变多之后，开发者期望一种结构化的方式组织代码。Elixir模块化代码很简单。你只需要将函数拆分写入模块中，当然Elixir中的函数（指命名函数，接下来除非特别指出匿名函数，否则所有函数都指命名函数）在模块中定义。
+先看一个简单的例子。在你的目录中创建一个Elixir源文件times.exs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（十）-- 命名函数">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（十）---命名函数/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="程序由几行代码开始，逐渐变多之后，开发者期望一种结构化的方式组织代码。Elixir模块化代码很简单。你只需要将函数拆分写入模块中，当然Elixir中的函数（指命名函数，接下来除非特别指出匿名函数，否则所有函数都指命名函数）在模块中定义。
+先看一个简单的例子。在你的目录中创建一个Elixir源文件times.exs">
+<meta property="og:updated_time" content="2016-02-18T02:37:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（十）-- 命名函数">
+<meta name="twitter:description" content="程序由几行代码开始，逐渐变多之后，开发者期望一种结构化的方式组织代码。Elixir模块化代码很简单。你只需要将函数拆分写入模块中，当然Elixir中的函数（指命名函数，接下来除非特别指出匿名函数，否则所有函数都指命名函数）在模块中定义。
+先看一个简单的例子。在你的目录中创建一个Elixir源文件times.exs">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（十）---命名函数/"/>
+
+
+  <title> Elixir-简明笔记（十）-- 命名函数 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（十）-- 命名函数
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:10+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>程序由几行代码开始，逐渐变多之后，开发者期望一种结构化的方式组织代码。Elixir模块化代码很简单。你只需要将函数拆分写入模块中，当然Elixir中的函数（指命名函数，接下来除非特别指出匿名函数，否则所有函数都指命名函数）在模块中定义。</p>
+<p>先看一个简单的例子。在你的目录中创建一个Elixir源文件<code>times.exs</code></p>
+<a id="more"></a>
+<p>mm/times.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Times</span></span> <span class="keyword">do</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">double</span></span>(n) <span class="keyword">do</span></div><div class="line">		n * <span class="number">2</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>我们定义了一个<code>Times</code>模块。该模块包含一个单独的<code>double</code>函数。该函数只有一个参数，在Elixir中，是通过参数的个数来区分不同模块的函数子句。例如上面的函数定义式是<code>double/1</code></p>
+<h3 id="编译模块"><a href="#编译模块" class="headerlink" title="编译模块"></a>编译模块</h3><p>有两种方式编译文件。第一种使用使用iex载入文件并编译：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>iex times.exs</div><div class="line">iex&gt; Times.double <span class="number">4</span></div><div class="line"><span class="number">8</span></div></pre></td></tr></table></figure>
+<p>命令行中输入iex + 文件名就可以编译源文件并将编译结果的上下文载入iex提示界面。</p>
+<p>如果你先进入了iex交互提示界面，可以使用c帮助函数进行编译。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex&gt; c <span class="string">"times.exs"</span></div><div class="line">[Times]</div><div class="line">iex&gt; Times.double(<span class="number">4</span>)</div><div class="line"><span class="number">8</span></div><div class="line">iex&gt; Times.double(<span class="number">123</span>)</div><div class="line"><span class="number">246</span></div></pre></td></tr></table></figure>
+<p>这一行<code>c &quot;times.exs&quot;</code>代码将对源文件进行编译并载入编译后的程序。使用模块加函数名即可调用函数，即<code>Times.double</code>。</p>
+<p>如果给函数传入一个整数将会发生什么呢？</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">iex&gt; Times.double(<span class="string">"cat"</span>)</div><div class="line">** (ArithmeticError) bad argument <span class="keyword">in</span> arithmetic expression</div><div class="line">times.<span class="symbol">exs:</span><span class="number">3</span>: Times.double/<span class="number">1</span></div></pre></td></tr></table></figure>
+<p>堆栈信息中可以看见发生了一个<code>ArithmeticError</code>异常，第一行告诉我们发生了什么错误。下一行告诉我们错误发生在什么地方。注意错误信息中是定义式<code>Times.double/1</code>描述出错的函数。</p>
+<p>Elixir中通过函数名及其参数个数（arity）来识别不同的函数子句。<code>double</code>函数有一个参数，因此被标记为<code>double/1</code>。如果它有三个函数，则会被标注为<code>double/3</code>。无需为Elixir担心无法区分这两个函数。设想一下，如果有两个同名函数挨着，即使同名有不同的参数个数，对于人还是无法容易的分辨。为了避免这种情况，请尽量不用把不相关的函数使用相同的名字。</p>
+<h3 id="函数体也是一个块"><a href="#函数体也是一个块" class="headerlink" title="函数体也是一个块"></a>函数体也是一个块</h3><p><code>do...end</code>块是组织表达式和代码的一种方式。Elxir的模块和函数使用他们定义，控制代码结构，以及任何需要处理的代码体。</p>
+<p>可是，<code>do…end</code>并不是基础语法。他们的本质是像这样的：</p>
+<pre><code>def double(n), do: n * 2
+</code></pre><p>可以给<code>do:</code>提供任何使用小括号包裹的表达式。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">greet</span></span>(greeting, name), <span class="symbol">do:</span> (</div><div class="line">	IO.puts greeting</div><div class="line">	IO.puts <span class="string">"How're you doing, <span class="subst">#&#123;name&#125;</span>?"</span></div><div class="line">)</div></pre></td></tr></table></figure>
+<p><code>do…end</code>只是组织代码块的一个语法糖，他们都可以转换成<code>do: from</code>的形式（<code>do: from</code>本身并没有特别之处，只是一个简单的关键字列表）。人们习惯使用<code>do: form</code>语法来表示单行的代码块的时候，使用<code>do…end</code>组织多行代码块。</p>
+<p>例如我们的例子其实可以改写一下：</p>
+<p>mm/times1.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Times</span></span> <span class="keyword">do</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">double</span></span>(n), <span class="symbol">do:</span> n * <span class="number">2</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>甚至可以这么写：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Times</span></span>, <span class="symbol">do:</span> (<span class="function"><span class="keyword">def</span> <span class="title">double</span></span>(n), <span class="symbol">do:</span> n*<span class="number">2</span>)</div></pre></td></tr></table></figure>
+<p>（最好不好这样做，可读性不好）</p>
+<h3 id="函数调用及其模式匹配"><a href="#函数调用及其模式匹配" class="headerlink" title="函数调用及其模式匹配"></a>函数调用及其模式匹配</h3><p>前一章，我们了解了匿名函数式的参数是如果通过模式匹配将参数应用于函数体。这个规则对于命名函数也同样适用。不同的地方在于，命名函数需要写多个不同参数列表和函数体子句的函数。尽管看起来像是定义了多个函数，其实这是一个函数的多个子句而已。</p>
+<p>当你调用一个命名函数的时候，Elixir会首先把你传入的参数和第一个函数子句进行模式匹配。只有前面的函数子句没有匹配，才会尝试和后面的函数子句进行匹配（记住，参数的个数必须和模式匹配相同）。直到匹配完所有的函数子句。</p>
+<p>我们来玩一玩。编写一个从1到n的阶乘（<code>n!</code>）函数<code>factorial</code>。通常0!等于1。<br>类似数学语言的表达：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">factorial(<span class="number">0</span>) → <span class="number">1</span></div><div class="line">factorial(n) → n * factorial(n-<span class="number">1</span>)</div></pre></td></tr></table></figure>
+<p>这是一个阶乘的伪代码，但是它已经和Elixir实现很接近了。</p>
+<p>mm/factorial1.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Factorial</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(<span class="number">0</span>), <span class="symbol">do:</span> <span class="number">1</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(n), <span class="symbol">do:</span> n * of(n-<span class="number">1</span>)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>这里我们定了两个同名的函数<code>of</code>。调用<code>Factorial.of(2)</code>，Elixir会用参数2与第一个of函数的参数模式进行匹配，0不匹配2，第一个函数匹配失败。然后，Elixir会把这个参数和第二个函数进行模式匹配<code>n=2</code>，匹配成功，然后把<code>n</code>传入该子句的函数体进行求值运算。其中由递归的调用<code>of(2-1)</code>。此时同样的的处理过程，还是第二个函数匹配调用，再接下来递归调用，<code>Factorial.of(0)</code>，此时则匹配第一个函数了。该函数执行返回1，直到递归回溯完毕。Elixir会自动回溯栈，将所有数字相乘法，然后返回答案。这个<code>factorial</code>模块实现了正常的功能，但是这段代码还可以使用尾递归优化提高。</p>
+<p>先运行看看结果：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">iex&gt; c <span class="string">"factorial1.exs"</span></div><div class="line">[Factorial]</div><div class="line">iex&gt; Factorial.of(<span class="number">3</span>)</div><div class="line"><span class="number">6</span></div><div class="line">iex&gt; Factorial.of(<span class="number">7</span>)</div><div class="line"><span class="number">5040</span></div><div class="line">iex&gt; Factorial.of(<span class="number">10</span>)</div><div class="line"><span class="number">3628800</span></div><div class="line">iex&gt; Factorial.of(<span class="number">1000</span>)</div><div class="line"><span class="number">40238726007709377354370243392300398571937486421071463254379991042993851239862</span></div><div class="line"><span class="number">90205920442084869694048004799886101971960586316668729948085589013238296699445</span></div><div class="line">...</div><div class="line"><span class="number">00624271243416</span>90900415369010593398383577793941097002775347200000000000000000<span class="number">0</span></div><div class="line"><span class="number">00000000000000000000000000000000000000000000000000000000000000000000000000000</span></div><div class="line"><span class="number">00000000000000000000000000000000000000000000000000000000000000000000000000000</span></div><div class="line"><span class="number">00000000000000000000000000000000000000000000000000000000000000000000000000000</span></div></pre></td></tr></table></figure>
+<p>Elixir中使用模式匹配设计和编程很普遍（几乎所有函数式语言都如此）。先来说一下最简单的情况下，一个过程有了明确的答案。将是解决问题的切入点。然后找一个递归解决方案，将这些过程集合处理。</p>
+<p>更多的例子：</p>
+<ul>
+<li><p>n个数的和</p>
+</li>
+<li><p>第一个0的和是0</p>
+</li>
+<li><p>第n个数的和又n-1个数的和与n相加。</p>
+</li>
+</ul>
+<p>列表的长度</p>
+<ul>
+<li>空列表的长度是0</li>
+</ul>
+<p>&amp; 任何列表的长度都等于第一个元素的长度1加上剩余列表元素的长度</p>
+<p>重要的知识点：将上面的语句用代码表达，将会写出多个子句函数。Elixir总是从最先定义的函数进行模式匹配。一旦前面的满足了要求，就不会往下匹配了。所有下面的代码将不会工作：</p>
+<p>mm/factorial1-bad.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">BadFactorial</span></span> <span class="keyword">do</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(n), <span class="symbol">do:</span> n * of(n-<span class="number">1</span>)</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(<span class="number">0</span>), <span class="symbol">do:</span> <span class="number">1</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>无论是什么参数，第一个函数子句都能匹配，第二个函数永远不会被执行。当然，出现这种情况，Elixir会在定义之后给出一个警告：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iex&gt; c <span class="string">"factorial1-bad.exs"</span></div><div class="line">.../factorial1-bad.<span class="symbol">ex:</span><span class="number">3</span>: this clause cannot match because a previous clause at</div></pre></td></tr></table></figure>
+<h3 id="卫子句"><a href="#卫子句" class="headerlink" title="卫子句"></a>卫子句</h3><p>通过传入参数的模式匹配，Elixir可以选择匹配的函数调用。但是，当我们需要匹配的结果是基于不同类型或者是匹配特定的值的时候该怎么办呢？不用担心，Elixir提供了卫子句。这是通过关键字给函数定义添加谓词。当模式匹配的时候，Elxir首先会使用参数的模式匹配，然后在针对when关键字的子句进行逻辑判断，如果条件为真，才执行对于的函数子句。</p>
+<p>mm/guard.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Guard</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">what_is</span></span>(x) <span class="keyword">when</span> is_number(x) <span class="keyword">do</span></div><div class="line">		IO.puts <span class="string">"<span class="subst">#&#123;x&#125;</span> is a number"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">what_is</span></span>(x) <span class="keyword">when</span> is_list(x) <span class="keyword">do</span></div><div class="line">		IO.puts <span class="string">"<span class="subst">#&#123;inspect(x)&#125;</span> is a list"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">what_is</span></span>(x) <span class="keyword">when</span> is_atom(x) <span class="keyword">do</span></div><div class="line">		IO.puts <span class="string">"<span class="subst">#&#123;x&#125;</span> is an atom"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">Guard.what_is(<span class="number">99</span>) <span class="comment"># =&gt; 99 is a number</span></div><div class="line"></div><div class="line">Guard.what_is(<span class="symbol">:cat</span>) <span class="comment"># =&gt; cat is an atom</span></div><div class="line"></div><div class="line">Guard.what_is([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]) <span class="comment"># =&gt; [1,2,3] is a list</span></div></pre></td></tr></table></figure>
+<p>从新看看阶乘<code>factorial</code>模块</p>
+<p>mm/factorial1.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Factorial</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(<span class="number">0</span>), <span class="symbol">do:</span> <span class="number">1</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(n), <span class="symbol">do:</span> n * of(n-<span class="number">1</span>)</div><div class="line"></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>如果我们传入一个负数，那么这段代码将会进入死循环，一直递归调用，永远不会满足递归结果的条件，即n等于0。因此我们可以通过卫子句对参数进行过滤，才能愉快的玩耍。</p>
+<p>mm/factorial2.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Factorial</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(<span class="number">0</span>), <span class="symbol">do:</span> <span class="number">1</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">of</span></span>(n) <span class="keyword">when</span> n &gt; <span class="number">0</span> <span class="keyword">do</span></div><div class="line">		n * of(n-<span class="number">1</span>)</div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>此时调用的时候再传入负数，第二个匹配的函数将会执行卫子句检查，返回false将不会执行函数子句，即没有函数匹配。（没有函数匹配将会抛出异常）</p>
+<p>iex&gt; c “factorial2.exs”<br>[Factorial]<br>iex&gt; Factorial.of -100<br>** (FunctionClauseError) no function clause matching in Factorial.of/1…<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 卫子句的限制 </div><div class="line"></div><div class="line">你只能写一些特定的Elixir表达式。下面的例子来自官方的Getting Started guide</div><div class="line"></div><div class="line">* 比较操作符</div><div class="line"></div><div class="line">	==, !=, ===, !==, &gt;, &lt;, &lt;=, &gt;=</div><div class="line"></div><div class="line">* 布尔操作符和取反操作符</div><div class="line"></div><div class="line">	or, and, not, !.  注意：|| 和 &amp;&amp; 是不能用的.</div><div class="line"></div><div class="line">* 算术操作符</div><div class="line"></div><div class="line">+, -, *, /</div><div class="line"></div><div class="line">* 连接操作符</div><div class="line"></div><div class="line">	&lt;&gt; and ++</div><div class="line"></div><div class="line">* in操作符</div><div class="line">	成员的集合和范围</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">### 类型检测函数</div><div class="line"></div><div class="line"></div><div class="line">下面是一些内建类型检测函数，具体可以参考其官方文档。</div><div class="line"></div><div class="line"></div><div class="line">* is_atom</div><div class="line">* is_binary </div><div class="line">* is_bitstring </div><div class="line">* is_boolean </div><div class="line">* is_exception </div><div class="line">* is_float </div><div class="line">* is_function </div><div class="line">* is_integer </div><div class="line">* is_l</div><div class="line">* ist </div><div class="line">* is_map </div><div class="line">* is_number </div><div class="line">* is_pid </div><div class="line">* is_port </div><div class="line">* is_record </div><div class="line">* is_reference </div><div class="line">* is_tuple</div><div class="line"></div><div class="line"></div><div class="line">### 其他函数</div><div class="line"></div><div class="line">下面的内建函数将返回参数的值，而不是`true` 或者 `false`</div><div class="line"></div><div class="line">* abs(number) </div><div class="line">* bit_size(bitstring) </div><div class="line">* byte_size(bitstring) </div><div class="line">* div(number,number) </div><div class="line">* elem(tuple, n) </div><div class="line">* float(term) </div><div class="line">* hd(list) </div><div class="line">* length(list) </div><div class="line">* node() </div><div class="line">* node(pid|ref|port) </div><div class="line">* rem(number,number) </div><div class="line">* round(number) </div><div class="line">* self() </div><div class="line">* tl(list) </div><div class="line">* trunc(number) </div><div class="line">* tuple_size(tuple) </div><div class="line"></div><div class="line"></div><div class="line">### 默认参数</div><div class="line"></div><div class="line"></div><div class="line">定义命名函数的时候，可以使用`\\`语法符给函数的参数设置默认值。调用函数的时候，如果该参数没有传值，则函数使用默认的参数。Elixir还会检测调用函数的时候所传入的参数个数，如果传入的参数少于必须参数，则不会匹配成功。如果正好满足必须的参数，那么必须参数则使用传入的参数进行匹配，其他的就使用其默认值。如果传入的参数个数大于必须参数的个数，那么就会匹配必须参数之后，覆盖默认参数的值。参数匹配是由左向右的。</div><div class="line"></div><div class="line">mm/default_params.exs</div><div class="line"></div><div class="line">```elixir</div><div class="line">defmodule Example do</div><div class="line"></div><div class="line">	def func(p1, p2 \\ 2, p3 \\ 3, p4) do</div><div class="line">		IO.inspect [p1, p2, p3, p4]</div><div class="line">	end</div><div class="line">end</div><div class="line"></div><div class="line">Example.func(&quot;a&quot;, &quot;b&quot;) # =&gt; [&quot;a&quot;,2,3,&quot;b&quot;]</div><div class="line">Example.func(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;) # =&gt; [&quot;a&quot;,&quot;b&quot;,3,&quot;c&quot;]</div><div class="line">Example.func(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;) # =&gt; [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;]</div></pre></td></tr></table></figure></p>
+<p>Elixir模式匹配的时候，默认参数有惊人的表现。录入，编译下面代码：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2 \\ <span class="number">2</span>, p3 \\ <span class="number">3</span>, p4) <span class="keyword">do</span></div><div class="line">	IO.inspect [p1, p2, p3, p4]</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2) <span class="keyword">do</span></div><div class="line">	IO.inspect [p1, p2]</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>你会得到错误：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">** (CompileError) default_params.<span class="symbol">exs:</span><span class="number">7</span>: <span class="function"><span class="keyword">def</span> <span class="title">func</span></span>/<span class="number">2</span> conflicts with</div><div class="line">defaults from <span class="function"><span class="keyword">def</span> <span class="title">func</span></span>/<span class="number">4</span></div></pre></td></tr></table></figure>
+<p>因为第一个函数子句的定义（带有默认参数），无论参数是两个，三个还是四个，几乎可以匹配任何第二个函数子句的模式。也就是第二个函数永远不会被匹配。</p>
+<p>对于默认函数，还有一点需要知道。下面一个函数两个函数头（双函数子句）的情况，只不过另外一个写清楚了默认值：</p>
+<p>mm/default_params1.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">DefaultParams1</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2 \\ <span class="number">123</span>) <span class="keyword">do</span></div><div class="line">		IO.inspect [p1, p2]</div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, <span class="number">99</span>) <span class="keyword">do</span></div><div class="line">		IO.puts <span class="string">"you said 99"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>编译会报错(两个子句都有默认的参数了)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">** (CompileError) default_params1.exs.exs:8: def func/2 has default</div><div class="line">values and multiple clauses, define a function head</div></pre></td></tr></table></figure>
+<h3 id="使用默认参数"><a href="#使用默认参数" class="headerlink" title="使用默认参数"></a>使用默认参数</h3><p>为了降低默认值带来的函数冲突。会把带有默认参数定义写在函数的头部，只需要声明却不写函数体。剩下的函数子句就使用正常的参数。下面的例子中，默认参数的声明写在了头部，这个规则使用下面两个函数的子句。</p>
+<p>mm/default_params2.exs</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Params</span></span> <span class="keyword">do</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2 \\ <span class="number">123</span>)</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2) <span class="keyword">when</span> is_list(p1) <span class="keyword">do</span></div><div class="line"></div><div class="line">		<span class="string">"You said <span class="subst">#&#123;p2&#125;</span> with a list"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2) <span class="keyword">do</span></div><div class="line"></div><div class="line">		<span class="string">"You passed in <span class="subst">#&#123;p1&#125;</span> and <span class="subst">#&#123;p2&#125;</span>"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">IO.puts Params.func(<span class="number">99</span>) 			<span class="comment"># You passed in 99 and 123 </span></div><div class="line">IO.puts Params.func(<span class="number">99</span>, <span class="string">"cat"</span>) 		<span class="comment"># You passed in 99 and cat</span></div><div class="line">IO.puts Params.func([<span class="number">99</span>]) 			<span class="comment"># You said 123 with a list</span></div><div class="line">IO.puts Params.func([<span class="number">99</span>], <span class="string">"dog"</span>) 	<span class="comment"># You said dog with a list</span></div></pre></td></tr></table></figure>
+<p>上面的定义，其实等价于（只不过把默认参数提取出来了）：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">defmodule</span> <span class="title">Params</span></span> <span class="keyword">do</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2 \\ <span class="number">123</span>) <span class="keyword">when</span> is_list(p1) <span class="keyword">do</span></div><div class="line"></div><div class="line">		<span class="string">"You said <span class="subst">#&#123;p2&#125;</span> with a list"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">func</span></span>(p1, p2 \\ <span class="number">123</span>) <span class="keyword">do</span></div><div class="line"></div><div class="line">		<span class="string">"You passed in <span class="subst">#&#123;p1&#125;</span> and <span class="subst">#&#123;p2&#125;</span>"</span></div><div class="line">	<span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h4 id="私有函数"><a href="#私有函数" class="headerlink" title="私有函数"></a>私有函数</h4><p><code>defp</code>宏可以定义声明一个私有函数，私有函数只能在声明它的模块内部调用。</p>
+<p>也可以定义多个私有函数，就像使用<code>def</code>定义函数一样。可是，不能定义参数一致的同名公有和私有函数。正如下面是非法的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">def fun(a) when is_list(a), do: true</div><div class="line"></div><div class="line">defp fun(a), do: false</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（九）---匿名函数/" rel="next" title="Elixir-简明笔记（九）-- 匿名函数">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（九）-- 匿名函数
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（十一）---神奇的管道/" rel="prev" title="Elixir-简明笔记（十一）-- 神奇的管道">
+                Elixir-简明笔记（十一）-- 神奇的管道 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#编译模块"><span class="nav-number">1.</span> <span class="nav-text">编译模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数体也是一个块"><span class="nav-number">2.</span> <span class="nav-text">函数体也是一个块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数调用及其模式匹配"><span class="nav-number">3.</span> <span class="nav-text">函数调用及其模式匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卫子句"><span class="nav-number">4.</span> <span class="nav-text">卫子句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用默认参数"><span class="nav-number">5.</span> <span class="nav-text">使用默认参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#私有函数"><span class="nav-number">5.1.</span> <span class="nav-text">私有函数</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

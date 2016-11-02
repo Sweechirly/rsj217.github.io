@@ -1,0 +1,682 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="编程语言有了基本数据结构，那么可以遣词造句了。等等，词组是有了，可是如何把这些词组组合起来呢？
+本节将会介绍运算符，基本数据结构通过运算符的计算，获得预期的值。Elixir的运算符与其他语言类似，并没有特别之处。主要有下面几类：
+
+布尔操作符 （Boolean operators）
+比较操作符 （Comparison operators）
+算术运算符（Arithmetic operators）
+包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（五）-- 运算符和操作符">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（五）---运算符和操作符/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="编程语言有了基本数据结构，那么可以遣词造句了。等等，词组是有了，可是如何把这些词组组合起来呢？
+本节将会介绍运算符，基本数据结构通过运算符的计算，获得预期的值。Elixir的运算符与其他语言类似，并没有特别之处。主要有下面几类：
+
+布尔操作符 （Boolean operators）
+比较操作符 （Comparison operators）
+算术运算符（Arithmetic operators）
+包">
+<meta property="og:updated_time" content="2016-02-18T02:34:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（五）-- 运算符和操作符">
+<meta name="twitter:description" content="编程语言有了基本数据结构，那么可以遣词造句了。等等，词组是有了，可是如何把这些词组组合起来呢？
+本节将会介绍运算符，基本数据结构通过运算符的计算，获得预期的值。Elixir的运算符与其他语言类似，并没有特别之处。主要有下面几类：
+
+布尔操作符 （Boolean operators）
+比较操作符 （Comparison operators）
+算术运算符（Arithmetic operators）
+包">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（五）---运算符和操作符/"/>
+
+
+  <title> Elixir-简明笔记（五）-- 运算符和操作符 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（五）-- 运算符和操作符
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:05+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>编程语言有了基本数据结构，那么可以遣词造句了。等等，词组是有了，可是如何把这些词组组合起来呢？</p>
+<p>本节将会介绍运算符，基本数据结构通过运算符的计算，获得预期的值。Elixir的运算符与其他语言类似，并没有特别之处。主要有下面几类：</p>
+<ul>
+<li>布尔操作符 （Boolean operators）</li>
+<li>比较操作符 （Comparison operators）</li>
+<li>算术运算符（Arithmetic operators）</li>
+<li>包含操作符（in operator）</li>
+</ul>
+<a id="more"></a>
+<h3 id="布尔操作符"><a href="#布尔操作符" class="headerlink" title="布尔操作符"></a>布尔操作符</h3><p>Elixir的布尔操作符只有三个，分别是<code>and</code>，<code>or</code>，<code>not</code>。之前介绍了布尔类型的数据结构。布尔操作符恰恰就是专门用于操作布尔类型的操作符。并且，布尔操作符只能接受布尔值做运算，非布尔值将会报错。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; a = <span class="keyword">true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">2</span>)&gt; b = <span class="keyword">false</span></div><div class="line"><span class="keyword">false</span></div><div class="line">iex(<span class="number">3</span>)&gt; a <span class="keyword">and</span> b</div><div class="line"><span class="keyword">false</span></div><div class="line">iex(<span class="number">4</span>)&gt; a <span class="keyword">or</span> b</div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">5</span>)&gt; <span class="keyword">not</span> a</div><div class="line"><span class="keyword">false</span></div><div class="line">iex(<span class="number">6</span>)&gt; <span class="keyword">not</span> <span class="number">1</span></div><div class="line">** (ArgumentError) argument error</div><div class="line">    <span class="symbol">:erlang</span>.<span class="keyword">not</span>(<span class="number">1</span>)</div><div class="line">iex(<span class="number">6</span>)&gt; <span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span></div><div class="line">** (ArgumentError) argument <span class="symbol">error:</span> <span class="number">1</span></div><div class="line">iex(<span class="number">6</span>)&gt; <span class="number">2</span> <span class="keyword">or</span> <span class="number">3</span></div><div class="line">** (ArgumentError) argument <span class="symbol">error:</span> <span class="number">2</span></div></pre></td></tr></table></figure>
+<p>布尔操作符运算遵循短路规则。即and表达式总是返回第一个false，如果全部是true的值，则返回最后一个true的值。or则返回第一个是true的值，如果都是false，则返回最后一个false的值。not则最简单，取反的值即可。一旦表达式返回了，就不会计算后面的逻辑表达式了。</p>
+<h4 id="and"><a href="#and" class="headerlink" title="and"></a>and</h4><blockquote>
+<p>a and b     # 如果 a 的值是 false，返回false，否则返回 b</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">iex(1)&gt; a = false</div><div class="line">false</div><div class="line">iex(2)&gt; b = 1</div><div class="line">1</div><div class="line">iex(3)&gt; a and b</div><div class="line">false</div><div class="line">iex(4)&gt; a = true</div><div class="line">true</div><div class="line">iex(5)&gt; a and b</div><div class="line">1</div></pre></td></tr></table></figure>
+<p>这里需要注意，方才我们说布尔操作符只接受布尔值，非布尔值将会报错。为什么当 <code>a=true</code>，<code>b=1</code>的时候，<code>a and b</code>不会报错，反而返回b的值呢？</p>
+<p>实际上，上面的and操作符运算的时候，都是从左往右计算求值，对于表达式 <code>a and b</code>。可以这么理解，and 的左边对a求值得到true（a=true变量绑定）。然后and操作符左边接受且必须接受一个布尔值，此时为a，根据and的计算原则，如果a的true，直接返回。如果a的false，则不需要计算后面的结构了，直接返回and右边的b。也就是说b并没有被and计算求值。</p>
+<p>在看下面的表达式：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">6</span>)&gt; a <span class="keyword">and</span> b <span class="keyword">and</span> b</div><div class="line">** (ArgumentError) argument <span class="symbol">error:</span> <span class="number">1</span></div><div class="line">iex(<span class="number">6</span>)&gt; a <span class="keyword">and</span> b <span class="keyword">and</span> <span class="number">1</span></div><div class="line">** (ArgumentError) argument <span class="symbol">error:</span> <span class="number">1</span></div></pre></td></tr></table></figure>
+<p>在第一个b后面再使用and操作符，第一个and把a当成参数计算的结果是返回b，第二个and则把返回的b当成自己的参数进行计算，显然此时b为1，不是布尔值，因此第二个and操作符报错。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">8</span>)&gt; a <span class="keyword">and</span> <span class="keyword">true</span> <span class="keyword">and</span> b</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">9</span>)&gt; a <span class="keyword">and</span> <span class="keyword">true</span> <span class="keyword">and</span> a <span class="keyword">and</span> b</div><div class="line"><span class="number">1</span></div></pre></td></tr></table></figure>
+<p>当and计算到最后一个元素，都是true的时候，则直接返回最后一个元素。例如上面的例子，最后一个and前面的值都是true，则返回and右边的值，此时不需要对右边的值进行逻辑求值。</p>
+<p>掌握逻辑操作的关键就是布尔操作符号每次只把左边的数当成参数求值计算，要么返回计算的结果，要么就返回右边的值。此时右边的值无需计算。</p>
+<h4 id="or"><a href="#or" class="headerlink" title="or"></a>or</h4><p>or操作符的原则是</p>
+<blockquote>
+<p>a or b      # 如果 a 的值是 true，返回ture，否则返回 b</p>
+</blockquote>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; a = <span class="keyword">true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">2</span>)&gt; a <span class="keyword">or</span> b</div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">3</span>)&gt; b = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">4</span>)&gt; a = <span class="keyword">false</span></div><div class="line"><span class="keyword">false</span></div><div class="line">iex(<span class="number">5</span>)&gt; a <span class="keyword">or</span> b</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">6</span>)&gt; a <span class="keyword">or</span> b <span class="keyword">or</span> <span class="keyword">true</span></div><div class="line">** (ArgumentError) argument <span class="symbol">error:</span> <span class="number">1</span></div></pre></td></tr></table></figure>
+<p>掌握了逻辑运算的规则，or也很容易理解。or左边是true，则返回true，如果左边不是true，则直接返回右边的值，不需要对右边的项求值，除非右边的项右边还有操作符。</p>
+<h4 id="not"><a href="#not" class="headerlink" title="not"></a>not</h4><p>not操作符最简单了</p>
+<blockquote>
+<p>not a       # 如果 a 的值是 true，返回false，否则返回 true</p>
+</blockquote>
+<p>与and，or 不同的在于，not不是对左边的项求值，而是对右边的第一项求值。</p>
+<p>下面看一个表达式，你觉得结果是什么呢？为什么？</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">2</span>)&gt; me = <span class="keyword">true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">3</span>)&gt; you = <span class="keyword">false</span></div><div class="line"><span class="keyword">false</span></div><div class="line">iex(<span class="number">4</span>)&gt; him = <span class="symbol">:love_u</span></div><div class="line"><span class="symbol">:love_u</span></div><div class="line">iex(<span class="number">5</span>)&gt; me <span class="keyword">and</span> you <span class="keyword">or</span> him</div><div class="line">???</div></pre></td></tr></table></figure>
+<p>当然，如果觉得逻辑操作符只能对布尔值求值比较麻烦。想要对普通的类型求值，可以使用宽松的逻辑操作符<code>&amp;&amp;</code>， <code>||</code>，<code>!</code>。这三个符号也可以做布尔运算，并且可以接受非布尔值做计算。其中计算的原则是，除了false和nil两个值之外，其他的一切类型求值都是true。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; a = <span class="keyword">true</span></div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">2</span>)&gt; b = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">3</span>)&gt; a <span class="keyword">and</span> b</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">4</span>)&gt; a <span class="keyword">and</span> b <span class="keyword">and</span> <span class="number">1</span></div><div class="line">** (ArgumentError) argument <span class="symbol">error:</span> <span class="number">1</span></div><div class="line">iex(<span class="number">4</span>)&gt; a &amp;&amp; b</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">5</span>)&gt; a &amp;&amp; b &amp;&amp; <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">6</span>)&gt; <span class="keyword">nil</span> &amp;&amp; a</div><div class="line"><span class="keyword">nil</span></div><div class="line">iex(<span class="number">7</span>)&gt;</div></pre></td></tr></table></figure>
+<p><code>||</code>和<code>!</code>与or和not类似，大家可以自己试试。</p>
+<h3 id="比较操作符"><a href="#比较操作符" class="headerlink" title="比较操作符"></a>比较操作符</h3><p>Elixir中的<code>=</code>表示模式匹配的符号，与其他语言不一样。那么其他语言的双等号<code>==</code>，Elixir也别有洞天么？</p>
+<p>当然不是Elixir的<code>==</code>与其他语言基本一样，用于表示<code>==</code>符号左右两边的数值相当。但是，仅仅是表示值相等，如果需要表示值和类型都相等，需要再加一个等号。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; a = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">2</span>)&gt; b = <span class="number">1.0</span></div><div class="line"><span class="number">1.0</span></div><div class="line">iex(<span class="number">3</span>)&gt; a == b</div><div class="line"><span class="keyword">true</span></div><div class="line">iex(<span class="number">4</span>)&gt; a === b</div><div class="line"><span class="keyword">false</span></div><div class="line">iex(<span class="number">5</span>)&gt;</div></pre></td></tr></table></figure>
+<p>比较操作符也没有什么特别的，大致如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">a === b     <span class="comment"># 严格意义上的相等，包括值和数据类型 (so 1 === 1.0 is false)</span></div><div class="line">a !== b     <span class="comment"># 严格意义上的不等 (so 1 !== 1.0 is true)</span></div><div class="line">a == b      <span class="comment"># 值相等 (so 1 == 1.0 is true)</span></div><div class="line">a != b      <span class="comment"># 值不等 (so 1 != 1.0 is false)</span></div><div class="line">a &gt; b       <span class="comment"># 大于</span></div><div class="line">a &gt;= b      <span class="comment"># 大于等于:</span></div><div class="line">a &lt; b       <span class="comment"># 小于:</span></div><div class="line">a &lt;= b      <span class="comment"># 小于等于:</span></div></pre></td></tr></table></figure>
+<p>比较操作符除了做数值大小的比较，还可以做排序的比较。Elixir中的比较排序并不像别的语言那么严格。不同类型也可以进行比较。如果类型相同或者一致，就会使用正常的类型比较。如果类型不同，则基于下面的优先原则：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">数字类型(number) &lt; 原子(atom) &lt; 引用(reference) &lt; 函数(function) &lt; 端口(port) &lt; 进程(pid) &lt; 元组(tuple) &lt; 图(map) &lt; 列表(list) &lt; 二进制(binary)</div></pre></td></tr></table></figure>
+<h3 id="算术运算符"><a href="#算术运算符" class="headerlink" title="算术运算符"></a>算术运算符</h3><p>算术运算符也很常见了，基本上就是四则运算符号。四个符号如下：</p>
+<ul>
+<li><ul>
+<li>加法</li>
+</ul>
+</li>
+<li><ul>
+<li>减法</li>
+</ul>
+</li>
+<li><ul>
+<li>乘法</li>
+</ul>
+</li>
+<li>/ 除法</li>
+</ul>
+<p>需要注意<code>/</code>做除法的时候，得到的结果都是浮点型的，即使能运算能够除尽。想要得到整型结果，需要使用内建的运算函数<code>div</code>。<code>div</code>的参数不能接受浮点型。Elixir很奇怪，没有常见的<code>%</code>做取余，而是使用一个内建的函数<code>rem</code>。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; <span class="number">10</span> / <span class="number">3</span></div><div class="line"><span class="number">3.3333333333333335</span></div><div class="line">iex(<span class="number">2</span>)&gt; <span class="number">10</span> / <span class="number">2</span></div><div class="line"><span class="number">5.0</span></div><div class="line">iex(<span class="number">3</span>)&gt; div <span class="number">10</span>, <span class="number">3</span></div><div class="line"><span class="number">3</span></div><div class="line">iex(<span class="number">4</span>)&gt; div <span class="number">10</span>, <span class="number">2</span></div><div class="line"><span class="number">5</span></div><div class="line">iex(<span class="number">5</span>)&gt; rem <span class="number">10</span> , <span class="number">3</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">6</span>)&gt; div <span class="number">10.0</span>, <span class="number">2</span></div><div class="line">** (ArithmeticError) bad argument <span class="keyword">in</span> arithmetic expression</div><div class="line">    <span class="symbol">:erlang</span>.div(<span class="number">10.0</span>, <span class="number">2</span>)</div></pre></td></tr></table></figure>
+<h3 id="拼接操作（Join-operators）"><a href="#拼接操作（Join-operators）" class="headerlink" title="拼接操作（Join operators）"></a>拼接操作（Join operators）</h3><p>相信很多开发者都知道，+符号除了用于数字运算，还通常用于字符串数组列表等数据结构的拼接。elixir中提供了<code>&lt;&gt;</code>拼接字符串，<code>++</code>用于拼接列表，甚至还有<code>--</code>用于列表相减。</p>
+<h3 id="包含操作符（in-operator）"><a href="#包含操作符（in-operator）" class="headerlink" title="包含操作符（in operator）"></a>包含操作符（in operator）</h3><p><code>in</code>成员判断操作符也很常用。用于判断一个元素是否在一个容器集合里面。</p>
+<p>本节针对elixir的基本运算符和操作符做了简单的介绍。有了他们，配合强大的元组列表图等结构。对于写一个Elixir程序，已经差不多万事俱备了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（四）---基本数据类型/" rel="next" title="Elixir-简明笔记（四）-- 基本数据类型">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（四）-- 基本数据类型
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（六）---元组/" rel="prev" title="Elixir-简明笔记（六）-- 元组">
+                Elixir-简明笔记（六）-- 元组 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#布尔操作符"><span class="nav-number">1.</span> <span class="nav-text">布尔操作符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#and"><span class="nav-number">1.1.</span> <span class="nav-text">and</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#or"><span class="nav-number">1.2.</span> <span class="nav-text">or</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#not"><span class="nav-number">1.3.</span> <span class="nav-text">not</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#比较操作符"><span class="nav-number">2.</span> <span class="nav-text">比较操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算术运算符"><span class="nav-number">3.</span> <span class="nav-text">算术运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拼接操作（Join-operators）"><span class="nav-number">4.</span> <span class="nav-text">拼接操作（Join operators）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#包含操作符（in-operator）"><span class="nav-number">5.</span> <span class="nav-text">包含操作符（in operator）</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

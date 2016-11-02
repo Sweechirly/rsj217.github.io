@@ -1,0 +1,612 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="story,unix," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="电脑，计算机已经成为我们生活中必不可少的一部分。无论是大型的超级计算机，还是手机般小巧的终端设备，都跑着一个操作系统。正是这些操作系统，让那些硬件和芯片能够组合起来，让那些软件得以运行，让我们的世界在科技的领域里一次又一次的享受生活。
+我们熟知的操作系统大概都是windows系列，近年来 Apple 的成功，让 MacOS（泛指apple的操作系统）也逐渐走进普通用户。在服务器领域，恐怕Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统的故事（一）--- ​​Unix 传奇">
+<meta property="og:url" content="http://rsj217.github.com/2015/03/03/os-story-1/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="电脑，计算机已经成为我们生活中必不可少的一部分。无论是大型的超级计算机，还是手机般小巧的终端设备，都跑着一个操作系统。正是这些操作系统，让那些硬件和芯片能够组合起来，让那些软件得以运行，让我们的世界在科技的领域里一次又一次的享受生活。
+我们熟知的操作系统大概都是windows系列，近年来 Apple 的成功，让 MacOS（泛指apple的操作系统）也逐渐走进普通用户。在服务器领域，恐怕Linux">
+<meta property="og:updated_time" content="2015-03-03T06:21:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="操作系统的故事（一）--- ​​Unix 传奇">
+<meta name="twitter:description" content="电脑，计算机已经成为我们生活中必不可少的一部分。无论是大型的超级计算机，还是手机般小巧的终端设备，都跑着一个操作系统。正是这些操作系统，让那些硬件和芯片能够组合起来，让那些软件得以运行，让我们的世界在科技的领域里一次又一次的享受生活。
+我们熟知的操作系统大概都是windows系列，近年来 Apple 的成功，让 MacOS（泛指apple的操作系统）也逐渐走进普通用户。在服务器领域，恐怕Linux">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/03/03/os-story-1/"/>
+
+
+  <title> 操作系统的故事（一）--- ​​Unix 传奇 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                操作系统的故事（一）--- ​​Unix 传奇
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-03-03T12:53:02+08:00" content="2015-03-03">
+              2015-03-03
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>电脑，计算机已经成为我们生活中必不可少的一部分。无论是大型的超级计算机，还是手机般小巧的终端设备，都跑着一个操作系统。正是这些操作系统，让那些硬件和芯片能够组合起来，让那些软件得以运行，让我们的世界在科技的领域里一次又一次的享受生活。</p>
+<p>我们熟知的操作系统大概都是windows系列，近年来 Apple 的成功，让 MacOS（泛指apple的操作系统）也逐渐走进普通用户。在服务器领域，恐怕Linux是无人不知无人不晓。他们都是操作系统，也在自己的领域里独领风骚。当然，这都得益于另外一个古董级别的操作系统–Unix，虽然说古董级别，只是他年纪大了，性能和功能，Unix 依然有着顽强的生命力。</p>
+<p>我们来沏杯茶，回顾Unix的传奇，讨论讨论 Windows 与 MacOS 的恩恩怨怨，还有 Linux 的迅速崛起。当然也少不了移动操作系统的 Symbian、IOS、Android、WindowsPhone 争霸以及 WebOS 和 BlackBerry OS 的别样人生。</p>
+<a id="more"></a>
+<h3 id="Unix-传奇"><a href="#Unix-传奇" class="headerlink" title="Unix 传奇"></a>Unix 传奇</h3><p>时光追溯到上世纪六十年代，多数计算机都采用批处理命令。为了研发一个多用途，多用户的操作系统。有三个著名的公司和机构联合起来进行研发。他们分别是美国电话及电报公司（American Telephone and Telegraph Inc.；AT&amp;T）、通用电器公司（General Electrics；G.E.）及麻省理工学院（Massachusetts Institute of Technology；MIT）。整个项目研发出来的操作系统被称之为MULTICS。可是后来，MULTICS项目开始迷失，目标过于庞大，功能过于复杂，研发的人们越来越不明白这个项目将会如何走下去。最终隶属 AT&amp;T 公司的贝尔实验室（Bell Labs）退出了这个项目。</p>
+<p>值得一提的是 Bell Labs 。这个实验室在整个人类科技史上都占据重要地位，电话就是在这个实验室诞生。里面有着才华卓越的工程师和黑客。由于贝尔实验室退出了MULTICS，那些习惯了使用MULTICS的贝尔实验室工程师突然之间无法使用MULTICS，这无疑类似把剑客的剑给没收了。当时贝尔实验室有个叫Ken Thompson的人，他负责为为MULTICS这个操作系统写游戏了个叫“Space Travel”的游戏。为了让这个游戏能继续下去，他不得不重新编写一个操作系统。当他去申请计算机的时候，显然领导不会因为一个游戏批准你一台计算机。早期的计算机并不像我们现在的pc机那么小巧。当时计算机可是巨无霸，每一台的造价也极其昂贵，只有企业和科研机构才能买得起。</p>
+<p>数字设备公司（Digital Equipment Corporation；DEC）生产两种小型计算机PDP系列和vax。 Ken无法得到PDP-11，却在一个角落了发现了PDP-7，虽然这个机器已经落后，Ken还是觉得如获至宝，随后他很顺利的用汇编完成了操作系统，并写完了游戏。有趣的是，Ken的一个同事Brian Kernighan非常不喜欢这个系统，嘲笑Ken Thompson说：“你写的系统真烂，干脆叫Unics算了。”（unics在英文里表示单一，与mult相反）。Ken对Brian的评价到没有多大排斥，本身他的目标是游戏，而不是操作系统，也接受了同事的命名。然后他更乐于推广他的游戏，让同事们茶余饭后娱乐娱乐。那时是1969年8月，恰巧这一年，芬兰诞生了一个婴儿，Linus Torvalds啼哭着来到这个世界。</p>
+<p>事情总是环环相扣，可是谁也不知道这环将会扣向哪一环。Ken的另一个同事Dennis Ritchie对Ken的游戏没有多大兴趣，倒是对Unics情有独钟。当时Ken用汇编完成的Unics，如果换到PDP-11上，Unics想要运行必须重新冲重新编写代码移植。Ken无法为当时不同的机型提供上百个Unics版本。这时，Dennis Ritchie 在BCPL基础上，开发了一种新的高级语言将Unics重新写了一遍，并命名为UNIX。这个语言是将BCPL语言进行了升级，也就是后来大名鼎鼎的C语言。尽管是游戏和嘲讽，Unix和C诞生了，并且完美地结合成为一个统一体，C与Unix很快成为世界的主导。新的历史，开始了。</p>
+<p>当时的美国公司，工程师研发完毕，往往会有休假，一休就是一年。旅游，探险都是好方式，可是Ken选择了到伯克利（Berkeley）进行教学。也难怪欧美的教育科技那么发达，总有黑客将知识和技术进行传承。由于当时AT&amp;T被美国反垄断制裁，Bell实验室不能销售Unix。只能无偿提供大家学习研究。正是因为这样开放环境，使得Unix的功能和特性被不断的丰富。在Berkeley，有一个专门研究UNIX小组，他们为UNIX提供了很多新特性，例如著名的TCP/IP协议。并完成了BSD版本。很快，就有公司看到了BSD的商机，分分购买BSD进行商用。</p>
+<p>这个时候，AT&amp;T公司对其他机构拿着Unix赚钱自己却一无所获很不爽。那是一个AT&amp;T妄图私有化的Unix的时代。为了私有化 Unix，1986年IEEE指定了一个委员会制定了一个一个开放作业系统的标准，称为POSIX(Portable Operating Systems Interface)。并和BSD进行法律官司，AT&amp;T再次被反垄断，这场官司一直打到AT&amp;T再将自己的Unix系统实验室卖掉。当然，AT&amp;T的Unix取得了这个标准制订战争的胜利，并取得了Unix注册商标。此时拥护BSD的爱好者把自己比做为冷酷无情的公司帝国的反抗军。独立的Bell实验室就可以单独销售Unix，当时价格昂贵。也就在这个时候，人们被昂贵的Unix吓怕了，使用的人数骤减。与此同时，Berkeley BSD小组的Bill Joy开始创办了一家公司，也就是后来全球知名的SUN公司。就销售量来说，AT&amp;T/UNIX始终赶不上BSD/Sun。并且Sun生产的小型工作站，风靡整个市场，很快就将 DEC 击败，并且让DEC退出了历史舞台。</p>
+<p>BSD仍然还在官司缠身，可是其他公司都看到了UNIX的商机，分分投靠AT&amp;T并开发自己的Unix，其中有著名的IBM的AIX，HP的HP-UX，SUN公司的Solaris，还有西雅图一个不知名的小公司，也生产着一个叫XENIX的Unix。时光继续走着，这个小公司的三个创始人打着扑克，心里还在构思。自己的公司如何挑战并取代那些巨无霸公司，成为Microsoft未来的梦想。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/story/" rel="tag">#story</a>
+          
+            <a href="/tags/unix/" rel="tag">#unix</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/02/nginx/" rel="next" title="Nginx限制静态文件访问">
+                <i class="fa fa-chevron-left"></i> Nginx限制静态文件访问
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/03/03/os-story-2/" rel="prev" title="操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨">
+                操作系统的故事（二）--- ​​Windows 与 Mac OS 的恩恩怨怨 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unix-传奇"><span class="nav-number">1.</span> <span class="nav-text">Unix 传奇</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

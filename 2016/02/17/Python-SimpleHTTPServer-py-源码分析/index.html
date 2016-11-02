@@ -1,0 +1,628 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前面分析BaseServer和BaseHTTPServer，可以知道BaseHTTPRequestHandler中handle_one_request方法将会通过自省的方式，调用HTTP客户端请求的方法。
+123456789def handle_one_request(self):	try:        # 省略... ...        method = getattr(self, mnam">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python-SimpleHTTPServer-py-源码分析">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Python-SimpleHTTPServer-py-源码分析/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="前面分析BaseServer和BaseHTTPServer，可以知道BaseHTTPRequestHandler中handle_one_request方法将会通过自省的方式，调用HTTP客户端请求的方法。
+123456789def handle_one_request(self):	try:        # 省略... ...        method = getattr(self, mnam">
+<meta property="og:updated_time" content="2016-02-17T09:32:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python-SimpleHTTPServer-py-源码分析">
+<meta name="twitter:description" content="前面分析BaseServer和BaseHTTPServer，可以知道BaseHTTPRequestHandler中handle_one_request方法将会通过自省的方式，调用HTTP客户端请求的方法。
+123456789def handle_one_request(self):	try:        # 省略... ...        method = getattr(self, mnam">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Python-SimpleHTTPServer-py-源码分析/"/>
+
+
+  <title> Python-SimpleHTTPServer-py-源码分析 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python-SimpleHTTPServer-py-源码分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:08+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面分析BaseServer和BaseHTTPServer，可以知道BaseHTTPRequestHandler中handle_one_request方法将会通过自省的方式，调用HTTP客户端请求的方法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_one_request</span><span class="params">(self)</span>:</span></div><div class="line">	<span class="keyword">try</span>:</div><div class="line">        <span class="comment"># 省略... ...</span></div><div class="line"></div><div class="line">        method = getattr(self, mname)</div><div class="line">        method()</div><div class="line">        self.wfile.flush() <span class="comment">#actually send the response if not already done.</span></div><div class="line">    <span class="keyword">except</span> socket.timeout, e:</div><div class="line">        <span class="comment"># 省略... ...</span></div></pre></td></tr></table></figure>
+<p>显然method将会在BaseHTTPRequestHandler的子类中实现。我们已经知道，但凡以Base开头的class，都需要被继承，然后在其子类中实现相关的方法。</p>
+<a id="more"></a>
+<h3 id="SimpleHTTPServer"><a href="#SimpleHTTPServer" class="headerlink" title="SimpleHTTPServer"></a>SimpleHTTPServer</h3><p>构建一个简单的HTTP服务，需要继承HTTPServer，同时requesthandler也需要继承BaseHTTPRequestHandler。python已经实现了一个例子，那就是SimpleHTTPServer。因此分析SimpleHTTPServer来查看如何使用前面的一些类构建http服务。</p>
+<p>曾经为了表示python的简洁优雅，经常会举这样的例子，python可以一行代码开启一个服务器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ python -m SimpleHTTPServer</div></pre></td></tr></table></figure>
+<p>这里的SimpleHTTPServer就是实现了HTTPServer的模块。</p>
+<p>SimpleHTTPServer通过调用BaseHTTPServer模块的test方法做为入口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">def test(HandlerClass = SimpleHTTPRequestHandler,</div><div class="line">         ServerClass = BaseHTTPServer.HTTPServer):</div><div class="line">    BaseHTTPServer.test(HandlerClass, ServerClass)</div></pre></td></tr></table></figure>
+<p>test方法做了两件事，第一件就是使用HTTPServer接受一个监听地址和requestClass参数，创建了一个实例对象，调用server_forever方法开启服务。</p>
+<h3 id="SimpleHTTPRequestHandler"><a href="#SimpleHTTPRequestHandler" class="headerlink" title="SimpleHTTPRequestHandler"></a>SimpleHTTPRequestHandler</h3><p>根据之前的分析，使用httpserver的服务，我们只需要继续BaseHTTPRequestHandler，并提供自省的method方法即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SimpleHTTPRequestHandler</span><span class="params">(BaseHTTPServer.BaseHTTPRequestHandler)</span>:</span></div><div class="line">    server_version = <span class="string">"SimpleHTTP/"</span> + __version__</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">do_GET</span><span class="params">(self)</span>:</span></div><div class="line">        f = self.send_head()</div><div class="line">        <span class="keyword">if</span> f:</div><div class="line">            self.copyfile(f, self.wfile)</div><div class="line">            f.close()</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">do_HEAD</span><span class="params">(self)</span>:</span></div><div class="line">        f = self.send_head()</div><div class="line">        <span class="keyword">if</span> f:</div><div class="line">            f.close()</div></pre></td></tr></table></figure>
+<p>do_GET 和 do_HEAD 分别实现了http的get请求和head请求的处理。他们调用send_head方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_head</span><span class="params">(self)</span>:</span></div><div class="line"></div><div class="line">    path = self.translate_path(self.path)</div><div class="line">    f = <span class="keyword">None</span></div><div class="line">    <span class="keyword">if</span> os.path.isdir(path):</div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.path.endswith(<span class="string">'/'</span>):</div><div class="line">            self.send_response(<span class="number">301</span>)</div><div class="line">            self.send_header(<span class="string">"Location"</span>, self.path + <span class="string">"/"</span>)</div><div class="line">            self.end_headers()</div><div class="line">            <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">        <span class="keyword">for</span> index <span class="keyword">in</span> <span class="string">"index.html"</span>, <span class="string">"index.htm"</span>:</div><div class="line">            index = os.path.join(path, index)</div><div class="line">            <span class="keyword">if</span> os.path.exists(index):</div><div class="line">                path = index</div><div class="line">                <span class="keyword">break</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> self.list_directory(path)</div><div class="line">    ctype = self.guess_type(path)</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        f = open(path, <span class="string">'rb'</span>)</div><div class="line">    <span class="keyword">except</span> IOError:</div><div class="line">        self.send_error(<span class="number">404</span>, <span class="string">"File not found"</span>)</div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">    self.send_response(<span class="number">200</span>)</div><div class="line">    self.send_header(<span class="string">"Content-type"</span>, ctype)</div><div class="line">    fs = os.fstat(f.fileno())</div><div class="line">    self.send_header(<span class="string">"Content-Length"</span>, str(fs[<span class="number">6</span>]))</div><div class="line">    self.send_header(<span class="string">"Last-Modified"</span>, self.date_time_string(fs.st_mtime))</div><div class="line">    self.end_headers()</div><div class="line">    <span class="keyword">return</span> f</div></pre></td></tr></table></figure>
+<p>send_head 方法通过uri的path分析得到客户请求的网路路径。构造head的mime元信息并发送到客户端，然后返回一个打开path的文件句柄。</p>
+<h3 id="copyfile"><a href="#copyfile" class="headerlink" title="copyfile"></a>copyfile</h3><p>do_GET的下一步就是通过 copyfile方法，将客户请求的path的文件数据写入到缓冲可写文件中，发送给客户端。</p>
+<h3 id="list-directory"><a href="#list-directory" class="headerlink" title="list_directory"></a>list_directory</h3><p>SimpleHTTPServer模块还提供了list_directory方法，用于响应path是一个目录，而不是文件的情况。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">list_directory</span><span class="params">(self, path)</span>:</span></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        list = os.listdir(path)</div><div class="line">    <span class="keyword">except</span> os.error:</div><div class="line">        self.send_error(<span class="number">404</span>, <span class="string">"No permission to list directory"</span>)</div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div><div class="line">    list.sort(key=<span class="keyword">lambda</span> a: a.lower())</div><div class="line">    f = StringIO()</div><div class="line">    displaypath = cgi.escape(urllib.unquote(self.path))</div><div class="line">    f.write(<span class="string">'&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"&gt;'</span>)</div><div class="line">    f.write(<span class="string">"&lt;html&gt;\n&lt;title&gt;Directory listing for %s&lt;/title&gt;\n"</span> % displaypath)</div><div class="line">    f.write(<span class="string">"&lt;body&gt;\n&lt;h2&gt;Directory listing for %s&lt;/h2&gt;\n"</span> % displaypath)</div><div class="line">    f.write(<span class="string">"&lt;hr&gt;\n&lt;ul&gt;\n"</span>)</div><div class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> list:</div><div class="line">        fullname = os.path.join(path, name)</div><div class="line">        displayname = linkname = name</div><div class="line">        <span class="comment"># Append / for directories or @ for symbolic links</span></div><div class="line">        <span class="keyword">if</span> os.path.isdir(fullname):</div><div class="line">            displayname = name + <span class="string">"/"</span></div><div class="line">            linkname = name + <span class="string">"/"</span></div><div class="line">        <span class="keyword">if</span> os.path.islink(fullname):</div><div class="line">            displayname = name + <span class="string">"@"</span></div><div class="line">            <span class="comment"># Note: a link to a directory displays with @ and links with /</span></div><div class="line">        f.write(<span class="string">'&lt;li&gt;&lt;a href="%s"&gt;%s&lt;/a&gt;\n'</span></div><div class="line">                % (urllib.quote(linkname), cgi.escape(displayname)))</div><div class="line">    f.write(<span class="string">"&lt;/ul&gt;\n&lt;hr&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n"</span>)</div><div class="line">    length = f.tell()</div><div class="line">    f.seek(<span class="number">0</span>)</div><div class="line">    self.send_response(<span class="number">200</span>)</div><div class="line">    encoding = sys.getfilesystemencoding()</div><div class="line">    self.send_header(<span class="string">"Content-type"</span>, <span class="string">"text/html; charset=%s"</span> % encoding)</div><div class="line">    self.send_header(<span class="string">"Content-Length"</span>, str(length))</div><div class="line">    self.end_headers()</div><div class="line">    <span class="keyword">return</span> f</div></pre></td></tr></table></figure>
+<p>由此可见，处理客户端的请求，只需要使用 send_reponse， send_header 和 end_headers ，就能向客户端发送reponse。</p>
+<h3 id="自定义http服务"><a href="#自定义http服务" class="headerlink" title="自定义http服务"></a>自定义http服务</h3><p>定义一个CustomHTTPRequestHadnler继承自BaseHTTPRequestHandler。在其内实现do_GET 方法来处理get请求。</p>
+<p>然后再定义一个CustomHTTPServer继承自HTTPServer，它接受CustomHTTPRequestHadnler作为自己的handler。简单的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> BaseHTTPServer <span class="keyword">import</span> BaseHTTPRequestHandler, HTTPServer</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomHTTPRequestHandler</span><span class="params">(BaseHTTPRequestHandler)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">do_GET</span><span class="params">(self)</span>:</span></div><div class="line">        self.send_response(<span class="number">200</span>)</div><div class="line">        self.send_header(<span class="string">'Content-type'</span>, <span class="string">'text/html'</span>)</div><div class="line">        self.end_headers()</div><div class="line">        self.wfile.write(<span class="string">"hello world\r\n"</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomHTTPServer</span><span class="params">(HTTPServer)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, host, port)</span>:</span></div><div class="line">        HTTPServer.__init__(self, (host, port), CustomHTTPRequestHandler)</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">    server = CustomHTTPServer(<span class="string">'127.0.0.1'</span>, <span class="number">8000</span>)</div><div class="line">    server.serve_forever()</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    main()</div></pre></td></tr></table></figure>
+<p>使用curl访问可以得到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">➜  ~  curl http://127.0.0.1:8000</div><div class="line">hello world</div><div class="line">➜  ~</div></pre></td></tr></table></figure>
+<p>控制台会打出访问的log。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">127.0.0.1 - - [01/Jun/2015 11:42:33] &quot;GET / HTTP/1.1&quot; 200 -</div></pre></td></tr></table></figure>
+<p>从socket的建立，select的IO模式，再到Server和Handler的组合构建服务。我们已经熟悉了python的基本网络编程。python的web开发中，更多是使用WSGI协议。实现该协议的还有 uWSGI和gunicorn等库。相比那些库，python内部提供了一个wsgiref模块，实现了一个简单wsgi服务–simple_server。</p>
+<p>接下来将会通过分析simple_server，更好的掌握WSGI协议。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/Python-BaseHTTPServer-py-源码分析/" rel="next" title="Python-BaseHTTPServer-py-源码分析">
+                <i class="fa fa-chevron-left"></i> Python-BaseHTTPServer-py-源码分析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Python-wsgiref-模块源码浅析/" rel="prev" title="Python-wsgiref-模块源码浅析">
+                Python-wsgiref-模块源码浅析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SimpleHTTPServer"><span class="nav-number">1.</span> <span class="nav-text">SimpleHTTPServer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SimpleHTTPRequestHandler"><span class="nav-number">2.</span> <span class="nav-text">SimpleHTTPRequestHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copyfile"><span class="nav-number">3.</span> <span class="nav-text">copyfile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#list-directory"><span class="nav-number">4.</span> <span class="nav-text">list_directory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义http服务"><span class="nav-number">5.</span> <span class="nav-text">自定义http服务</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

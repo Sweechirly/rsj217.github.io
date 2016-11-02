@@ -1,0 +1,640 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="异步任务异步任务是web开发中一个很常见的方法。对于一些耗时耗资源的操作，往往从主应用中隔离，通过异步的方式执行。简而言之，做一个注册的功能，在用户使用邮箱注册成功之后，需要给该邮箱发送一封激活邮件。如果直接放在应用中，则调用发邮件的过程会遇到网络IO的阻塞，比好优雅的方式则是使用异步任务，应用在业务逻辑中触发一个异步任务。
+实现异步任务的工具有很多，其原理都是使用一个任务队列，比如使用redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="异步任务神器-Celery-简明笔记">
+<meta property="og:url" content="http://rsj217.github.com/2015/09/20/异步任务神器-Celery-简明笔记/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="异步任务异步任务是web开发中一个很常见的方法。对于一些耗时耗资源的操作，往往从主应用中隔离，通过异步的方式执行。简而言之，做一个注册的功能，在用户使用邮箱注册成功之后，需要给该邮箱发送一封激活邮件。如果直接放在应用中，则调用发邮件的过程会遇到网络IO的阻塞，比好优雅的方式则是使用异步任务，应用在业务逻辑中触发一个异步任务。
+实现异步任务的工具有很多，其原理都是使用一个任务队列，比如使用redis">
+<meta property="og:updated_time" content="2016-02-17T03:10:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="异步任务神器-Celery-简明笔记">
+<meta name="twitter:description" content="异步任务异步任务是web开发中一个很常见的方法。对于一些耗时耗资源的操作，往往从主应用中隔离，通过异步的方式执行。简而言之，做一个注册的功能，在用户使用邮箱注册成功之后，需要给该邮箱发送一封激活邮件。如果直接放在应用中，则调用发邮件的过程会遇到网络IO的阻塞，比好优雅的方式则是使用异步任务，应用在业务逻辑中触发一个异步任务。
+实现异步任务的工具有很多，其原理都是使用一个任务队列，比如使用redis">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/09/20/异步任务神器-Celery-简明笔记/"/>
+
+
+  <title> 异步任务神器-Celery-简明笔记 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                异步任务神器-Celery-简明笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-09-20T22:09:00+08:00" content="2015-09-20">
+              2015-09-20
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="异步任务"><a href="#异步任务" class="headerlink" title="异步任务"></a>异步任务</h3><p>异步任务是web开发中一个很常见的方法。对于一些耗时耗资源的操作，往往从主应用中隔离，通过异步的方式执行。简而言之，做一个注册的功能，在用户使用邮箱注册成功之后，需要给该邮箱发送一封激活邮件。如果直接放在应用中，则调用发邮件的过程会遇到网络IO的阻塞，比好优雅的方式则是使用异步任务，应用在业务逻辑中触发一个异步任务。</p>
+<p>实现异步任务的工具有很多，其原理都是使用一个任务队列，比如使用<a href="http://www.jianshu.com/p/9c04890615ba" target="_blank" rel="external">redis生产消费模型或者发布订阅模式实现一个简单的消息队列</a>。</p>
+<a id="more"></a>
+<p>除了redis，还可以使用另外一个神器—Celery。Celery是一个异步任务的调度工具。它是Python写的库，但是它实现的通讯协议也可以使用ruby，php，javascript等调用。异步任务除了消息队列的后台执行的方式，还是一种则是跟进时间的计划任务。下面将会介绍如何使用celery实现这两种需求。</p>
+<h3 id="Celry-broker-和-backend"><a href="#Celry-broker-和-backend" class="headerlink" title="Celry broker 和 backend"></a>Celry broker 和 backend</h3><p>最早学习celery的时候，冒出了一个rabbitmq，又冒出一个redis。当时一头雾水。实际上这正是celery的设计奥妙。简单来说，rabbitmq是一个采用Erlang写的强大的消息队列工具。在celery中可以扮演broker的角色。那么什么是broker？</p>
+<p>broker是一个消息传输的中间件，可以理解为一个邮箱。每当应用程序调用celery的异步任务的时候，会向broker传递消息，而后celery的worker将会取到消息，进行对于的程序执行。好吧，这个邮箱可以看成是一个消息队列。那么什么又是backend，通常程序发送的消息，发完就完了，可能都不知道对方时候接受了。为此，celery实现了一个backend，用于存储这些消息以及celery执行的一些消息和结果。对于 brokers，官方推荐是rabbitmq和redis，至于backend，就是数据库啦。为了简单起见，我们都用redis。</p>
+<h3 id="Getting-Starting"><a href="#Getting-Starting" class="headerlink" title="Getting Starting"></a>Getting Starting</h3><p>使用celery包含三个方面，其一是定义任务函数，其二是运行celery服务，最后是客户应用程序的调用。</p>
+<p>创建一个文件 <code>tasks.py</code></p>
+<p>输入下列代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">from celery import Celery</div><div class="line"></div><div class="line">brokers = &apos;redis://127.0.0.1:6379/5&apos;</div><div class="line">backend = &apos;redis://127.0.0.1:6379/6&apos;</div><div class="line"></div><div class="line"></div><div class="line">app = Celery(&apos;tasks&apos;, broker=broker, backend=backend)</div><div class="line"></div><div class="line">@app.task</div><div class="line">def add(x, y):</div><div class="line">    return x + y</div></pre></td></tr></table></figure>
+<p>上述代码导入了celery，然后创建了celery实例app，实力话的过程中，指定了任务名<code>tasks</code>（和文件名一致），传入了broker和backend。然后创建了一个任务函数<code>add</code>。</p>
+<p>下面就启动celery服务</p>
+<p>在当前命令行终端运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">celery -A tasks worker  --loglevel=info</div></pre></td></tr></table></figure>
+<p>此时会看见一对输出。包括注册的任务啦。</p>
+<p>下面客户端程序如何调用呢？打开一个命令行，进入Python环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">In [0]:from tasks import add</div><div class="line">In [1]: r = add.delay(2, 2)</div><div class="line">In [2]: add.delay(2, 2)</div><div class="line">Out[2]: &lt;AsyncResult: 6fdb0629-4beb-4eb7-be47-f22be1395e1d&gt;</div><div class="line"></div><div class="line">In [3]: r = add.delay(3, 3)</div><div class="line"></div><div class="line">In [4]: r.re</div><div class="line">r.ready   r.result  r.revoke</div><div class="line"></div><div class="line">In [4]: r.ready()</div><div class="line">Out[4]: True</div><div class="line"></div><div class="line">In [6]: r.result</div><div class="line">Out[6]: 6</div><div class="line"></div><div class="line">In [7]: r.get()</div><div class="line">Out[7]: 6</div></pre></td></tr></table></figure>
+<p>在celery命令行可以看见celery执行的日志：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[2015-09-20 21:37:06,086: INFO/MainProcess] Task proj.tasks.add[76beb980-0f55-4629-a4fb-4a1776428ea8] succeeded in 0.00089102005586s: 6</div></pre></td></tr></table></figure>
+<p>打开 backend的redis，也可以看见celery执行的信息。</p>
+<p>现在时在python环境中调用的add函数，实际上通常在应用程序中调用这个方法。需要注意，如果把返回值赋值给一个变量，那么原来的应用程序也会被阻塞，需要等待异步任务返回的结果。因此，实际使用中，不需要把结果赋值。</p>
+<h3 id="计划任务"><a href="#计划任务" class="headerlink" title="计划任务"></a>计划任务</h3><p>上述的使用是简单的配置，下面介绍一个更健壮的方式来使用celery。首先创建一个python包，celery服务，姑且命名为proj。目录文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">☁  proj  tree</div><div class="line">.</div><div class="line">├── __init__.py</div><div class="line">├── celery.py 			# 创建 celery 实例</div><div class="line">├── config.py				# 配置文件</div><div class="line">└── tasks.py				# 任务函数</div></pre></td></tr></table></figure>
+<p>首先是 celery.py</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line"></div><div class="line">from __future__ import absolute_import</div><div class="line">from celery import Celery</div><div class="line"></div><div class="line">app = Celery(&apos;proj&apos;, include=[&apos;proj.tasks&apos;])</div><div class="line"></div><div class="line">app.config_from_object(&apos;proj.config&apos;)</div><div class="line"></div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line">    app.start()</div></pre></td></tr></table></figure>
+<p>这一次创建 app，并没有直接指定 broker 和 backend。而是在配置文件中。</p>
+<p>config.py</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line"></div><div class="line">from __future__ import absolute_import</div><div class="line"></div><div class="line">CELERY_RESULT_BACKEND = &apos;redis://127.0.0.1:6379/5&apos;</div><div class="line">BROKER_URL = &apos;redis://127.0.0.1:6379/6&apos;</div></pre></td></tr></table></figure>
+<p>剩下的就是tasks.py</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line"></div><div class="line">from __future__ import absolute_import</div><div class="line">from proj.celery import app</div><div class="line"></div><div class="line">@app.task</div><div class="line">def add(x, y):</div><div class="line">    return x + y</div></pre></td></tr></table></figure>
+<p>使用方法也很简单，在proj的同一级目录执行celery：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">celery -A proj worker -l info</div></pre></td></tr></table></figure>
+<p>现在使用任务也很简单，直接在客户端代码调用 proj.tasks 里的函数即可。</p>
+<h4 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h4><p>一种常见的需求是每隔一段时间执行一个任务。配置如下</p>
+<p>config.py<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line"></div><div class="line">from __future__ import absolute_import</div><div class="line"></div><div class="line">CELERY_RESULT_BACKEND = &apos;redis://127.0.0.1:6379/5&apos;</div><div class="line">BROKER_URL = &apos;redis://127.0.0.1:6379/6&apos;</div><div class="line"></div><div class="line">CELERY_TIMEZONE = &apos;Asia/Shanghai&apos;</div><div class="line"></div><div class="line">from datetime import timedelta</div><div class="line"></div><div class="line">CELERYBEAT_SCHEDULE = &#123;</div><div class="line">    &apos;add-every-30-seconds&apos;: &#123;</div><div class="line">         &apos;task&apos;: &apos;proj.tasks.add&apos;,</div><div class="line">         &apos;schedule&apos;: timedelta(seconds=30),</div><div class="line">         &apos;args&apos;: (16, 16)</div><div class="line">    &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注意配置文件需要指定时区。这段代码表示每隔30秒执行 add 函数。</p>
+<p>一旦使用了 scheduler, 启动 celery需要加上-B 参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">celery -A proj worker -B -l info</div></pre></td></tr></table></figure>
+<h4 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h4><p>计划任务当然也可以用crontab实现，celery也有crontab模式。修改 config.py</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env python</div><div class="line"># -*- coding:utf-8 -*-</div><div class="line"></div><div class="line">from __future__ import absolute_import</div><div class="line"></div><div class="line">CELERY_RESULT_BACKEND = &apos;redis://127.0.0.1:6379/5&apos;</div><div class="line">BROKER_URL = &apos;redis://127.0.0.1:6379/6&apos;</div><div class="line"></div><div class="line">CELERY_TIMEZONE = &apos;Asia/Shanghai&apos;</div><div class="line"></div><div class="line">from celery.schedules import crontab</div><div class="line"></div><div class="line">CELERYBEAT_SCHEDULE = &#123;</div><div class="line">    # Executes every Monday morning at 7:30 A.M</div><div class="line">    &apos;add-every-monday-morning&apos;: &#123;</div><div class="line">        &apos;task&apos;: &apos;tasks.add&apos;,</div><div class="line">        &apos;schedule&apos;: crontab(hour=7, minute=30, day_of_week=1),</div><div class="line">        &apos;args&apos;: (16, 16),</div><div class="line">    &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>总而言之，scheduler的切分度更细，可以精确到秒。crontab模式就不用说了。当然celery还有更高级的用法，比如多个机器使用，启用多个worker并发处理等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/06/22/python-magic-descriptor/" rel="next" title="Python 黑魔法---描述器（descriptor）">
+                <i class="fa fa-chevron-left"></i> Python 黑魔法---描述器（descriptor）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/16/递归与尾递归/" rel="prev" title="递归和尾递归">
+                递归和尾递归 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#异步任务"><span class="nav-number">1.</span> <span class="nav-text">异步任务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Celry-broker-和-backend"><span class="nav-number">2.</span> <span class="nav-text">Celry broker 和 backend</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Getting-Starting"><span class="nav-number">3.</span> <span class="nav-text">Getting Starting</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计划任务"><span class="nav-number">4.</span> <span class="nav-text">计划任务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Scheduler"><span class="nav-number">4.1.</span> <span class="nav-text">Scheduler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#crontab"><span class="nav-number">4.2.</span> <span class="nav-text">crontab</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="BaseServer 和 BaseRequestHandlerPython为网络编程提高了更高级的封装。SocketServer.py 提供了不少网络服务的类。它们的设计很优雅。Python把网络服务抽象成两个主要的类，一个是Server类，用于处理连接相关的网络操作，另外一个则是RequestHandler类，用于处理数据相关的操作。并且提供两个MixIn 类，用于扩展 Server，实现多进程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python-SocketServer-py-源码分析（一）">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Python-SocketServer-py-源码分析（一）/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="BaseServer 和 BaseRequestHandlerPython为网络编程提高了更高级的封装。SocketServer.py 提供了不少网络服务的类。它们的设计很优雅。Python把网络服务抽象成两个主要的类，一个是Server类，用于处理连接相关的网络操作，另外一个则是RequestHandler类，用于处理数据相关的操作。并且提供两个MixIn 类，用于扩展 Server，实现多进程">
+<meta property="og:updated_time" content="2016-02-17T09:29:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python-SocketServer-py-源码分析（一）">
+<meta name="twitter:description" content="BaseServer 和 BaseRequestHandlerPython为网络编程提高了更高级的封装。SocketServer.py 提供了不少网络服务的类。它们的设计很优雅。Python把网络服务抽象成两个主要的类，一个是Server类，用于处理连接相关的网络操作，另外一个则是RequestHandler类，用于处理数据相关的操作。并且提供两个MixIn 类，用于扩展 Server，实现多进程">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Python-SocketServer-py-源码分析（一）/"/>
+
+
+  <title> Python-SocketServer-py-源码分析（一） |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python-SocketServer-py-源码分析（一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:01+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="BaseServer-和-BaseRequestHandler"><a href="#BaseServer-和-BaseRequestHandler" class="headerlink" title="BaseServer 和 BaseRequestHandler"></a>BaseServer 和 BaseRequestHandler</h2><p>Python为网络编程提高了更高级的封装。SocketServer.py 提供了不少网络服务的类。它们的设计很优雅。Python把网络服务抽象成两个主要的类，一个是Server类，用于处理连接相关的网络操作，另外一个则是RequestHandler类，用于处理数据相关的操作。并且提供两个MixIn 类，用于扩展 Server，实现多进程或多线程。在构建网络服务的时候，Server 和 RequestHandler 并不是分开的，RequestHandler的实例对象在Server 内配合 Server工作。</p>
+<p>改模块的主要几个<code>Server</code>关系如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">+------------+</div><div class="line">| BaseServer |</div><div class="line">+------------+</div><div class="line">      |</div><div class="line">      v</div><div class="line">+-----------+        +------------------+</div><div class="line">| TCPServer |-------&gt;| UnixStreamServer |</div><div class="line">+-----------+        +------------------+</div><div class="line">      |</div><div class="line">      v</div><div class="line">+-----------+        +--------------------+</div><div class="line">| UDPServer |-------&gt;| UnixDatagramServer |</div><div class="line">+-----------+        +--------------------+</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="BaseServer-分析"><a href="#BaseServer-分析" class="headerlink" title="BaseServer 分析"></a>BaseServer 分析</h3><p>BaseServer 通过<code>__init__</code>初始化，对外提供serve_forever和 handler_request方法。</p>
+<h4 id="init-初始化"><a href="#init-初始化" class="headerlink" title="init 初始化"></a><strong>init</strong> 初始化</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, server_address, RequestHandlerClass)</span>:</span></div><div class="line">    <span class="string">"""Constructor.  May be extended, do not override."""</span></div><div class="line">    self.server_address = server_address</div><div class="line">    self.RequestHandlerClass = RequestHandlerClass</div><div class="line">    self.__is_shut_down = threading.Event()</div><div class="line">    self.__shutdown_request = <span class="keyword">False</span></div></pre></td></tr></table></figure>
+<p><code>__init__</code>源码很简单。主要作用是创建server对象，并初始化server地址和处理请求的class。熟悉socket编程应该很清楚，server_address是一个包含主机和端口的元组。</p>
+<h4 id="serve-forever"><a href="#serve-forever" class="headerlink" title="serve_forever"></a>serve_forever</h4><p>创建了server对象之后，就需要使用server对象开启一个无限循环，下面来分析serve_forever的源码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">serve_forever</span><span class="params">(self, poll_interval=<span class="number">0.5</span>)</span>:</span></div><div class="line">    self.__is_shut_down.clear()</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        <span class="keyword">while</span> <span class="keyword">not</span> self.__shutdown_request:</div><div class="line">            r, w, e = _eintr_retry(select.select, [self], [], [],</div><div class="line">                                   poll_interval)</div><div class="line">            <span class="keyword">if</span> self <span class="keyword">in</span> r:</div><div class="line">                self._handle_request_noblock()</div><div class="line">    <span class="keyword">finally</span>:</div><div class="line">        self.__shutdown_request = <span class="keyword">False</span></div><div class="line">        self.__is_shut_down.set()</div></pre></td></tr></table></figure>
+<p>serve_forever接受一个参数poll_interval，用于表示select轮询的时间。然后进入一个无限循环，调用select方式进行网络IO的监听。</p>
+<p>如果select函数返回，表示有IO连接或数据，那么将会调用_handle_request_noblock方法。</p>
+<h4 id="handle-request-noblock"><a href="#handle-request-noblock" class="headerlink" title="_handle_request_noblock"></a>_handle_request_noblock</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">_handle_request_noblock</span><span class="params">(self)</span>:</span></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        request, client_address = self.get_request()</div><div class="line">    <span class="keyword">except</span> socket.error:</div><div class="line">        <span class="keyword">return</span></div><div class="line">    <span class="keyword">if</span> self.verify_request(request, client_address):</div><div class="line">        <span class="keyword">try</span>:</div><div class="line">            self.process_request(request, client_address)</div><div class="line">        <span class="keyword">except</span>:</div><div class="line">            self.handle_error(request, client_address)</div><div class="line">            self.shutdown_request(request)</div></pre></td></tr></table></figure>
+<p>_handle_request_noblock方法即开始处理一个请求，并且是非阻塞。该方法通过get_request方法获取连接，具体的实现在其子类。一旦得到了连接，调用verify_request方法验证请求。验证通过，即调用process_request处理请求。如果中途出现错误，则调用handle_error处理错误，以及shutdown_request结束连接。</p>
+<h4 id="verify-request"><a href="#verify-request" class="headerlink" title="verify_request"></a>verify_request</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">verify_request</span><span class="params">(self, request, client_address)</span>:</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">True</span></div></pre></td></tr></table></figure>
+<p>该方法对request进行验证，通常会被子类重写。简单的返回True即可，然后进入process_request方法处理请求。</p>
+<h4 id="process-request"><a href="#process-request" class="headerlink" title="process_request"></a>process_request</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, client_address)</span>:</span></div><div class="line">    self.finish_request(request, client_address)</div><div class="line">    self.shutdown_request(request)</div></pre></td></tr></table></figure>
+<p>process_request方法是mixin的入口，MixIn子类通过重写该方法，进行多线程或多进程的配置。调用finish_request完成请求的处理，同时调用shutdown_request结束请求。</p>
+<h4 id="finish-request"><a href="#finish-request" class="headerlink" title="finish_request"></a>finish_request</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">finish_request</span><span class="params">(self, request, client_address)</span>:</span></div><div class="line">    self.RequestHandlerClass(request, client_address, self)</div></pre></td></tr></table></figure>
+<p>finish_request方法将会处理完毕请求。创建requestHandler对象，并通过requestHandler做具体的处理。</p>
+<h3 id="BaseRequestHandler-分析"><a href="#BaseRequestHandler-分析" class="headerlink" title="BaseRequestHandler 分析"></a>BaseRequestHandler 分析</h3><p>所有requestHandler都继承BaseRequestHandler基类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, request, client_address, server)</span>:</span></div><div class="line">    self.request = request</div><div class="line">    self.client_address = client_address</div><div class="line">    self.server = server</div><div class="line">    self.setup()</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        self.handle()</div><div class="line">    <span class="keyword">finally</span>:</div><div class="line">        self.finish()</div></pre></td></tr></table></figure>
+<p>该类会处理每一个请求。初始化对象的时候，设置请求request对象。然后调用setup方法，子类会重写该方法，用于处理socket连接。接下来的将是handler和finish方法。所有对请求的处理，都可以重写handler方法。</p>
+<p>至此，整个Python提供的Server方式即介绍完毕。总结一下，构建一个网络服务，需要一个BaseServer用于处理网络IO，同时在内部创建requestHandler对象，对所有具体的请求做处理。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">BaseServer - BaseRequestHandler</div><div class="line"></div><div class="line">__init__(server_address, RequestHandlerClass): </div><div class="line">	BaseServer.server_address</div><div class="line">	BaseServer.RequestHandlerClass</div><div class="line">	</div><div class="line">serve_forever(): </div><div class="line"></div><div class="line">	select() </div><div class="line"></div><div class="line">	BaseServer._handle_request_noblock()</div><div class="line"></div><div class="line">		BaseServer.get_request() -&gt; request, client_addres</div><div class="line"></div><div class="line">		BaseServer.verify_request()</div><div class="line"></div><div class="line">			BaseServer.process_request()</div><div class="line"></div><div class="line">				BaseServer.process_request()</div><div class="line"></div><div class="line">					BaseServer.finish_request()</div><div class="line"></div><div class="line">						BaseServer.RequestHandlerClass()</div><div class="line"></div><div class="line">							BaseRequestHandler.__init__(request)</div><div class="line">			</div><div class="line">								BaseRequestHandler.request</div><div class="line">								BaseRequestHandler.client_address = client_address</div><div class="line"></div><div class="line">								BaseRequestHandler.setup()</div><div class="line"></div><div class="line">								BaseRequestHandler.handle()</div><div class="line"></div><div class="line">	        		BaseServer.shutdown_request()</div><div class="line">	      </div><div class="line">	        			BaseServer.close_request()</div><div class="line"></div><div class="line">			BaseServer.shutdown_request()</div><div class="line">	      </div><div class="line">	        	BaseServer.close_request()</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/Epoll-模型简介/" rel="next" title="Epoll-模型简介">
+                <i class="fa fa-chevron-left"></i> Epoll-模型简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/Python-SocketServer-py-源码分析（二）/" rel="prev" title="Python-SocketServer-py-源码分析（二）">
+                Python-SocketServer-py-源码分析（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BaseServer-和-BaseRequestHandler"><span class="nav-number">1.</span> <span class="nav-text">BaseServer 和 BaseRequestHandler</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BaseServer-分析"><span class="nav-number">1.1.</span> <span class="nav-text">BaseServer 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#init-初始化"><span class="nav-number">1.1.1.</span> <span class="nav-text">init 初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#serve-forever"><span class="nav-number">1.1.2.</span> <span class="nav-text">serve_forever</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#handle-request-noblock"><span class="nav-number">1.1.3.</span> <span class="nav-text">_handle_request_noblock</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#verify-request"><span class="nav-number">1.1.4.</span> <span class="nav-text">verify_request</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#process-request"><span class="nav-number">1.1.5.</span> <span class="nav-text">process_request</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#finish-request"><span class="nav-number">1.1.6.</span> <span class="nav-text">finish_request</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BaseRequestHandler-分析"><span class="nav-number">1.2.</span> <span class="nav-text">BaseRequestHandler 分析</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

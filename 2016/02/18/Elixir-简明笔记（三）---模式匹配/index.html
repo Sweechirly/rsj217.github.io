@@ -1,0 +1,645 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="函数式语言的一大特点就是使用模式匹配来做条件判断。Elixir甚至可以使用模式匹配来替代 if else 这些传统编程语言的控制结构。模式匹配对于Elixir至关重要，那么到底什么是模式匹配呢？
+赋值号？等号？模式匹配号？稍微有一点编程经验的人都会知道“=”这个符号是赋值符号，左边表示一个变量，右边是一个表达式或者值，将右边的值或表达式求值的结果赋予左边的变量。刚开始学编程的时候，都会强调赋值号与">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（三）-- 模式匹配">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（三）---模式匹配/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="函数式语言的一大特点就是使用模式匹配来做条件判断。Elixir甚至可以使用模式匹配来替代 if else 这些传统编程语言的控制结构。模式匹配对于Elixir至关重要，那么到底什么是模式匹配呢？
+赋值号？等号？模式匹配号？稍微有一点编程经验的人都会知道“=”这个符号是赋值符号，左边表示一个变量，右边是一个表达式或者值，将右边的值或表达式求值的结果赋予左边的变量。刚开始学编程的时候，都会强调赋值号与">
+<meta property="og:updated_time" content="2016-02-18T02:33:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（三）-- 模式匹配">
+<meta name="twitter:description" content="函数式语言的一大特点就是使用模式匹配来做条件判断。Elixir甚至可以使用模式匹配来替代 if else 这些传统编程语言的控制结构。模式匹配对于Elixir至关重要，那么到底什么是模式匹配呢？
+赋值号？等号？模式匹配号？稍微有一点编程经验的人都会知道“=”这个符号是赋值符号，左边表示一个变量，右边是一个表达式或者值，将右边的值或表达式求值的结果赋予左边的变量。刚开始学编程的时候，都会强调赋值号与">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（三）---模式匹配/"/>
+
+
+  <title> Elixir-简明笔记（三）-- 模式匹配 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（三）-- 模式匹配
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:03+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>函数式语言的一大特点就是使用模式匹配来做条件判断。Elixir甚至可以使用模式匹配来替代 if else 这些传统编程语言的控制结构。模式匹配对于Elixir至关重要，那么到底什么是模式匹配呢？</p>
+<h3 id="赋值号？等号？模式匹配号？"><a href="#赋值号？等号？模式匹配号？" class="headerlink" title="赋值号？等号？模式匹配号？"></a>赋值号？等号？模式匹配号？</h3><p>稍微有一点编程经验的人都会知道“=”这个符号是赋值符号，左边表示一个变量，右边是一个表达式或者值，将右边的值或表达式求值的结果赋予左边的变量。刚开始学编程的时候，都会强调赋值号与数学中的等号的差别。</p>
+<a id="more"></a>
+<p>可是在elixir中，你又得忘掉编程中的赋值号，重新拾起遗忘的数学等号。因为Elixir并没有赋值的概念，“=”也不是赋值号。Elixir中的“=”号是一个模式匹配符号。</p>
+<h3 id="变量绑定"><a href="#变量绑定" class="headerlink" title="变量绑定"></a>变量绑定</h3><p><code>=</code>号是一个模式匹配符号，匹配成功将会进行绑定。请看下面的例子：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; x = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">2</span>)&gt; x</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">3</span>)&gt;</div></pre></td></tr></table></figure>
+<p>上述代码中，在<code>x=1</code>这个表达式中，左边的<em>x</em>是一个变量（实际上很多函数式语言的变量都是不可变的量，elixir的“变量”也是不变的）。右边的 <em>1</em> 是一个数值。表达式的含义是进行变量绑定。将<em>1</em>的值绑定给变量<em>x</em>，所以输入<em>x</em>的时候，对<em>x</em>求值等于<em>1</em>。</p>
+<p>也许你不以为然，变量绑定和赋值有什么差别呢？那么请看下面的语句：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; x = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">2</span>)&gt; x</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">3</span>)&gt; <span class="number">1</span> = x</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">4</span>)&gt; x</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">5</span>)&gt;</div></pre></td></tr></table></figure>
+<p>常见的传统编程语言可不会出现<code>1=x</code>这样的表达式。实际上，Elixir中的<code>=</code>和数学上的等号概念类似，<strong>左边等于右边，右边等于左边</strong>，那么表达式就不会报错。当然，对于变量，可以重新绑定：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">1</span>)&gt; x = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">2</span>)&gt; x</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">5</span>)&gt; x = <span class="number">2</span></div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">6</span>)&gt; x</div><div class="line"><span class="number">2</span></div></pre></td></tr></table></figure>
+<p>这个过程其实并没有改变变量<em>x</em>的值，而只是对<em>x</em>进行了重新的绑定。效果类似改变了值。</p>
+<h3 id="模式，匹配"><a href="#模式，匹配" class="headerlink" title="模式，匹配"></a>模式，匹配</h3><p>既然知道了<code>=</code>是模式匹配符号，而不是等号，那上面为什么在说变量绑定？Elixir中的模式匹配英文是Pattern Match。可以理解为通过某个模式进行匹配，就像使用正则表达式这样的pattern对字符串进行匹配一样。一旦匹配成功，就会对<strong>匹配的项</strong>进行变量绑定。从匹配到绑定整个过程称之为<strong>模式匹配</strong>。有点拗口，贵在理解啦。</p>
+<p>模式匹配，就必须先知道模式。<code>=</code>符号左边表示一个模式（pattern），右边则是一个表达式，或者一个数值。所谓的模式，也可以是一个数值，可以是一个变量，甚至也可以一些基本数据结构，例如列表（List），元组（Tuple），类字典（Dicionary）等。只要等号左右两边的数据类型和结构相同，则可以匹配。</p>
+<p>从最简单的开始吧。前面的例子，我们见识了变量的模式匹配</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">8</span>)&gt; a = <span class="number">1</span></div><div class="line"><span class="number">1</span></div></pre></td></tr></table></figure>
+<p>模式<em>a</em>和数值<em>1</em>匹配，匹配成功，将右边的数值和左边的模式变量<em>a</em>进行绑定。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">8</span>)&gt; a = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">9</span>)&gt; <span class="number">1</span> = a</div><div class="line"><span class="number">1</span></div></pre></td></tr></table></figure>
+<p><code>1=a</code>，这个模式匹配表示含义是，左边的模式是数字<em>1</em>。右边是一个变量，该变量已经绑定了数值<em>1</em>，因此对<em>a</em>变量（表达式）求值，得到值<em>1</em>。表达式实际含义等价于<code>1 = 1</code>。右边的值<em>1</em>和左边的数字<em>1</em>值相等，匹配成功，然后进行变量绑定，可是右边的模式是数字<em>1</em>不是变量，就忽略了绑定过程。整个模式匹配成功。</p>
+<p>在看下面的代码：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">8</span>)&gt; a = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">9</span>)&gt; <span class="number">1</span> = a</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">10</span>)&gt; <span class="number">2</span> = a</div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> <span class="number">1</span></div><div class="line">iex(<span class="number">10</span>)&gt;</div></pre></td></tr></table></figure>
+<p>表达式<code>2=a</code>发生了MatchError错误。这里模式匹配不成功，因为 <code>2 = 1</code> 明显不成了，匹配失败。前面的例子中，变量进行了重绑定，实际上是进行了重新的模式匹配。</p>
+<p>模式匹配本质是对等式求值的过程，例如数学的等式中 <code>x = y + 1</code>。如果我们知道了<em>y</em>的值，自然可以通过数学表达式运算，求出<em>x</em>的值。模式匹配的本质就是针对右边的表达式或数字字面量求值，然后根据等式的原则，计算出左边的模式的值，再对左边进行变量的绑定。</p>
+<p>模式匹配可以看成表达式运算，那么表达式肯定要是一类东西，而不是别的什么玩意了。例如<code>x = y + 1</code>中的 <em>x</em> 和 <em>y</em>都是变量。如果是这样的表达式 <code>fn x -&gt; x end = y + 1</code>。左边是一个匿名函数式，显然函数是不能进行加减运算的。这也就是为什么左边的变量或表达式称之为<strong>模式</strong>。</p>
+<h3 id="复杂的例子"><a href="#复杂的例子" class="headerlink" title="复杂的例子"></a>复杂的例子</h3><p>下面看几个复杂一点的模式匹配。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">12</span>)&gt; list = [<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]]</div><div class="line">iex(<span class="number">13</span>)&gt; [a, b, c] = list</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]]</div><div class="line">iex(<span class="number">14</span>)&gt; a</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">15</span>)&gt; b</div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">16</span>)&gt; c</div><div class="line">[<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</div><div class="line">iex(<span class="number">17</span>)&gt;</div></pre></td></tr></table></figure>
+<p>首先，有一个内嵌列表的列表。表达式<code>list=[1, 2, [3, 4, 5]]</code>将列表和变量<em>list</em>进行匹配，这里列表可以看成一个整体，匹配成功，然后进行变量绑定，将变量<em>list</em>绑定成一个列表。</p>
+<p><code>[a, b, c] = list</code>表达式左边的模式也是一个列表，右边也是一个列表（同一类型），并且左右两边的列表都是三个项目元素（同一结构）。匹配成功，然后进行变量绑定。</p>
+<p>通过这个例子，可以清楚的知道，模式匹配的模式和表达式或数值的结构必须要相同。即同一数据类型，同一结构类型。</p>
+<p>模式可以是数值和变量，也可以是变量和数值的混合结构</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">17</span>)&gt; list = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">18</span>)&gt; [a, <span class="number">2</span>, c] = list</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">iex(<span class="number">19</span>)&gt; a</div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">20</span>)&gt; c</div><div class="line"><span class="number">3</span></div><div class="line">iex(<span class="number">21</span>)&gt; <span class="number">2</span></div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">22</span>)&gt;</div></pre></td></tr></table></figure>
+<p>例子中，右边的模式中的结构和右边一致 ，并且第二个元素都是<em>2</em>，匹配成功，剩下的<em>a</em>和<em>c</em>也可以匹配成功，进行变量绑定。</p>
+<p>变量是可以重新绑定，但是在<strong>一次模式匹配</strong>中，变量只能<strong>绑定一次</strong></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">22</span>)&gt; [a, a] = [<span class="number">1</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">1</span>]</div><div class="line">iex(<span class="number">23</span>)&gt; [a, a] = [<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> [<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">iex(<span class="number">23</span>)&gt;</div></pre></td></tr></table></figure>
+<p>第二个表示中，含有两个<em>a</em>变量的列表在结构和数据类型都和左边相匹配，可是进行变量绑定的时候，<em>a</em>只能绑定一次，因此整个模式匹配过程失败。</p>
+<p>想要重新绑定变量，只需要再进行一次模式匹配即可：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">23</span>)&gt; a = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">24</span>)&gt; [<span class="number">1</span>, a] = [<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">iex(<span class="number">25</span>)&gt; a</div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">26</span>)&gt;</div></pre></td></tr></table></figure>
+<h3 id="固定绑定"><a href="#固定绑定" class="headerlink" title="固定绑定"></a>固定绑定</h3><p>函数式本来追求的是不变，如果也想要变量绑定了之后不被重新绑定。可以使用脱字符<code>^</code>将变量固定。该符号很形象，就像钉子一样固定了变量。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">2</span>)&gt; a = <span class="number">1</span></div><div class="line"><span class="number">1</span></div><div class="line">iex(<span class="number">3</span>)&gt; a = <span class="number">2</span></div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">5</span>)&gt; ^a = <span class="number">3</span></div><div class="line">** (MatchError) no match of right hand side <span class="symbol">value:</span> <span class="number">3</span></div><div class="line">iex(<span class="number">5</span>)&gt; a</div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">6</span>)&gt;</div></pre></td></tr></table></figure>
+<h3 id="忽略绑定"><a href="#忽略绑定" class="headerlink" title="忽略绑定"></a>忽略绑定</h3><p>变量可以重新绑定，也可以固定绑定，当然还可以忽略绑定。与其他语言例如python，swift类似。Elixir可以使用下划线<code>_</code>忽略变量的绑定。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">6</span>)&gt; [<span class="number">1</span>, a] = [<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">iex(<span class="number">7</span>)&gt; a</div><div class="line"><span class="number">2</span></div><div class="line">iex(<span class="number">8</span>)&gt; [<span class="number">1</span>, <span class="number">_</span>] = [<span class="number">1</span>, <span class="number">2</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>]</div></pre></td></tr></table></figure>
+<p><code>_</code>就像占位符一样，虽然它总是能匹配成功，例如可以匹配任何值，可是它并不会绑定任何值。这个功能就是可以在模式匹配中，忽略一些不需要绑定的变量。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>以上就是模式匹配的基础内容。需要重新理解<code>=</code>符号的含义，理解匹配这个过程。匹配的过程类似数学表达式的求值过程。</p>
+<p>整个过程又和纯数学表达式求值有差别，因为模式只能放在左边，并左右的结构和类型都要一模一样。右边如果出现变量和表达式，则会先对右边的变量或表达式先求值。然后再和左边的模式进行匹配运算。</p>
+<p>如果匹配成功，则对左边的模式（变量）进行变量绑定。一次模式匹配只能绑定一次变量。不同的模式匹配可以重新绑定变量。可以使用脱字符<code>^</code>不让变量重新绑定，亦可以使用<code>_</code>忽略绑定。</p>
+<p>模式匹配介绍完毕，这个概念存在于很多函数式编程语言中。刚开始可能很不习惯，觉得和赋值没有差别。只要重新认识清楚数学上的等号的含义，就能慢慢的理解。当然实战才是根本，后面的将会使用到模式匹配，到时心中的疑问将会逐步解开。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（二）---运行模式/" rel="next" title="Elixir-简明笔记（二）-- 运行模式">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（二）-- 运行模式
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（四）---基本数据类型/" rel="prev" title="Elixir-简明笔记（四）-- 基本数据类型">
+                Elixir-简明笔记（四）-- 基本数据类型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#赋值号？等号？模式匹配号？"><span class="nav-number">1.</span> <span class="nav-text">赋值号？等号？模式匹配号？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量绑定"><span class="nav-number">2.</span> <span class="nav-text">变量绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模式，匹配"><span class="nav-number">3.</span> <span class="nav-text">模式，匹配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复杂的例子"><span class="nav-number">4.</span> <span class="nav-text">复杂的例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#固定绑定"><span class="nav-number">5.</span> <span class="nav-text">固定绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#忽略绑定"><span class="nav-number">6.</span> <span class="nav-text">忽略绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

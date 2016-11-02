@@ -1,0 +1,622 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="任务异步化打开浏览器，输入地址，按下回车，打开了页面。于是一个HTTP请求（request）就由客户端发送到服务器，服务器处理请求，返回响应（response）内容。
+我们每天都在浏览网页，发送大大小小的请求给服务器。有时候，服务器接到了请求，会发现他也需要给另外的服务器发送请求，或者服务器也需要做另外一些事情，于是最初们发送的请求就被阻塞了，也就是要等待服务器完成其他的事情。
+更多的时候，服务器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis实现简单消息队列">
+<meta property="og:url" content="http://rsj217.github.com/2015/04/28/Redis实现简单消息队列/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="任务异步化打开浏览器，输入地址，按下回车，打开了页面。于是一个HTTP请求（request）就由客户端发送到服务器，服务器处理请求，返回响应（response）内容。
+我们每天都在浏览网页，发送大大小小的请求给服务器。有时候，服务器接到了请求，会发现他也需要给另外的服务器发送请求，或者服务器也需要做另外一些事情，于是最初们发送的请求就被阻塞了，也就是要等待服务器完成其他的事情。
+更多的时候，服务器">
+<meta property="og:updated_time" content="2016-02-17T03:06:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis实现简单消息队列">
+<meta name="twitter:description" content="任务异步化打开浏览器，输入地址，按下回车，打开了页面。于是一个HTTP请求（request）就由客户端发送到服务器，服务器处理请求，返回响应（response）内容。
+我们每天都在浏览网页，发送大大小小的请求给服务器。有时候，服务器接到了请求，会发现他也需要给另外的服务器发送请求，或者服务器也需要做另外一些事情，于是最初们发送的请求就被阻塞了，也就是要等待服务器完成其他的事情。
+更多的时候，服务器">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2015/04/28/Redis实现简单消息队列/"/>
+
+
+  <title> Redis实现简单消息队列 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Redis实现简单消息队列
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2015-04-28T14:22:00+08:00" content="2015-04-28">
+              2015-04-28
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="任务异步化"><a href="#任务异步化" class="headerlink" title="任务异步化"></a>任务异步化</h3><p>打开浏览器，输入地址，按下回车，打开了页面。于是一个<code>HTTP</code>请求（<code>request</code>）就由客户端发送到服务器，服务器处理请求，返回响应（<code>response</code>）内容。</p>
+<p>我们每天都在浏览网页，发送大大小小的请求给服务器。有时候，服务器接到了请求，会发现他也需要给另外的服务器发送请求，或者服务器也需要做另外一些事情，于是最初们发送的请求就被阻塞了，也就是要等待服务器完成其他的事情。</p>
+<p>更多的时候，服务器做的额外事情，并不需要客户端等待，这时候就可以把这些额外的事情异步去做。从事异步任务的工具有很多。主要原理还是处理通知消息，针对通知消息通常采取是队列结构。生产和消费消息进行通信和业务实现。</p>
+<a id="more"></a>
+<h3 id="生产消费与队列"><a href="#生产消费与队列" class="headerlink" title="生产消费与队列"></a>生产消费与队列</h3><p>上述异步任务的实现，可以抽象为生产者消费模型。如同一个餐馆，厨师在做饭，吃货在吃饭。如果厨师做了很多，暂时卖不完，厨师就会休息；如果客户很多，厨师马不停蹄的忙碌，客户则需要慢慢等待。实现生产者和消费者的方式用很多，下面使用<code>Python</code>标准库<code>Queue</code>写个小例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> random</div><div class="line"><span class="keyword">import</span> time</div><div class="line"><span class="keyword">from</span> Queue <span class="keyword">import</span> Queue</div><div class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> Thread</div><div class="line"></div><div class="line">queue = Queue(<span class="number">10</span>)</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Producer</span><span class="params">(Thread)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            elem = random.randrange(<span class="number">9</span>)</div><div class="line">            queue.put(elem)</div><div class="line">            <span class="keyword">print</span> <span class="string">"厨师 &#123;&#125; 做了 &#123;&#125; 饭 --- 还剩 &#123;&#125; 饭没卖完"</span>.format(self.name, elem, queue.qsize())</div><div class="line">            time.sleep(random.random())</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span><span class="params">(Thread)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            elem = queue.get()</div><div class="line">            <span class="keyword">print</span> <span class="string">"吃货&#123;&#125; 吃了 &#123;&#125; 饭 --- 还有 &#123;&#125; 饭可以吃"</span>.format(self.name, elem, queue.qsize())</div><div class="line">            time.sleep(random.random())</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</div><div class="line">        p = Producer()</div><div class="line">        p.start()</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>):</div><div class="line">        c = Consumer()</div><div class="line">        c.start()</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    main()</div></pre></td></tr></table></figure>
+<p>大概输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">厨师 Thread-1 做了 1 饭 --- 还剩 1 饭没卖完</div><div class="line">厨师 Thread-2 做了 8 饭 --- 还剩 2 饭没卖完</div><div class="line">厨师 Thread-3 做了 3 饭 --- 还剩 3 饭没卖完</div><div class="line">吃货Thread-4 吃了 1 饭 --- 还有 2 饭可以吃</div><div class="line">吃货Thread-5 吃了 8 饭 --- 还有 1 饭可以吃</div><div class="line">吃货Thread-4 吃了 3 饭 --- 还有 0 饭可以吃</div><div class="line">厨师 Thread-1 做了 0 饭 --- 还剩 1 饭没卖完</div><div class="line">厨师 Thread-2 做了 0 饭 --- 还剩 2 饭没卖完</div><div class="line">厨师 Thread-1 做了 1 饭 --- 还剩 3 饭没卖完</div><div class="line">厨师 Thread-1 做了 1 饭 --- 还剩 4 饭没卖完</div><div class="line">吃货Thread-4 吃了 0 饭 --- 还有 3 饭可以吃</div><div class="line">厨师 Thread-3 做了 3 饭 --- 还剩 4 饭没卖完</div><div class="line">吃货Thread-5 吃了 0 饭 --- 还有 3 饭可以吃</div><div class="line">吃货Thread-5 吃了 1 饭 --- 还有 2 饭可以吃</div><div class="line">厨师 Thread-2 做了 8 饭 --- 还剩 3 饭没卖完</div><div class="line">厨师 Thread-2 做了 8 饭 --- 还剩 4 饭没卖完</div></pre></td></tr></table></figure>
+<h3 id="Redis-队列"><a href="#Redis-队列" class="headerlink" title="Redis 队列"></a>Redis 队列</h3><p>Python内置了一个好用的队列结构。我们也可以是用redis实现类似的操作。并做一个简单的异步任务。</p>
+<p>Redis提供了两种方式来作消息队列。一个是使用<code>生产者消费模式</code>模式，另外一个方法就是<code>发布订阅者模式</code>。前者会让一个或者多个客户端监听消息队列，一旦消息到达，消费者马上消费，谁先抢到算谁的，如果队列里没有消息，则消费者继续监听。后者也是一个或多个客户端订阅消息频道，只要发布者发布消息，所有订阅者都能收到消息，订阅者都是平等的。</p>
+<h3 id="生产消费模式"><a href="#生产消费模式" class="headerlink" title="生产消费模式"></a>生产消费模式</h3><p>主要使用了redis提供的blpop获取队列数据，如果队列没有数据则阻塞等待，也就是监听。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> redis</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        self.rcon = redis.StrictRedis(host=<span class="string">'localhost'</span>, db=<span class="number">5</span>)</div><div class="line">        self.queue = <span class="string">'task:prodcons:queue'</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">listen_task</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            task = self.rcon.blpop(self.queue, <span class="number">0</span>)[<span class="number">1</span>]</div><div class="line">            <span class="keyword">print</span> <span class="string">"Task get"</span>, task</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    <span class="keyword">print</span> <span class="string">'listen task queue'</span></div><div class="line">    Task().listen_task()</div></pre></td></tr></table></figure>
+<h3 id="发布订阅模式"><a href="#发布订阅模式" class="headerlink" title="发布订阅模式"></a>发布订阅模式</h3><p>使用redis的pubsub功能，订阅者订阅频道，发布者发布消息到频道了，频道就是一个消息队列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> redis</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Task</span><span class="params">(object)</span>:</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        self.rcon = redis.StrictRedis(host=<span class="string">'localhost'</span>, db=<span class="number">5</span>)</div><div class="line">        self.ps = self.rcon.pubsub()</div><div class="line">        self.ps.subscribe(<span class="string">'task:pubsub:channel'</span>)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">listen_task</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> self.ps.listen():</div><div class="line">            <span class="keyword">if</span> i[<span class="string">'type'</span>] == <span class="string">'message'</span>:</div><div class="line">                <span class="keyword">print</span> <span class="string">"Task get"</span>, i[<span class="string">'data'</span>]</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    <span class="keyword">print</span> <span class="string">'listen task channel'</span></div><div class="line">    Task().listen_task()</div></pre></td></tr></table></figure>
+<h3 id="Flask-入口"><a href="#Flask-入口" class="headerlink" title="Flask 入口"></a>Flask 入口</h3><p>我们分别实现了两种异步任务的后端服务，直接启动他们，就能监听redis队列或频道的消息了。简单的测试如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">import</span> redis</div><div class="line"><span class="keyword">import</span> random</div><div class="line"><span class="keyword">import</span> logging</div><div class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, redirect</div><div class="line"></div><div class="line">app = Flask(__name__)</div><div class="line"></div><div class="line">rcon = redis.StrictRedis(host=<span class="string">'localhost'</span>, db=<span class="number">5</span>)</div><div class="line">prodcons_queue = <span class="string">'task:prodcons:queue'</span></div><div class="line">pubsub_channel = <span class="string">'task:pubsub:channel'</span></div><div class="line"></div><div class="line"><span class="meta">@app.route('/')</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></div><div class="line"></div><div class="line">    html = <span class="string">"""</span></div><div class="line">&lt;br&gt;</div><div class="line">&lt;center&gt;&lt;h3&gt;Redis Message Queue&lt;/h3&gt;</div><div class="line">&lt;br&gt;</div><div class="line">&lt;a href="/prodcons"&gt;生产消费者模式&lt;/a&gt;</div><div class="line">&lt;br&gt;</div><div class="line">&lt;br&gt;</div><div class="line">&lt;a href="/pubsub"&gt;发布订阅者模式&lt;/a&gt;</div><div class="line">&lt;/center&gt;</div><div class="line">"""</div><div class="line">    <span class="keyword">return</span> html</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">@app.route('/prodcons')</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">prodcons</span><span class="params">()</span>:</span></div><div class="line">    elem = random.randrange(<span class="number">10</span>)</div><div class="line">    rcon.lpush(prodcons_queue, elem)</div><div class="line">    logging.info(<span class="string">"lpush &#123;&#125; -- &#123;&#125;"</span>.format(prodcons_queue, elem))</div><div class="line">    <span class="keyword">return</span> redirect(<span class="string">'/'</span>)</div><div class="line"></div><div class="line"><span class="meta">@app.route('/pubsub')</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">pubsub</span><span class="params">()</span>:</span></div><div class="line">    ps = rcon.pubsub()</div><div class="line">    ps.subscribe(pubsub_channel)</div><div class="line">    elem = random.randrange(<span class="number">10</span>)</div><div class="line">    rcon.publish(pubsub_channel, elem)</div><div class="line">    <span class="keyword">return</span> redirect(<span class="string">'/'</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    app.run(debug=<span class="keyword">True</span>)</div></pre></td></tr></table></figure>
+<p>启动脚本，使用</p>
+<pre><code>siege -c10 -r 5 http://127.0.0.1:5000/prodcons
+siege -c10 -r 5 http://127.0.0.1:5000/pubsub
+</code></pre><p>可以分别在监听的脚本输入中看到异步消息。在异步的任务中，可以执行一些耗时间的操作，当然目前这些做法并不知道异步的执行结果，如果需要知道异步的执行结果，可以考虑设计协程任务或者使用一些工具如<code>RQ</code>或者<code>celery</code>等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/03/29/exlixir/" rel="next" title="异端魔法 --- Elixir">
+                <i class="fa fa-chevron-left"></i> 异端魔法 --- Elixir
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/04/29/Python-多线程/" rel="prev" title="Python 多线程">
+                Python 多线程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#任务异步化"><span class="nav-number">1.</span> <span class="nav-text">任务异步化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生产消费与队列"><span class="nav-number">2.</span> <span class="nav-text">生产消费与队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis-队列"><span class="nav-number">3.</span> <span class="nav-text">Redis 队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生产消费模式"><span class="nav-number">4.</span> <span class="nav-text">生产消费模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发布订阅模式"><span class="nav-number">5.</span> <span class="nav-text">发布订阅模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flask-入口"><span class="nav-number">6.</span> <span class="nav-text">Flask 入口</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

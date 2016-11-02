@@ -1,0 +1,616 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Think DifferentDave Thomas大神曾经把学习 Elixir 比成 Take the red pill。诚然，相对于传统的编程语言而言，函数式编程有点“异端”。实际上，恰恰是这些“异端”，可以领阅更多的编程思想，了解更多的编程模型。简而言之就是Think Different。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elixir-简明笔记（八）-- 变可变，非常变">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（八）----变可变，非常变/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Think DifferentDave Thomas大神曾经把学习 Elixir 比成 Take the red pill。诚然，相对于传统的编程语言而言，函数式编程有点“异端”。实际上，恰恰是这些“异端”，可以领阅更多的编程思想，了解更多的编程模型。简而言之就是Think Different。">
+<meta property="og:updated_time" content="2016-02-18T02:56:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Elixir-简明笔记（八）-- 变可变，非常变">
+<meta name="twitter:description" content="Think DifferentDave Thomas大神曾经把学习 Elixir 比成 Take the red pill。诚然，相对于传统的编程语言而言，函数式编程有点“异端”。实际上，恰恰是这些“异端”，可以领阅更多的编程思想，了解更多的编程模型。简而言之就是Think Different。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/18/Elixir-简明笔记（八）----变可变，非常变/"/>
+
+
+  <title> Elixir-简明笔记（八）-- 变可变，非常变 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Elixir-简明笔记（八）-- 变可变，非常变
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:08+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Think-Different"><a href="#Think-Different" class="headerlink" title="Think Different"></a>Think Different</h3><p>Dave Thomas大神曾经把学习 Elixir 比成 Take the red pill。诚然，相对于传统的编程语言而言，函数式编程有点“异端”。实际上，恰恰是这些“异端”，可以领阅更多的编程思想，了解更多的编程模型。简而言之就是Think Different。</p>
+<a id="more"></a>
+<h3 id="函数式编程"><a href="#函数式编程" class="headerlink" title="函数式编程"></a>函数式编程</h3><p>很多介绍Erlang，Hashkell等书籍都喜欢对读者宣传：学习下一代编程语言。下一代给人的感觉就是新生儿，好似他们都是刚刚发明的。实际上函数式编程语言是很古老的语言。甚至现在很多高级语言还没诞生，他们就出现了。</p>
+<p>虽然很早就出现了，可是函数式语言一直在工业领域没什么地位，虽然学术方面成就颇高。可是随着现在网络应用的发展，函数式语言得天独厚的特性逐渐展示出强大的力量。也无怪乎媒体社区都在说下一代编程语言。</p>
+<h3 id="并发-并发"><a href="#并发-并发" class="headerlink" title="并发 并发"></a>并发 并发</h3><p>函数式语言被称之为下一代编程语言，主要原因还是对并发的处理。随着网络应用的发展，C10k的问题逐渐暴露。用户量增长迅速，网络应用再也不是支持几百人的那种小流量了。而是有可能处理上亿级别的数据。越来越多的服务需要高并发，高时实。而函数式语言几乎都天生支持并发。</p>
+<p>函数式语言天生支持并发，主要源自函数式语言的特性，不可变性，函数没有副作用。这样的特性很容易构造分布式系统。</p>
+<p>从现在计算机的发展来看，单核的CPU运算相当快了。并且根据摩尔定律，cpu的速度还会提升。可是，还会永远提升么？实际上，尽管cpu的还在升级，可是却很难有数量级的优势了。</p>
+<p>也就是说，单纯的通过提高cpu的运算能力来提供服务的性能，将会成为发展的一个瓶颈。既然纵向方法遇到了困难，那么可以横向拓展嘛。</p>
+<p>把依靠单核cpu的方式转变成使用多核来提高性能。可是，传统的编程模型中，并发多数是串行的方式。程序的进程通过共享内存来通信。多线程或多进程同步成为一个令开发者头疼的问题。</p>
+<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>与共享内存的不一样的模型是分布式内存，即每个CPU有属于自己的内存，这些CPU内存可以分步在多台机器上，多台机器可以处理同样的计算任务。因此很容易横向拓展。Elixir和Erlang都采用Aacton的并发模型。</p>
+<p>它们可以轻易的开启成千上万个进程（process）。这些进程和别的语言的进程不一样，是极其轻量级，甚至比线程还轻。同时，进程之间通过消息（message）通信。这样的模型，很符合我们的真实世界。</p>
+<p>OOP的范式通过类、属性、方法定义对象的性质和行为。通过共享类或对象来做状态同步。这样的模型在工业力长盛很多年。Elixir所采用却不是这样，而是通过进程和消息来编程，这其实更符合自然界。自然的通信就是讲话，而不是通过共享大脑。</p>
+<h3 id="Elixir-Erlang"><a href="#Elixir-Erlang" class="headerlink" title="Elixir/Erlang"></a>Elixir/Erlang</h3><p>Elixir是一门函数式语言。Elixir中的数据类型都是不可变的。变量一旦被绑定了之后，就不能改变了（可以重新绑定）。对于列表<code>[1, 2, 3]</code>，如果给他们当中的每一个元素都加 <em>100</em> 的时候，<code>Elixir</code>会根据原列表拷贝一份，并带有新的值。原始的列表并没有被改变。你的任何操作，就不会影响引用了原始列表的代码。</p>
+<p>因为数据的不可变，对数据的操作都需要拷贝一份数据，内存中将会有很多数据需要垃圾回收，这样会不会造成低效率呢？</p>
+<p>直觉上这样的操作确实让人感到低效，可是Elixir却恰恰相反。因为Elixir中的数据是不可变的，因此当新建一个数据的时候，可以复用原来的数据。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">iex(<span class="number">2</span>)&gt; list1 = [<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>]</div><div class="line">[<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>]</div><div class="line">iex(<span class="number">3</span>)&gt; list2 = [<span class="number">4</span> | list1]</div><div class="line">[<span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>]</div><div class="line">iex(<span class="number">4</span>)&gt; list2</div><div class="line">[<span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>]</div></pre></td></tr></table></figure>
+<p><em>list1</em>是一个列表，并且是不可变的，使用<code>|</code>操作符创建了<em>list2</em>。直觉上会觉得先把<em>list1</em>复制一份，然后再和<em>4</em>组合创建成新的<em>list2</em>。实际上，并不需要复制<em>list1</em>，只需要把<em>4</em>和<em>list1</em>组合即可。毕竟<em>list1</em>是永远不会变的嘛。</p>
+<p>对于内存中大量无用的值，需要被垃圾回收。现代的语言几乎都有这个机制，其实有的人甚至怀疑来及回收本身带来的开销比内存中无用的“垃圾”还大。</p>
+<p>Elixir提供了一个很cool的解决方案。写代码的时候可以使用多进程，每一个进程都有自己的内存堆栈。应用程序的数据被分发在这些进程之中。因此，数据在分散在很多内存而不是一个内存中，垃圾回收操作的内存都相对小，因而效率会很高。也就是垃圾回收在小内存中搜索需要清理的数据比在一个很大的内存中搜索要快。</p>
+<p>尽管我们一直说Elixir是函数式编程语言，可是至今还没介绍函数，未免有点尴尬。下一章将会介绍Elixir中的函数。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（七）---列表/" rel="next" title="Elixir-简明笔记（七）-- 列表">
+                <i class="fa fa-chevron-left"></i> Elixir-简明笔记（七）-- 列表
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-简明笔记（九）---匿名函数/" rel="prev" title="Elixir-简明笔记（九）-- 匿名函数">
+                Elixir-简明笔记（九）-- 匿名函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Think-Different"><span class="nav-number">1.</span> <span class="nav-text">Think Different</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数式编程"><span class="nav-number">2.</span> <span class="nav-text">函数式编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发-并发"><span class="nav-number">3.</span> <span class="nav-text">并发 并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式"><span class="nav-number">4.</span> <span class="nav-text">分布式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Elixir-Erlang"><span class="nav-number">5.</span> <span class="nav-text">Elixir/Erlang</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

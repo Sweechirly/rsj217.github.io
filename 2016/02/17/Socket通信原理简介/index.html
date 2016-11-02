@@ -1,0 +1,642 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="何谓socket计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。
+Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。
+在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Socket通信原理简介">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Socket通信原理简介/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="何谓socket计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。
+Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。
+在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-be761c56af32a12f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-39d6838a371b6c83.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-94095f6afd8a5a67.png">
+<meta property="og:updated_time" content="2016-02-17T03:30:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Socket通信原理简介">
+<meta name="twitter:description" content="何谓socket计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。
+Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。
+在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-be761c56af32a12f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Socket通信原理简介/"/>
+
+
+  <title> Socket通信原理简介 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Socket通信原理简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T15:30:02+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="何谓socket"><a href="#何谓socket" class="headerlink" title="何谓socket"></a>何谓socket</h3><p>计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。</p>
+<p>Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。</p>
+<p>在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么就得使用网络套接字（socket）。socket就是在不同计算机之间进行通信的一个抽象。他工作于TCP/IP协议中应用层和传输层之间的一个抽象。如下图：</p>
+<a id="more"></a>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-be761c56af32a12f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="socket.jpg"></p>
+<h3 id="服务器通信"><a href="#服务器通信" class="headerlink" title="服务器通信"></a>服务器通信</h3><p>socket保证了不同计算机之间的通信，也就是网络通信。对于网站，通信模型是客户端服务器之间的通信。两个端都建立一个socket对象，然后通过socket对象对数据进行传输。通常服务器处于一个无线循环，等待客户端连接：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-39d6838a371b6c83.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="socket3.jpg"></p>
+<h3 id="socket-通信实例"><a href="#socket-通信实例" class="headerlink" title="socket 通信实例"></a>socket 通信实例</h3><p>socket接口是操作系统提供的，调用操作系统的接口。当然高级语言一般也封装了好用的函数接口，下面用python代码写一个简单的socket服务端例子：</p>
+<p>server.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> socket</div><div class="line"></div><div class="line">HOST = <span class="string">'localhost'</span>      <span class="comment"># 服务器主机地址</span></div><div class="line">PORT = <span class="number">5000</span>             <span class="comment"># 服务器监听端口</span></div><div class="line">BUFFER_SIZE = <span class="number">2048</span>      <span class="comment"># 读取数据大小</span></div><div class="line"></div><div class="line"><span class="comment"># 创建一个套接字</span></div><div class="line">sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  </div><div class="line"><span class="comment"># 绑定主机和端口</span></div><div class="line">sock.bind((HOST, PORT))</div><div class="line"><span class="comment"># 开启socket监听</span></div><div class="line">sock.listen(<span class="number">5</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">print</span> <span class="string">'Server start, listening &#123;&#125;'</span>.format(PORT)</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">    <span class="comment"># 建立连接，连接为建立的时候阻塞</span></div><div class="line">    conn, addr = sock.accept()</div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">        <span class="comment"># 读取数据，数据还没到来阻塞</span></div><div class="line">        data = conn.recv(BUFFER_SIZE)</div><div class="line">        <span class="keyword">if</span> len(data):</div><div class="line">            <span class="keyword">print</span> <span class="string">'Server Recv Data: &#123;&#125;'</span>.format(data)</div><div class="line">            conn.send(data)</div><div class="line">            <span class="keyword">print</span> <span class="string">'Server Send Data: &#123;&#125;'</span>.format(data)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">print</span> <span class="string">'Server Recv Over'</span></div><div class="line">            <span class="keyword">break</span></div><div class="line">    conn.close()</div><div class="line">sock.close()</div></pre></td></tr></table></figure>
+<p>client.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> socket</div><div class="line"></div><div class="line">HOST = <span class="string">'localhost'</span></div><div class="line">PORT = <span class="number">5000</span></div><div class="line">BUFFER_SIZE = <span class="number">1024</span></div><div class="line"></div><div class="line"><span class="comment"># 创建客户端套接字</span></div><div class="line">sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</div><div class="line"><span class="comment"># 连接到服务器</span></div><div class="line">sock.connect((HOST, PORT))</div><div class="line"></div><div class="line"><span class="keyword">try</span>:</div><div class="line">    message = <span class="string">"Hello"</span></div><div class="line">    <span class="comment"># 发起数据给服务器</span></div><div class="line">    sock.sendall(message)</div><div class="line">    amount_received = <span class="number">0</span></div><div class="line">    amount_expected = len(message)</div><div class="line">    <span class="keyword">while</span> amount_received &lt; amount_expected:</div><div class="line">        <span class="comment"># 接收服务器返回的数据</span></div><div class="line">        data = sock.recv(<span class="number">10</span>)</div><div class="line">        amount_received += len(data)</div><div class="line">        <span class="keyword">print</span> <span class="string">'Client Received: &#123;&#125;'</span>.format(data)</div><div class="line"></div><div class="line"><span class="keyword">except</span> socket.errno, e:</div><div class="line">    <span class="keyword">print</span> <span class="string">'Socket error: &#123;&#125;'</span>.format(e)</div><div class="line"><span class="keyword">except</span> Exception, e:</div><div class="line">    <span class="keyword">print</span> <span class="string">'Other exception: %s'</span>.format(e)</div><div class="line"><span class="keyword">finally</span>:</div><div class="line">    <span class="keyword">print</span> <span class="string">'Closing connection to the server'</span></div><div class="line">    sock.close()</div></pre></td></tr></table></figure>
+<h3 id="TCP-三次握手"><a href="#TCP-三次握手" class="headerlink" title="TCP 三次握手"></a>TCP 三次握手</h3><p>python代码写套接字很简单。传说的TCP三次握手又是如何体现的呢？什么是三次握手呢?</p>
+<ul>
+<li>第一握：首先客户端发送一个syn，请求连接，</li>
+<li>第二握：服务器收到之后确认，并发送一个 syn ack应答</li>
+<li>第三握：客户端接收到服务器发来的应答之后再给服务器发送建立连接的确定。</li>
+</ul>
+<p>用下面的比喻就是</p>
+<blockquote>
+<p>C：约么？</p>
+<p>S：约</p>
+<p>C：好的</p>
+<p>约会</p>
+</blockquote>
+<p>这样就建立了一个TCP连接会话。如果是要断开连接，大致过程是：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-94095f6afd8a5a67.png" alt="tcp.png"></p>
+<p>上图也很清晰的表明了三次握手的socket具体过程。</p>
+<ol>
+<li>客户端socket对象connect调用之后进行阻塞，此过程发送了一个syn。</li>
+<li>服务器socket对象调用accept函数之后阻塞，直到客户端发送来的syn，然后发送syn和ack应答</li>
+<li>客户端socket对象收到服务端发送的应答之后，再发送一个ack给服务器，并返回connect调用，建立连接。</li>
+<li>服务器socket对象接受客户端最后一次握手确定ack返回accept函数，建立连接。</li>
+</ol>
+<p>至此，客户端和服务器的socket通信连接建立完成，剩下的就是两个端的连接对象收发数据，从而完成网络通信。</p>
+<p>文中图片来源网络</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/17/并发与并行/" rel="next" title="并发与并行">
+                <i class="fa fa-chevron-left"></i> 并发与并行
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/简明网络I-O模型---同步异步阻塞非阻塞之惑/" rel="prev" title="简明网络I-O模型---同步异步阻塞非阻塞之惑">
+                简明网络I-O模型---同步异步阻塞非阻塞之惑 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#何谓socket"><span class="nav-number">1.</span> <span class="nav-text">何谓socket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务器通信"><span class="nav-number">2.</span> <span class="nav-text">服务器通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket-通信实例"><span class="nav-number">3.</span> <span class="nav-text">socket 通信实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-三次握手"><span class="nav-number">4.</span> <span class="nav-text">TCP 三次握手</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

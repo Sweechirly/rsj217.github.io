@@ -1,0 +1,635 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Python 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？
+安装第三方库的方式其实不多。下面就介绍一些技巧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python-第三方库安装技巧">
+<meta property="og:url" content="http://rsj217.github.com/2016/02/17/Python-第三方库安装技巧/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Python 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？
+安装第三方库的方式其实不多。下面就介绍一些技巧。">
+<meta property="og:updated_time" content="2016-02-17T03:21:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python-第三方库安装技巧">
+<meta name="twitter:description" content="Python 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？
+安装第三方库的方式其实不多。下面就介绍一些技巧。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/02/17/Python-第三方库安装技巧/"/>
+
+
+  <title> Python-第三方库安装技巧 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Python-第三方库安装技巧
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T10:43:32+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p> <code>Python</code> 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？</p>
+<p>安装第三方库的方式其实不多。下面就介绍一些技巧。</p>
+<a id="more"></a>
+<h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><p>很多第三方库都是开源的，几乎都可以在<code>github</code> 或者 <a href="https://pypi.python.org/pypi" target="_blank" rel="external">pypi</a>上找到源码。找到源码格式大概都是 <code>zip</code> 、 <code>tar.zip</code>、 <code>tar.bz2</code>格式的压缩包。解压这些包，进入解压好的文件夹，通常会看见一个 <code>setup.py</code> 的文件。打开命令行，进入该文件夹。运行</p>
+<pre><code>python setup.py install
+</code></pre><p>这个命令，就能把这个第三库安装到系统里，也就是你的 <code>Python</code> 路径，<code>windows</code>大概是在 <code>C:\Python2.7\Lib\site-packages</code>。<br><code>Linux</code>会在 <code>/usr/local/lib/python2.7/dist-packages</code>。<br><code>Mac</code> 应该在 <code>/Library/Python/2.7/site-packages</code>。如果是在 <code>virtulenv</code>环境下安装，这个包就被安装在所建立的虚拟环境下的 <code>site-packages/</code>目录下。想要卸载这些库也很简单，进入 <code>site-packages</code>，直接删掉库文件就 OK 啦。当然，这些安装可能有一点麻烦，需要下载，解压，再运行安装，卸载也不是很方便。有没有一种工具，可以帮外面管理这些库呢？</p>
+<h3 id="包管理器-（pip-和-easy-install）"><a href="#包管理器-（pip-和-easy-install）" class="headerlink" title="包管理器 （pip 和 easy_install）"></a>包管理器 （pip 和 easy_install）</h3><p>现在很多编程语言，都带有包管理器，例如 <code>Ruby</code> 的 <code>gem</code>，<code>nodejs</code>的<code>npm</code>。<code>Python</code>当然也不例外，拥有大名鼎鼎的 <code>pip</code>和 <code>easy_install</code>。</p>
+<p>前面说到的<code>pypi</code>就是一些 <code>python</code>第三库所在的源，使用 <code>pip</code> 或者 <code>easy_install</code> 安装模块，会搜索这个源，然后自动下载安装。比如我们需要安装 <code>flask</code> 框架具体命令如下：</p>
+<pre><code>pip install flask
+</code></pre><p>或者 </p>
+<pre><code>easy_install flask
+</code></pre><p>简单吧，一个简单的命令就搞定。卸载也很方便，例如我们需要卸载<code>flask</code></p>
+<pre><code>pip uninstall flask
+</code></pre><p>查看所安装的包，包括系统自带的和手动安装的</p>
+<pre><code>pip list
+</code></pre><p>还可以搜索包</p>
+<pre><code>pip search flask
+</code></pre><p>还可以重定向输出项目使用的库。</p>
+<pre><code>pip freeze &gt; requirements.txt
+</code></pre><p>这样就会把该环境下的第三方库重定向到 <code>requirements.txt</code>文件内，如果给别人安装项目的依赖，只需要运行：</p>
+<pre><code>pip install -r requirements.txt
+</code></pre><p>很方便吧。当然，有时候，我们的网络并不是那么顺畅，<code>pip</code>是在线安装的，可不可以离线呢？当然可以啦，<code>pip install</code> 的第一步，就是在 <code>pypi</code> 上寻找包，然后下载到本地。如果网络不好，可以先建一个本地的仓库，把常用的包离线下载。比如可以下载 <code>flask</code> 的源码</p>
+<pre><code>pip intall flask-master.zip
+</code></pre><p>同样也可以安装。</p>
+<h3 id="虚拟环境相关安装"><a href="#虚拟环境相关安装" class="headerlink" title="虚拟环境相关安装"></a>虚拟环境相关安装</h3><p>当然，上面介绍的，其实也是很普通很常见的方式，也算不上什么技巧。下面介绍的，则是一些需要了解原理和解决非常规问题的技巧。</p>
+<p>使用<code>Python</code>，我们会喜欢用 <code>virtualenv</code>建立虚拟环境，例如建立一个 <code>venv</code>的虚拟环境。我们只需要 <code>source</code>进去就可以使用<code>pip</code>安装了。可是有时候，即使在虚拟环境下，使用了<code>sudo</code>的前缀（<code>windows</code>忽略），那么安装的库不是在虚拟环境，而是被安装到系统下的<code>site-package</code> 目录下了。</p>
+<p><code>windows</code>的用户可能会很开心，不需要注意这个问题。当然 <code>windows</code> 也同样有着自己的问题。在 <code>windows</code>上安装<code>python</code>，一般是编译好的二进制包<code>exe</code>可执行文件。通常有 32位和64位的<code>python</code>。对于第三方库，本来32和64不会有太大的差别。但是对于一些<code>C</code>写的<code>python</code>库，如<code>mysqldb</code>，<code>PIL</code>， <code>pillow</code>，会发现使用 <code>pip</code>或者 <code>easy_install</code> 的方式会报错：</p>
+<blockquote>
+<p>Fixing python error: Unable to find vcvarsall.bat</p>
+</blockquote>
+<p>原因大概是 <code>windows</code>上缺少一些 <code>C</code>编译器东东。源码需要编译一下才能安装，此时 <code>windows</code>就很苦逼了。当然，有一些好心人，帮您把常用的一些库编译成 exe 可执行文件，放到了这个<a href="http://www.lfd.uci.edu/~gohlke/pythonlibs/" target="_blank" rel="external">站点</a>。你只需要寻找对于版本的，下载一键安装。</p>
+<p>可是，还有一个问题，下载 <code>exe</code> 文件，运行安装，这个库是被安装到了系统的 <code>site-package</code> 目录下，如果我在<code>windows</code> 建立了<code>venv</code>虚拟环境，这样安装不是歇菜了么？</p>
+<p>别担心，这个文章的真正技巧，就是为了解决这个问题的。我们来安装64位的 <code>mysqldb</code>。先下载 <code>MySQL‑python‑1.2.5.win‑amd64‑py2.7.exe</code> 在 <code>windows</code> 上，用命令行进入虚拟环境 <code>venv</code>。然后运行</p>
+<pre><code>easy_install MySQL‑python‑1.2.5.win‑amd64‑py2.7.exe
+</code></pre><p>完美解决，在 <code>venv</code> 虚拟环境，将<code>mysqldb</code> 库安装到了<code>venv</code>下。</p>
+<p>有了上面三个方式，几乎涵盖 <code>python</code> 所有平台的第三方库安装。不过话说回来，尽管 <code>Python</code> 是跨平台，开发环境，还是尽量使用 <code>Linux</code>或者<code>MacOS</code>，这两个系统有更好的工具以及省去很多莫名其妙的问题。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/16/Mac-OS-安装-Python3-5/" rel="next" title="Mac-OS-安装-Python3-5">
+                <i class="fa fa-chevron-left"></i> Mac-OS-安装-Python3-5
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/17/并发与并行/" rel="prev" title="并发与并行">
+                并发与并行 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">45</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#源码安装"><span class="nav-number">1.</span> <span class="nav-text">源码安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#包管理器-（pip-和-easy-install）"><span class="nav-number">2.</span> <span class="nav-text">包管理器 （pip 和 easy_install）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟环境相关安装"><span class="nav-number">3.</span> <span class="nav-text">虚拟环境相关安装</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
