@@ -1,0 +1,855 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="network,tcp," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="技术革命格雷厄姆在《黑客与画家》中提到一个观点，历史上财富的积累无非两种方式—偷窃和抢夺。新技术革命的出现，财富的积累的新方式则是技术进步。
+技术进步创造了无数的财富，而这个技术指的就是网络技术。相对于人类的文明，网络的历史如同昙花一现，恰恰是这么短的时间内，所创造的文明和财富却是前所未有。相对于网络自身的发展，其实已经算是历史悠久了。然而自从网络诞生到现在，网络的基础架构理论，基本的通信协议改变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP握手与挥手">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/TCP握手与挥手/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="技术革命格雷厄姆在《黑客与画家》中提到一个观点，历史上财富的积累无非两种方式—偷窃和抢夺。新技术革命的出现，财富的积累的新方式则是技术进步。
+技术进步创造了无数的财富，而这个技术指的就是网络技术。相对于人类的文明，网络的历史如同昙花一现，恰恰是这么短的时间内，所创造的文明和财富却是前所未有。相对于网络自身的发展，其实已经算是历史悠久了。然而自从网络诞生到现在，网络的基础架构理论，基本的通信协议改变">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-9923e3f3981f3cb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-a0dcfd90c7842ffa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2016-11-02T06:39:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP握手与挥手">
+<meta name="twitter:description" content="技术革命格雷厄姆在《黑客与画家》中提到一个观点，历史上财富的积累无非两种方式—偷窃和抢夺。新技术革命的出现，财富的积累的新方式则是技术进步。
+技术进步创造了无数的财富，而这个技术指的就是网络技术。相对于人类的文明，网络的历史如同昙花一现，恰恰是这么短的时间内，所创造的文明和财富却是前所未有。相对于网络自身的发展，其实已经算是历史悠久了。然而自从网络诞生到现在，网络的基础架构理论，基本的通信协议改变">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-9923e3f3981f3cb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/TCP握手与挥手/"/>
+
+
+  <title> TCP握手与挥手 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                TCP握手与挥手
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:27:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="技术革命"><a href="#技术革命" class="headerlink" title="技术革命"></a>技术革命</h3><p>格雷厄姆在《黑客与画家》中提到一个观点，历史上财富的积累无非两种方式—偷窃和抢夺。新技术革命的出现，财富的积累的新方式则是技术进步。</p>
+<p>技术进步创造了无数的财富，而这个技术指的就是网络技术。相对于人类的文明，网络的历史如同昙花一现，恰恰是这么短的时间内，所创造的文明和财富却是前所未有。相对于网络自身的发展，其实已经算是历史悠久了。然而自从网络诞生到现在，网络的基础架构理论，基本的通信协议改变也不是很大。</p>
+<a id="more"></a>
+<p>我们所熟知的Internet，把全世界的人连接起来，Inernet构建于TCP/IP模型基础之上。TCP/IP模型有着很多协议，其中与网络（web）应用开发者息息相关的莫过于TCP协议。想要了解TCP协议的本质，起始于TCP的三次握手和四次挥手。</p>
+<h3 id="TCP-握手连接"><a href="#TCP-握手连接" class="headerlink" title="TCP 握手连接"></a>TCP 握手连接</h3><p>连接是一个通信的行为。建立连接，就能使用连接进行通信。连接作用于两个节点。TCP是有状态的协议，因此两个节点之间想要通过tcp发送数据，必须先建立可靠有效的连接。tcp是双通道的通信模式，因此tcp的连接（逻辑连接）其实是两条物理连接，即<code>客户端--&gt;连接</code>和<code>服务端---&gt;客户端</code>的连接。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-9923e3f3981f3cb4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Handshake.png"></p>
+<p>上图即是经典的TCP三次握手。握手前，服务端创建socket对象，绑定地址，开启监听；客户端创建socket，准备连接。然后进行三次握手连接：</p>
+<ol>
+<li>clinet向server端发送一个[SYN]包，seq=x。</li>
+<li>server收到[SYN]包之后，向clinet发送[SYN ACK] seq=y，ack=x+1</li>
+<li>clinet收到server的syn和ack之后，再向server端发送[ACK] ack=y+1包，至此三次握手完成。</li>
+</ol>
+<p>创建一个tcp连接，通过三次握手即可。其实三次握手的clinet和server端是在不同的变化状态。下面详细讨论下三次握手中的两端的状态变化。</p>
+<h3 id="TCP-握手c-s端状态"><a href="#TCP-握手c-s端状态" class="headerlink" title="TCP 握手c/s端状态"></a>TCP 握手c/s端状态</h3><p>针对三次握手的详细过程，有如下过程：</p>
+<ol>
+<li><p>发起握手的时候，clinet发送[SYN]包之后，自身马上变成<code>SYN_SENT</code>状态，server则是进行了listen，自身的状态则变成<code>LISTEN</code>。接受到[SYN]包之后，自身变成<code>SYN_RCVD</code>状态。这个过程主要含义是clinet向server建立一条发送数据的连接。</p>
+</li>
+<li><p>server端收到了client的SYN之后，马上会发送一个[SYN ACK]包，这里一共有两个作用。ACK用于应答client，表示client-&gt;server的连接已经建立，同时server也想向client建立一条发送数据的连接，因此也需要发送一个[SYN]包。</p>
+</li>
+<li><p>client收到了server的[SYN ACK]。通过server发的ACK确定了client-&gt;server这条连接建立。自身状态变成了<code>ESTABLISHED</code>，表示可以正常的发送数据给server了。同时为了响应server发送的建立连接的SYN请求，再次给server做一次ACK的应答，一旦server收到clinet的ACK应答，server的状态也会变成<code>ESTABLISHED</code>。</p>
+</li>
+</ol>
+<p>上述的过程中涉及到几个状态，其中<code>SYN_SENT</code>和<code>SYN_RCVD</code>非常短暂，使用nc等工具也很难看到这种状态的。<code>syn</code>包表示希望建立一个连接，<code>ack</code>包表示应答。连接的本质是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">client  ----- 发送syn ------&gt;  server  希望创建连接</div><div class="line">client  &lt;----- 发送ack ------  server  确定创建连接</div></pre></td></tr></table></figure>
+<p>之所以是三次握手，而不是第四次握手，是因为第二次握手的时候，server把 [SYN] 和 [ACK]一起发送了。</p>
+<table>
+<thead>
+<tr>
+<th>客户端</th>
+<th></th>
+<th></th>
+<th>服务端</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开始状态</td>
+<td>过程</td>
+<td>结束状态</td>
+<td>开始状态</td>
+<td>过程</td>
+<td>结束状态</td>
+</tr>
+<tr>
+<td>CLOSED</td>
+<td>client创建socket</td>
+<td>CLOSED</td>
+<td>CLOSED</td>
+<td>server创建socket，绑定地址，打开监听</td>
+<td>LISTEN</td>
+</tr>
+<tr>
+<td>CLOSED</td>
+<td>[第一次握手]client向server发送SYN包</td>
+<td>SYS-SENT</td>
+<td>LISTEN</td>
+<td>等待client发送的SYN</td>
+<td>LISTEN</td>
+</tr>
+<tr>
+<td>SYS-SENT</td>
+<td>发送syn之后等待server发送ack</td>
+<td>SYS-SENT</td>
+<td>LISTEN</td>
+<td>[第二次握手]接受client的syn，同时向client发送[SYN ACK]</td>
+<td>SYN-RECEIVED</td>
+</tr>
+<tr>
+<td>SYN-SENT</td>
+<td>接受server的SYN+ACK，通过ack确定client-&gt;server连接创立，[第三次握手]同时针对SYN发送ACK</td>
+<td>ESTABLISHED</td>
+<td>SYN-RECEIVED</td>
+<td>等待clinet发送的ACK确认</td>
+<td>SYN-RECEIVED</td>
+</tr>
+<tr>
+<td>ESTABLISHED</td>
+<td>等待server完成对ack的响应，等待完成server-&gt;clinet的连接</td>
+<td>ESTABLISHED</td>
+<td>SYN-RECEIVED</td>
+<td>接受client的ACK确定，完成server-&gt;clinet的连接</td>
+<td>ESTABLISHED</td>
+</tr>
+<tr>
+<td>ESTABLISHED</td>
+<td>发送接受数据</td>
+<td>ESTABLISHED</td>
+<td>ESTABLISHED</td>
+<td>发送接收数据</td>
+<td>ESTABLISHED</td>
+</tr>
+</tbody>
+</table>
+<p><a href="http://www.tcpipguide.com/free/t_TCPConnectionEstablishmentProcessTheThreeWayHandsh-3.htm" target="_blank" rel="external">参考</a></p>
+<h3 id="TCP-挥手断连"><a href="#TCP-挥手断连" class="headerlink" title="TCP 挥手断连"></a>TCP 挥手断连</h3><p>了解了tcp的握手方式，那么挥手方式就很容易理解啦。与创建连接syn不一样，想要端口连接需要发送的是fin包。同样为了确定断开连接，需要发送ack应答确认包。大概方式入下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-a0dcfd90c7842ffa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Termination.png"></p>
+<p>断开tcp需要四步，断开连接既可以是client主动，server被动，也可以server主动断开。两种的状态变化也是相对而言。下面以client主动断开为例：</p>
+<ol>
+<li>client发送[FIN]包，表示要断开clinet-&gt;server的连接。</li>
+<li>server收到[FIN]之后，发送一个[ACK]包表示确定断开连接啦。</li>
+<li>同时server也会向clinet再发一个[FIN]包，表示也想断开server-&gt;clinet的连接。</li>
+<li>clinet收到server的[ACK]包，确定了clinet-&gt;server的连接的断开，该连接将不会发送数据啦。由于client也会收到server的[FIN]包，因此也要为断开server-&gt;clinet的连接发送[ACK]给server确定。</li>
+</ol>
+<p>至此，四次挥手完成。下面详细四次交互过程两个端的状态。</p>
+<p>client和server端传送数据的时候，双方的状态都是<code>ESTABLISHED</code>。一旦clinet发送了fin之后，自身变成<code>FIN-WAIT-1</code>的状态，意思是等待server端的ack确定。此时，该通道不再向server发送数据，但是仍然可以接收server数据了。</p>
+<p>server收到了clinet发送的ack之后，自身的状态由<code>ESTABLISHED</code>变成<code>CLOSE_WAIT</code>。client收到ack后，自身由<code>FIN-WAIT-1</code>变成<code>FIN-WAIT-2</code>，断开了连接。此时client在等待server端的fin信号。</p>
+<p>server 发送 ack之后，自身就由<code>CLOSE_WAIT</code>变成<code>LAST-ACK</code>状态，即等待client的最后的ack确定。client收到server的fin包之后，自身就由 <code>FIN-WAIT-2</code> 变成 <code>TIME_WAIT</code>状态，等待一个2MSL时间之后，就变成了<code>CLOSED</code>状态。</p>
+<p>最后server收到client的ack确定之后，自身也变成<code>CLOSED</code>状态。</p>
+<table>
+<thead>
+<tr>
+<th>客户端</th>
+<th></th>
+<th></th>
+<th>服务端</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开始状态</td>
+<td>过程</td>
+<td>结束状态</td>
+<td>开始状态</td>
+<td>过程</td>
+<td>结束状态</td>
+</tr>
+<tr>
+<td>ESTABLISHED</td>
+<td>向server发送FIN，表示想关闭clinet-&gt;server的连接</td>
+<td>FIN-WAIT-1</td>
+<td>ESTABLISHED</td>
+<td>正常服务，直到收到FIN</td>
+<td>ESTABLISHED</td>
+</tr>
+<tr>
+<td>FIN-WAIT-1</td>
+<td>发送完毕FIN，等待server的确认应答，此时将不会再发送数据给server</td>
+<td>FIN-WAIT-1</td>
+<td>ESTABLISHED</td>
+<td>接受FIN，发送ACK确认断开连接</td>
+<td>CLOSE-WAIT</td>
+</tr>
+<tr>
+<td>FIN-WAIT-1</td>
+<td>接收server发送的ACK，确定client-&gt;server连接关闭</td>
+<td>FIN-WAIT-2</td>
+<td>CLOSE-WAIT</td>
+<td>发送FIN，表示关闭server-&gt;client的连接</td>
+<td>LAST-ACK</td>
+</tr>
+<tr>
+<td>FIN-WAIT-2</td>
+<td>收到server的FIN包，发送ACK作为应答</td>
+<td>TIME-WAIT</td>
+<td>LAST-ACK</td>
+<td>等待 client发送的ACK</td>
+<td>LAST-ACK</td>
+</tr>
+<tr>
+<td>TIME-WAIT</td>
+<td>等待MSL时间，保证ACK能被对方收到，等待fin否则重发</td>
+<td>TIME-WAIT</td>
+<td>LAST-ACK</td>
+<td>接受ACK应达，关闭server-&gt;clinet的连接</td>
+<td>CLOSED</td>
+</tr>
+<tr>
+<td>TIME-WAIT</td>
+<td>MSL 时间过期</td>
+<td>CLOSED</td>
+<td>CLOSED</td>
+<td>连接关闭</td>
+<td>CLOSED</td>
+</tr>
+</tbody>
+</table>
+<p><a href="http://www.tcpipguide.com/free/t_TCPConnectionTermination-2.htm" target="_blank" rel="external">参考</a></p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>三次握手保证了TCP连接的可靠性，假设没有三次握手只有两次。如果client发送第一个syn的时候延迟很大，导致client发送了第二个，第二个syn很快就到达server端。于是server发送ack确定连接，并发送syn。在两次握手的情况下，服务器认为连接都建立好了。如果此时第一个syn又抵达了服务器，那么服务器将会再次应答，向client端发送连接请求。这样会造成无效的连接，通过第三次握手，可以在server应答无效连接的时候提前终止。也就是最后一次握手不再发送ack，那么server就不会再创建连接。</p>
+<p>在关闭连接的时候，虽然两个端都统一关闭连接，并且四次交互也发送完毕。假设如果网络延迟很大，或者丢包严重，就很难保证client最后一次ack一定能被server收到。如果server收不到，会重发fin。为了解决这个问题，通常在client发送ack之后2MSL时间，才由<code>TIME_WAIT</code>变成<code>CLOSED</code>状态，在此期间，client可以针对server补发的fin重发ack。</p>
+<p>还有一个<code>CLOSING</code>状态，这个状态表示client发送了FIN之后，并没有收到ACK，反而先收到了server的FIN。当然这种情况十分罕见的“异常”状态。双方都同时关闭连接，有可能在四次交互的时候，出现某些包延迟。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>TCP 连接和断开的过程中，都是一问一答的方式，创建连接的问是syn，回答是ack，同样断开连接的问是fin，回答是ack。有问必有答，那么连接就能正常的创建和关闭。因为tcp通信是双通道的，因此一个TCP逻辑连接，实际上是两条成对client和server端的物理连接。无论连接和断开，都需要把这两个连接都处理完毕才能完成。也因为这两个过程，中间衍生出了很多状态。这些状态在创建连接的时候有client和server端的区分，在断开的连接的时候就没有特别区别，只有主动断开和被动断开的差别。</p>
+<p>至于tcp三次握手中两端的“两个连接”的通信通道，他们的具体原理和过程，我们将会在TCP连接与Python中详细讨论。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag">#network</a>
+          
+            <a href="/tags/tcp/" rel="tag">#tcp</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/React实战：react+webpack+es6 实现简易todo app/" rel="next" title="React实战：react+webpack+es6 实现简易todo app">
+                <i class="fa fa-chevron-left"></i> React实战：react+webpack+es6 实现简易todo app
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/TCP握手与socket通信细节/" rel="prev" title="TCP握手与socket通信细节">
+                TCP握手与socket通信细节 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">58</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#技术革命"><span class="nav-number">1.</span> <span class="nav-text">技术革命</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-握手连接"><span class="nav-number">2.</span> <span class="nav-text">TCP 握手连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-握手c-s端状态"><span class="nav-number">3.</span> <span class="nav-text">TCP 握手c/s端状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-挥手断连"><span class="nav-number">4.</span> <span class="nav-text">TCP 挥手断连</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-number">5.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

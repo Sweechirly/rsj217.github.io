@@ -1,0 +1,772 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="react,es6," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="React可谓如日中天，webpack也风声水起。React刚出来不久就浏览了一遍官网的文档，当时想这个新玩意挺“颠覆”，暂时保持观望好了。直到React Angular Vue三分天下的时候，还处于观望就不太妥了。再次看完官网的document，尝试实现一个todo应用来实践react。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React实战：react+webpack+es6 实现简易todo app">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/React实战：react+webpack+es6 实现简易todo app/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="React可谓如日中天，webpack也风声水起。React刚出来不久就浏览了一遍官网的文档，当时想这个新玩意挺“颠覆”，暂时保持观望好了。直到React Angular Vue三分天下的时候，还处于观望就不太妥了。再次看完官网的document，尝试实现一个todo应用来实践react。">
+<meta property="og:updated_time" content="2016-11-02T06:39:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React实战：react+webpack+es6 实现简易todo app">
+<meta name="twitter:description" content="React可谓如日中天，webpack也风声水起。React刚出来不久就浏览了一遍官网的文档，当时想这个新玩意挺“颠覆”，暂时保持观望好了。直到React Angular Vue三分天下的时候，还处于观望就不太妥了。再次看完官网的document，尝试实现一个todo应用来实践react。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/React实战：react+webpack+es6 实现简易todo app/"/>
+
+
+  <title> React实战：react+webpack+es6 实现简易todo app |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                React实战：react+webpack+es6 实现简易todo app
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:25:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><code>React</code>可谓如日中天，webpack也风声水起。React刚出来不久就浏览了一遍官网的文档，当时想这个新玩意挺“颠覆”，暂时保持观望好了。直到<code>React Angular Vue</code>三分天下的时候，还处于观望就不太妥了。再次看完官网的document，尝试实现一个todo应用来实践react。</p>
+<a id="more"></a>
+<p>如果说实现一个Blog是后端工程师入门的第一个应用，那么Todo可谓是前端开发者练手处女项目了。<br>下面就使用React实现一个简单的todo，实现基本的增删改的功能，其效果请访问<a href="http://rsj217.github.io/apps/react-todo/" target="_blank" rel="external">react-todo</a>。</p>
+<h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><h4 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h4><p>前端发展太快，从<code>打包工具</code>到<code>框架/库</code>都层出不穷，往往一个坑还没爬出来，就掉进了另外的坑。创建的<code>todo</code>主要采用<code>node</code>包的方式，使用<code>webpack</code>打包，具体的js代码使用<code>ES6</code>的语法。</p>
+<p>初始化项目并创建一些基础文件，项目结构大概如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">☁  ~  mkdir todos</div><div class="line">☁  ~  cd todos &amp;&amp; npm init</div><div class="line">☁  todos  mkdir app app/components</div><div class="line">☁  todos  touch index.html webpack.config.js</div><div class="line">☁  todos  touch app/index.js app/components/app.js</div><div class="line">☁  todos  tree</div><div class="line">.</div><div class="line">├── app</div><div class="line">│   ├── components</div><div class="line">│   │   └── app.js</div><div class="line">│   └── index.js</div><div class="line">├── index.html</div><div class="line">├── package.json</div><div class="line">└── webpack.config.js</div><div class="line"></div><div class="line">2 directories, 5 files</div></pre></td></tr></table></figure>
+<h4 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h4><p>初始化项目之后，就需要安装所需要的库及其依赖。npm安装方式可以为开发环境或生产选择所安装的依赖。首先需要安装<code>webpack</code>和<code>webpack-dev-server</code>。这两个包需要全局安装，通过 <code>npm install -g webpack webpack-dev-server</code>，如果已经安装了，可以忽略。</p>
+<p>随后将会安装编译ES6和JSX的编译工具<code>babel</code>。运行下面命令安装。react，react-dom是react的基础库，<code>lodash</code>则是一个函数库，用于使用ES6的一些新特性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">☁  todos  npm install --save react react-dom lodash</div></pre></td></tr></table></figure>
+<p>上述包是生产发布环境也需要的依赖，下面安装开发环境中使用的打包编译的loader包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">☁  todos  npm install --save-dev babel-core babel-loader babel-preset-es2015 babel-preset-react react-hot-loader style-loader css-loader webpack webpack-dev-server</div></pre></td></tr></table></figure>
+<p>如果一切顺利，npm将会在package.json中显示已经安装好的包。迁移项目的时候，只需要npm install即可。</p>
+<h4 id="配置webpack"><a href="#配置webpack" class="headerlink" title="配置webpack"></a>配置webpack</h4><p>安装完所需要的依赖之后，配置webpack。webpack的配置比较简单。具体配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">var webpack = require(&quot;webpack&quot;)</div><div class="line">var path = require(&quot;path&quot;)</div><div class="line"></div><div class="line">module.exports = &#123;</div><div class="line"> devtool: &quot;inline-source-map&quot;,</div><div class="line"> entry: [</div><div class="line">  &quot;webpack-dev-server/client?http://127.0.0.1:8080/&quot;,</div><div class="line">  &quot;webpack/hot/only-dev-server&quot;,</div><div class="line">  &quot;./app&quot;</div><div class="line"> ],</div><div class="line"></div><div class="line"> output: &#123;</div><div class="line">  path: path.join(__dirname, &quot;public&quot;),</div><div class="line">  filename: &quot;bundle.js&quot;</div><div class="line"> &#125;,</div><div class="line"> resolve: &#123;</div><div class="line">  modulesDirectories: [&quot;node_modules&quot;, &quot;app&quot;],</div><div class="line">  extensions: [&quot;&quot;, &quot;.js&quot;]</div><div class="line"> &#125;,</div><div class="line"> module: &#123;</div><div class="line">  loaders: [</div><div class="line">   &#123;</div><div class="line">    test: /\.jsx?$/,</div><div class="line">    exclude: /node_modules/,</div><div class="line">    loaders: [&quot;react-hot&quot;, &quot;babel?presets[]=react,presets[]=es2015&quot;]</div><div class="line">   &#125;,</div><div class="line">   &#123;</div><div class="line">    test: /\.css?$/,</div><div class="line">    exclude: /node_modules/,</div><div class="line">    loaders: [&quot;style&quot;, &quot;css&quot;]</div><div class="line">   &#125;</div><div class="line">  ]</div><div class="line"> &#125;,</div><div class="line"> plugins: [</div><div class="line">  new webpack.HotModuleReplacementPlugin(),</div><div class="line">  new webpack.NoErrorsPlugin()</div><div class="line"> ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>关于webpack的配置，并不是本篇的主题，想要了解更多的详细内容，可以查阅官网的文档。</p>
+<h4 id="Hello-world"><a href="#Hello-world" class="headerlink" title="Hello world"></a>Hello world</h4><p>配置了webpack之后，编写html入口和js的入口文件，展示一下hello world啦。<br>编辑 index.html 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">index.html</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;title&gt;React Todos App&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">    &lt;div id=&quot;app&quot; /&gt;</div><div class="line">    &lt;script src=&quot;bundle.js&quot;&gt;&lt;/script&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>入口的js文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">index.js</div><div class="line"></div><div class="line">import React from &apos;react&apos;</div><div class="line">import &#123;render&#125; from &apos;react-dom&apos;</div><div class="line"></div><div class="line">render(&lt;div&gt;hello world&lt;/div&gt; document.getElementById(&apos;app&apos;))</div></pre></td></tr></table></figure>
+<p>运行 <code>webpack-dev-server</code>启动webpack服务器，使用浏览器打开 <code>http://127.0.0.1:8080</code>就能看见helloworld啦。这里webpack-dev-server是为了监测前端文件的变化，以便实时编译打包前端文件。</p>
+<p>React的render方法，将自定义的的component挂载到html中的dom中（div#app）。</p>
+<h4 id="React-组件"><a href="#React-组件" class="headerlink" title="React 组件"></a>React 组件</h4><p>前面通过react的render方法，创建了一个组件，下面创建更多的组件。编辑 components/app.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">import React from &quot;react&quot;</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">         &lt;div&gt;</div><div class="line">          &lt;h1&gt;React Todo App&lt;/h1&gt;</div><div class="line">         &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default App</div></pre></td></tr></table></figure>
+<p>然后修改之前的入口文件index.js，将随后创建的App组件渲染到html中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">index.js</div><div class="line"></div><div class="line">import React from &quot;react&quot;</div><div class="line">import &#123;render&#125; from &quot;react-dom&quot;</div><div class="line">import App from &quot;components/app&quot;</div><div class="line"></div><div class="line">render(&lt;App /&gt;, document.getElementById(&quot;app&quot;))</div></pre></td></tr></table></figure>
+<p>刷新浏览器，就能看见新创建的App组件。</p>
+<blockquote>
+<p>组件是React中的重要概念。对于软件界面，按钮，导航，表单这些可视化的界面都可以称之为组件，组件实现了逻辑和功能的封装。就像完积木一样，每个组件都是一个积木，多个积木可以合成一个大的积木，最终实现组件构成的用户界面。</p>
+<p>React的组件都是用<strong><em>**</em></strong>大写<strong><em>**</em></strong>的拉丁字母开头，继承自<code>React.Components</code>类。render方法用于返回该组件的JSX代码。JSX是Facebook为了配合react定义的一套xml规范。与html及其相似，用于构建组件界面。需要注意，JSX的所有标签必须闭合。return之后必须返回一个组件元素，不能同时返回多个，如果有多个的，需要用div重新包装一次。</p>
+</blockquote>
+<h3 id="编写Todo"><a href="#编写Todo" class="headerlink" title="编写Todo"></a>编写Todo</h3><h4 id="todo-列表"><a href="#todo-列表" class="headerlink" title="todo 列表"></a>todo 列表</h4><p>配置好基本环境之后，接下来将要完成一个完整的todo应用。这个小应用主要有两个大的组件，一个是用于创建todo条目，另外一个用于展示todo列表。下面先完成todo列表的组件。随着功能的增加，会经常编辑某个文件，文件内容也会变多，在此只会贴出变更的代码部分，不再贴出完整的文件内容，完整的文件内容可以参考<a href="https://github.com/rsj217/react-todo" target="_blank" rel="external">源码</a>。</p>
+<p>接下来在app.js 文件中定义数据，数据的获取方式很多，假设现在从本地获取数据。通过App这个组件逐渐把数据传递下去。定义了数据，需要借助React的state和props两个属性来实现数据传递。编辑app.js文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">import TodoList from &quot;components/todo-list&quot;</div><div class="line"></div><div class="line">const todos = [</div><div class="line"> &#123;</div><div class="line">  task: &apos;Learning React&apos;,</div><div class="line">  isCompleted: true</div><div class="line"> &#125;,</div><div class="line"> &#123;</div><div class="line">  task: &apos;Learning Jsx&apos;,</div><div class="line">  isCompleted: false</div><div class="line"> &#125;,</div><div class="line"> &#123;</div><div class="line">  task: &apos;React in action&apos;,</div><div class="line">  isCompleted: false</div><div class="line"> &#125;</div><div class="line">]</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line"></div><div class="line"> constructor(props)&#123;</div><div class="line">  super(props)</div><div class="line">  this.state = &#123;</div><div class="line">   todos: todos</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">         &lt;div&gt;</div><div class="line">          &lt;h1&gt;React Todo App&lt;/h1&gt;</div><div class="line">          &lt;TodoList todos=&#123;this.state.todos&#125;/&gt;</div><div class="line">         &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default App;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>props</code> 和 <code>state</code> 是react组件中重要的两个属性。它们本质都是js对象。props常用于存储一些不可变的组件属性，例如函数和方法，state则用于保留一些可变的数据结构，例如实际的数据和状态tag。</p>
+</blockquote>
+<p>上述的代码定义了一些todos数据，然后把这些数据初始化给App组件。再通过TodoList组件的todo props传递给后者。也就是在TodoList内部，它的this.props.todos则为 App组件的this.state.todos。</p>
+<p>TodoList是用于展示todo列表的组件。再创建一个文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">☁  app  touch components/todo-list.js</div></pre></td></tr></table></figure>
+<p>编辑todo-list.js 如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">todo-list.js</div><div class="line">...</div><div class="line">import _ from &apos;lodash&apos;</div><div class="line"></div><div class="line">class TodoList extends React.Component &#123;</div><div class="line"></div><div class="line"> renderItem()&#123;</div><div class="line">  return  _.map(this.props.todos, (todo, index) =&gt; &#123;</div><div class="line">   return (</div><div class="line">    &lt;tr key=&#123;index&#125;&gt;</div><div class="line">     &lt;td&gt;&#123;todo.task&#125;&lt;/td&gt;&lt;td&gt;&#123;todo.isCompleted ? &apos;done&apos; : &apos;undo&apos;&#125;&lt;/td&gt;</div><div class="line">    &lt;/tr&gt;</div><div class="line">   )</div><div class="line">  &#125;)</div><div class="line"> &#125;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">         &lt;table&gt;</div><div class="line">          &lt;thead&gt;</div><div class="line">           &lt;tr&gt;</div><div class="line">            &lt;th&gt;Task&lt;/th&gt;&lt;th&gt;Action&lt;/th&gt;</div><div class="line">           &lt;/tr&gt;</div><div class="line">          &lt;/thead&gt;</div><div class="line">          &lt;tbody&gt;</div><div class="line">           &#123;this.renderItem()&#125;</div><div class="line">          &lt;/tbody&gt;</div><div class="line">         &lt;/table&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default TodoList;</div></pre></td></tr></table></figure>
+<p>TodoList组件由两部分组成，table的head和body部分。body通过一个表格的行来展示todo的列表内容。通过lodash的map方法，可以迭代一个数组(this.props.todos)对象，然后把todo的列表拼装成表格返回。最后在tbody中调用函数renderItem。至此，大致的一个todo应用轮廓已经成形。接下来将要把TodoList这个组件更细化的拆分。主要拆分为head和item两个组件。</p>
+<h4 id="TodoHeader-组件"><a href="#TodoHeader-组件" class="headerlink" title="TodoHeader 组件"></a>TodoHeader 组件</h4><p>创建一个组件文件，用于表示todo应用的表头。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">☁  app  touch components/todo-header.js</div></pre></td></tr></table></figure>
+<p>修改编辑的todo-list.js 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">import TodoListHeader from &quot;components/todo-list-header&quot;</div><div class="line"></div><div class="line">class TodoList extends React.Component &#123;</div><div class="line"></div><div class="line"> ...</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">         &lt;table&gt;</div><div class="line">          &lt;TodoListHeader /&gt;</div><div class="line">          &lt;tbody&gt;</div><div class="line">           &#123;this.renderItem()&#125;</div><div class="line">          &lt;/tbody&gt;</div><div class="line">         &lt;/table&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后再编辑 todo-list-header.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">import React from &apos;react&apos;</div><div class="line"></div><div class="line">class TodoListHeader extends React.Component &#123;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return  (</div><div class="line">          &lt;thead&gt;</div><div class="line">                &lt;tr&gt;</div><div class="line">                    &lt;th&gt;Task&lt;/th&gt;</div><div class="line">                    &lt;th&gt;Action&lt;/th&gt;</div><div class="line">                &lt;/tr&gt;</div><div class="line">            &lt;/thead&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default TodoListHeader</div></pre></td></tr></table></figure>
+<p>TodoListHeader 组件相当简单，只需要把thead的内容copy即可。</p>
+<h4 id="TodoListItem-组件"><a href="#TodoListItem-组件" class="headerlink" title="TodoListItem 组件"></a>TodoListItem 组件</h4><p>需要拆分列表组件稍微复杂一点点。因为针对todo的每一个列表，都有修改、删除的操作。因此这些事件可以封装成为一个单独的组件，即item是组件。编辑todo-list.js文件，修改render函数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">todo-list.js</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">import TodoListItem from &quot;components/todo-list-item&quot;</div><div class="line"></div><div class="line">class TodoList extends React.Component &#123;</div><div class="line"></div><div class="line"> renderItem()&#123;</div><div class="line">  return  _.map(this.props.todos, (todo, index) =&gt; &#123;</div><div class="line">   return (</div><div class="line">    &lt;TodoListItem todo=&#123;todo&#125; key=&#123;index&#125;/&gt;</div><div class="line">   )</div><div class="line">  &#125;)</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后编辑todo-list-item.js文件，增加TodoListItem组件。和TodoListHeader组件类似，将之前renderItem中的jsx拷贝一份，通过this.props读取单条todo的数据即可。</p>
+<blockquote>
+<p>由于 react使用了virtrul-dom来实现操作dom的性能。那么针对一些列表元素的dom，都需要给他们一个id，这个id可以使用 key={index} 来指定。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">todo-list-item.js</div><div class="line"></div><div class="line">import React from &apos;react&apos;</div><div class="line"></div><div class="line">class TodoListItem extends React.Component &#123;</div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;tr key=&#123;this.props.index&#125;&gt;</div><div class="line">                &lt;td&gt;&#123;this.props.todo.task&#125;&lt;/td&gt;&lt;td&gt;&#123;this.props.todo.isCompleted ? &apos;done&apos; : &apos;undo&apos;&#125;&lt;/td&gt;</div><div class="line">            &lt;/tr&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default TodoListItem</div></pre></td></tr></table></figure>
+<h3 id="Todo-创建"><a href="#Todo-创建" class="headerlink" title="Todo 创建"></a>Todo 创建</h3><p>完成了todo列表的基本功能，下一步需要实现todo的创建功能。需要引入一个新的组建，TodoCreate。创建一个文件<code>todo-create.js</code>。编写如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">todo-create.js</div><div class="line"></div><div class="line">import React from &apos;react&apos;;</div><div class="line"></div><div class="line">class TodoCreate extends React.Component &#123;</div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">         &lt;form&gt;</div><div class="line">          &lt;input type=&quot;text&quot; placeholder=&quot;What need I do?&quot; ref=&quot;createInput&quot; /&gt;</div><div class="line">          &lt;button&gt;Create&lt;/button&gt;</div><div class="line">         &lt;/form&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default TodoCreate</div></pre></td></tr></table></figure>
+<p>然后编辑app.js 文件，引入TodoCreate 组件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">app.js</div><div class="line"></div><div class="line">import TodoCreate from &quot;components/todo-create&quot;</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line">   ...</div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                &lt;h1&gt;React Todo App&lt;/h1&gt;</div><div class="line">                &lt;TodoCreate /&gt;</div><div class="line">                &lt;TodoList todos=&#123;this.state.todos&#125;/&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="React事件"><a href="#React事件" class="headerlink" title="React事件"></a>React事件</h4><p>TodoCreate组件实质是一个表单，一个表单域和提交按钮。button的点击事件会触发form的onsubmit事件。因此需要定义form的事件，同时给表单域提供了一个ref属性，用于react引用表单域对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">todo-craete.js</div><div class="line"></div><div class="line">class TodoCreate extends React.Component &#123;</div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;form onSubmit=&#123;this.handleCreate.bind(this)&#125;&gt;</div><div class="line">                &lt;input type=&quot;text&quot; placeholder=&quot;What need I do?&quot; ref=&quot;createInput&quot; /&gt;</div><div class="line">                &lt;button&gt;Create&lt;/button&gt;</div><div class="line">            &lt;/form&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    handleCreate(event)&#123;</div><div class="line">        event.preventDefault()</div><div class="line"></div><div class="line">        const task = this.refs.createInput.value</div><div class="line">        this.refs.createInput.value = &apos;&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>给from增加了onSubmit事件函数handleCreate。handleCreate函数中先把form的默认事件除去，然后通过ref属性获取了表单的值。如果按照之前的编程习惯，此时这里可以处理增加todo的实际操作。可是如果这里增加了todo，那么如何渲染到todo列表的组件中呢？</p>
+<p>实际上，TodoCreate和TodoList是同级的组件，他们通信的共同点是通过App组件，并且之前的数据源都是通过App组件往子组件传递。因此可以在App组件中定义函数用于操作todo的数据，子组件只需要在自己的事件函数中调用父组建函数实现数据通信。</p>
+<blockquote>
+<p>React 的事件和原生的js事件很像，只是写法上使用驼峰式，并且还保证了浏览器的兼容性。这样的处理react随处可见，例如后面将会遇到的样式写法。ref是表单中常用的属性，用于引用一个dom元素。</p>
+</blockquote>
+<p>编辑App.js文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">app.js</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line">  ...</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                &lt;h1&gt;React Todo App&lt;/h1&gt;</div><div class="line">                // 绑定createTask函数给子组件TodoCreate</div><div class="line">                &lt;TodoCreate createTask=&#123;this.createTask.bind(this)&#125;/&gt;</div><div class="line">                &lt;TodoList todos=&#123;this.state.todos&#125;/&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">   // 增加createTask函数用于接受处理TodoCreate组件创建的task数据</div><div class="line">    createTask(task)&#123;</div><div class="line">        this.state.todos.push(&#123;</div><div class="line">            task: task,</div><div class="line">            isCompleted: false</div><div class="line">        &#125;)</div><div class="line">        this.setState(&#123;todos: this.state.todos&#125;)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>App组件中实现了createTask函数，该函数绑定到TodoCreate组件中，通过后者的handleCreate事件调用，并传递创建的task内容。createTask再把数据重新设置state，以便渲染整个数据变化的组件。之前的handleCreate将改下如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">todo-create.js</div><div class="line">class TodoCreate extends React.Component &#123;</div><div class="line">  ...</div><div class="line"></div><div class="line">    handleCreate(event)&#123;</div><div class="line">        event.preventDefault()</div><div class="line">        const task = this.refs.createInput.value</div><div class="line">        // 调用App组件的createTask函数用于操作todo数据</div><div class="line">        this.props.createTask(task)</div><div class="line">        this.refs.createInput.value = &apos;&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Todo-修改"><a href="#Todo-修改" class="headerlink" title="Todo 修改"></a>Todo 修改</h3><p>完成了Todo的创建，应用的功能算是完成了一半，CURD操作，仅仅是完成了两步，还有最重要的修改和删除两个功能。</p>
+<p>修改主要针对的是单条todo内容的数据进行操作，因此大部分逻辑都和TodoListItem组件有关，而基于前面的学习中，TodoCreate中的数据是需要借助App这个组件进行通信，同样TodoListItem中遇到数据的操作，也需要借助App的组件进行操作，比TodoCreate更复杂的情况是，TodoListItem的父组件确实TodoList，因此这个数据流的传递将会被TodoCreate多了一层组件。</p>
+<h4 id="action-操作"><a href="#action-操作" class="headerlink" title="action 操作"></a>action 操作</h4><p>todo的action中的功能，对于todo列表，action将会提供<code>编辑</code>和<code>删除</code>的功能，一旦点击了编辑，将会出现一个表单，同时action将会变成<code>保存</code>和<code>取消</code>两个功能。一旦点<code>取消</code>，action将变成之前的样子。下面先实现这两组action的交互变化。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line"></div><div class="line">class TodoListItem extends React.Component &#123;</div><div class="line"></div><div class="line">    constructor(props)&#123;</div><div class="line">        super(props)</div><div class="line">        // 借助 isEditing state用于存储修改todo的状态</div><div class="line">        this.state = &#123;</div><div class="line">            isEditing: false</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    renderActionSection()&#123;</div><div class="line">        </div><div class="line">        if(this.state.isEditing)&#123;</div><div class="line">            return (</div><div class="line">                &lt;td&gt;</div><div class="line">                    &lt;button&gt;Save&lt;/button&gt;</div><div class="line">                    &lt;button onClick=&#123;this.onCancel.bind(this)&#125;&gt;Cancel&lt;/button&gt;</div><div class="line">                &lt;/td&gt;</div><div class="line">            )</div><div class="line">        &#125;</div><div class="line">        return (</div><div class="line">            &lt;td&gt;</div><div class="line">                &lt;button onClick=&#123;this.onEditing.bind(this)&#125;&gt;Edit&lt;/button&gt;</div><div class="line">                &lt;button&gt;Delete&lt;/button&gt;</div><div class="line">            &lt;/td&gt;</div><div class="line">        )</div><div class="line">        </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;tr key=&#123;this.props.index&#125;&gt;</div><div class="line">                &lt;td&gt;&#123;this.props.todo.task&#125;&lt;/td&gt;</div><div class="line">                &#123;this.renderActionSection()&#125;</div><div class="line">            &lt;/tr&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    onEditing()&#123;</div><div class="line">        this.setState(&#123;</div><div class="line">            isEditing: true</div><div class="line">        &#125;)</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    onCancel()&#123;</div><div class="line">        this.setState(&#123;</div><div class="line">            isEditing: false</div><div class="line">        &#125;)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把动态变化的action内容抽出之后，点击编辑之后，除了action的按钮变化之外，还需要将task展示的地方变成一个form表单，以便实际修改task内容。因此在展示task内容的时候，需要根据当前的状态（是否是编辑）是否展示表单。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">todo-list-item.js</div><div class="line"></div><div class="line">class TodoListItem extends React.Component &#123;</div><div class="line">  ...</div><div class="line"></div><div class="line">    renderTaskSection()&#123;</div><div class="line"></div><div class="line">        if (this.state.isEditing)&#123;</div><div class="line">            return (</div><div class="line">                &lt;td&gt;</div><div class="line">                    &lt;form&gt;</div><div class="line">                        &lt;input type=&quot;text&quot; defaultValue=&#123;this.props.todo.task&#125; ref=&quot;editInput&quot;/&gt;</div><div class="line">                    &lt;/form&gt;</div><div class="line">                &lt;/td&gt;</div><div class="line">            )</div><div class="line">        &#125;</div><div class="line">        return &lt;td&gt;&#123;this.props.todo.task&#125;&lt;/td&gt; </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;tr key=&#123;this.props.index&#125;&gt;</div><div class="line">                &#123;this.renderTaskSection()&#125;</div><div class="line">                &#123;this.renderActionSection()&#125;</div><div class="line">            &lt;/tr&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">   ...</div></pre></td></tr></table></figure>
+<h4 id="todo-编辑"><a href="#todo-编辑" class="headerlink" title="todo 编辑"></a>todo 编辑</h4><p>点击编辑之后，会出现一个可编辑的表单，其中defaulValue属性比较重要，如果设置value，还需要针对表单的onchange事件进行监听，否则不会修改表单域的内容。</p>
+<p>实现todo的编辑功能，通过表单提交来修改内容，我们之前也遇到了创建todo的时候需要提交表单，两者的思路类似，都是通过表单的事件，调用父组件的函数，然后更新todo的数据状态，最后重新render数据变化的组件。只不过这一次的函数还需要通过TodoList这个组件做一次数据流向的中继。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">todo-list-item.js</div><div class="line"></div><div class="line">class TodoListItem extends React.Component &#123;</div><div class="line">    renderActionSection()&#123; </div><div class="line">        if(this.state.isEditing)&#123;</div><div class="line">            return (</div><div class="line">                &lt;td&gt;</div><div class="line">                    // 绑定save方法</div><div class="line">                    &lt;button onClick=&#123;this.onSave.bind(this)&#125;&gt;Save&lt;/button&gt;</div><div class="line">                    &lt;button onClick=&#123;this.onCancel.bind(this)&#125;&gt;Cancel&lt;/button&gt;</div><div class="line">                &lt;/td&gt;</div><div class="line">            )</div><div class="line">        &#125;</div><div class="line">       ...</div><div class="line">        </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    renderTaskSection()&#123;</div><div class="line"></div><div class="line">        if (this.state.isEditing)&#123;</div><div class="line">            return (</div><div class="line">                &lt;td&gt;</div><div class="line">                    // 绑定save方法</div><div class="line">                    &lt;form onSubmit=&#123;this.onSave.bind(this)&#125;&gt;</div><div class="line">                        &lt;input type=&quot;text&quot; defaultValue=&#123;this.props.todo.task&#125; ref=&quot;editInput&quot;/&gt;</div><div class="line">                    &lt;/form&gt;</div><div class="line">                &lt;/td&gt;</div><div class="line">            )</div><div class="line">        &#125;</div><div class="line">        return &lt;td&gt;&#123;this.props.todo.task&#125;&lt;/td&gt; </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    onSave(event)&#123;</div><div class="line">        event.preventDefault()</div><div class="line"></div><div class="line">        const oldTask = this.props.todo.task</div><div class="line">        const newTask = this.refs.editInput.value</div><div class="line"></div><div class="line">        // 调用父组件的方法</div><div class="line">     this.props.saveTask(oldTask, newTask)</div><div class="line">        this.setState(&#123;</div><div class="line">            isEditing: false</div><div class="line">        &#125;)</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>下面实现saveTask方法，编辑 app.js文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">app.js</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                &lt;h1&gt;React Todo App&lt;/h1&gt;</div><div class="line">                &lt;TodoCreate createTask=&#123;this.createTask.bind(this)&#125;/&gt;</div><div class="line">                &lt;TodoList todos=&#123;this.state.todos&#125;</div><div class="line">                    // 将saveTask函数传递给子组件</div><div class="line">                          saveTask=&#123;this.saveTask.bind(this)&#125;/&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">  ...</div><div class="line">  </div><div class="line">    saveTask(oldTask, newTask)&#123;</div><div class="line">        const foundTask = _.find(this.state.todos, todo =&gt; todo.task === oldTask)</div><div class="line">        foundTask.task = newTask</div><div class="line">        this.setState(&#123;todos: this.state.todos&#125;)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>完成了App组件中的saveTask函数定义，并传递给子组件，此时需要修改TodoList组件，并将这个函数方法继续传递给TodoListItem组件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">todo-list.js</div><div class="line"></div><div class="line">class TodoList extends React.Component &#123;</div><div class="line"></div><div class="line"> renderItem()&#123;</div><div class="line">  return  _.map(this.props.todos, (todo, index) =&gt; &#123;</div><div class="line">   return (</div><div class="line">      // 传递saveTask函数方法</div><div class="line">    &lt;TodoListItem todo=&#123;todo&#125; key=&#123;index&#125; saveTask=&#123;this.props.saveTask&#125;/&gt;</div><div class="line">   )</div><div class="line">  &#125;)</div><div class="line"> &#125;</div><div class="line"></div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过TodoList组件的传递，编辑功能就可以实现了。下一步，将会实现将todo的状态进行改变，即完成与否的操作功能，点击todo条目，将变成删除线，表示已经完成；重新点击，将除去删除线，表示未完成。这是常见的前端toggle操作。修改TodoListItem组件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">todo-list-item.js</div><div class="line"></div><div class="line">class TodoListItem extends React.Component &#123; </div><div class="line">  ... </div><div class="line">    renderTaskSection()&#123;</div><div class="line">   ...</div><div class="line">   // 增加 taskStyle 和 完成状态的删除线</div><div class="line">        if (!this.props.todo.isCompleted)&#123;</div><div class="line">            return &lt;td onClick=&#123;this.onToggle.bind(this)&#125; style=&#123;taskStyle&#125;&gt;&#123;this.props.todo.task&#125;&lt;/td&gt; </div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return &lt;td onClick=&#123;this.onToggle.bind(this)&#125; style=&#123;taskStyle&#125;&gt;&lt;strike&gt;&#123;this.props.todo.task&#125;&lt;/strike&gt;&lt;/td&gt; </div><div class="line">    &#125;</div><div class="line"> </div><div class="line">  ... </div><div class="line"></div><div class="line">    onToggle()&#123;</div><div class="line">        const currentTask = this.props.todo.task</div><div class="line">        this.props.toggleTask(currentTask)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 renderTaskSection中，如果不是处于编辑状态，将对todo条目进行绑定一个onToggle的操作，以及将此时todo的状态用style颜色标注。style是Jsx中的组件的属性，本质上是一个js对象，js的对象就是把CSS的编写改写一下，和JSX组件属性一样，遇到连字符连接的属性，则改未驼峰式书写。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">taskStyle = &#123;</div><div class="line">  color: this.props.todo.isCompleted ? &apos;green&apos; : &apos;red&apos;,</div><div class="line">  cursor: &apos;pointer&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面来看onToggle方法，与onSave类似，调用的都是父级组件传递过来的方法操作todo数据state然后重新render组件。</p>
+<h3 id="React-props特性"><a href="#React-props特性" class="headerlink" title="React props特性"></a>React props特性</h3><p>增加了编辑功能之后，还差一个删除，todo功能算是完成了。当然，现在还有两个小bug，稍后我们再fix。在此之前，针对TodoListItem组件的数据及其状态的修改，都是调用父级组件App定义的函数方法，其中通过TodoList传递，而每一次传递，都需要修改TodoList的代码，这一点实在太繁琐。为了解决这个问题，可以借助React和ES6的一些特性。下面修改TodoList组建。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">todo-list.js</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">class TodoList extends React.Component &#123;</div><div class="line">    renderItem()&#123;</div><div class="line"></div><div class="line">        // return  _.map(this.props.todos, (todo, index) =&gt; &#123;</div><div class="line">        //     return (</div><div class="line">        //         &lt;TodoListItem todo=&#123;todo&#125; key=&#123;index&#125; saveTask=&#123;this.props.saveTask&#125; toggleTask=&#123;this.props.toggleTask&#125;/&gt;</div><div class="line">        //     )</div><div class="line">        // &#125;)</div><div class="line">   </div><div class="line">   // 将 todo 对象直接传递</div><div class="line">        return _.map(this.props.todos, (todo, index) =&gt; &#123;</div><div class="line">            return &lt;TodoListItem key=&#123;index&#125; &#123;...todo&#125; /&gt;</div><div class="line">        &#125;)</div><div class="line">    &#125;</div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>{…todo}写法可以把todo({task: task value, isCompleted: isCompleted value})对象传递给子组建，相当于给todo对象进行解包，等价于<code>task=task value</code> 和 <code>isCompleted: isCompleted value</code>。经过了这样处理，原TodoListItem组件中的task获取就不再是 <code>this.props.todos.task</code> ，而是变成了 <code>this.props.task</code>, 相应的<code>isCompleted</code>属性同理。即把 <code>this.props.todos</code> 替换成 <code>this.props</code> 即可。</p>
+<p>使用 … 封包和解包的功能是为了减少 props 属性的传递，之前繁琐的属性是各种事件，这些事件包含在 TodoList组件的 this.props 中，因此todo-list.js还需要再修改以便传递各种事件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">todo-list.js</div><div class="line"></div><div class="line">class TodoList extends React.Component &#123;</div><div class="line"></div><div class="line">    renderItem()&#123;</div><div class="line">       // 除去 this.props 中的 todos属性，减少传递</div><div class="line">        const props = _.omit(this.props, &apos;todos&apos;);</div><div class="line">        return _.map(this.props.todos, (todo, index) =&gt; &#123;</div><div class="line">            return &lt;TodoListItem key=&#123;index&#125; &#123;...todo&#125; &#123;...props&#125; /&gt;</div><div class="line">        &#125;)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">  ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述代码使用了lodash的omit方法，将todos属性除去，因为map的时候，会针对当前的item传递todo，因此，不需要把props中的todos传递了。通过是用<code>...</code>功能，省去了一大堆props的书写。<code>{...props}</code>取代了<code>saveTask={this.props.saveTask} toggleTask={this.props.toggleTask}</code></p>
+<h3 id="删除-amp-bugfix"><a href="#删除-amp-bugfix" class="headerlink" title="删除&amp;bugfix"></a>删除&amp;bugfix</h3><h4 id="删除功能"><a href="#删除功能" class="headerlink" title="删除功能"></a>删除功能</h4><p>todo即将成形，完成删除功能和bugfix，再披上css样式，就大功告成了。实现删除功能很简单，基于前面的实践可知，再TodoListItem中绑定删除事件，然后调用App的删除方法即可，同时因为借助了<code>...</code>的解包方式，不需要再从TodoListItem中显式的传递这个函数方法啦。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">todo-list-item.js</div><div class="line"></div><div class="line">class TodoListItem extends React.Component &#123;</div><div class="line">    ... </div><div class="line"></div><div class="line">    renderActionSection()&#123;</div><div class="line">        ...</div><div class="line">        return (</div><div class="line">            &lt;td&gt;</div><div class="line">                &lt;button onClick=&#123;this.onEditing.bind(this)&#125;&gt;Edit&lt;/button&gt;</div><div class="line">                &lt;button onClick=&#123;this.onDelete.bind(this)&#125;&gt;Delete&lt;/button&gt;</div><div class="line">            &lt;/td&gt;</div><div class="line">        )        </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    onDelete()&#123;</div><div class="line">        const currentTask = this.props.task</div><div class="line">        this.props.deleteTask(currentTask)</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">app.js</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                ...</div><div class="line">                &lt;TodoList todos=&#123;this.state.todos&#125;</div><div class="line">                          deleteTask=&#123;this.deleteTask.bind(this)&#125;</div><div class="line">                          toggleTask=&#123;this.toggleTask.bind(this)&#125;</div><div class="line">                          saveTask=&#123;this.saveTask.bind(this)&#125;/&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    deleteTask(currentTask)&#123;</div><div class="line">        _.remove(this.state.todos, todo =&gt; todo.task === currentTask)</div><div class="line">        this.setState(&#123;todos: this.state.todos&#125;)</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>完成删除之后，可以尝试使用啦。在使用的时候，会发现，即使什么都不输入，也会增加一条空内容的task，同时，相同的task内容，在编辑修改的时候，总是修改成为第一条内容。产生bug的原因是在查找todo的时候，采用了task内容来匹配，而不是使用一个id之类的唯一标识。</p>
+<p>解决的方法也很简单，在创建和编辑的时候，禁止发布空内容和相同的内容。这修要修改create和save两个函数方法，在其中增加一个验证的函数即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">class TodoCreate extends React.Component &#123;</div><div class="line"></div><div class="line">    constructor(props)&#123;</div><div class="line">        super(props)</div><div class="line">        this.state = &#123;</div><div class="line">            error: null</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;form onSubmit=&#123;this.handleCreate.bind(this)&#125;&gt;</div><div class="line">                &lt;input type=&quot;text&quot; placeholder=&quot;What need I do?&quot; ref=&quot;createInput&quot; /&gt;</div><div class="line">                &lt;button&gt;Create&lt;/button&gt;</div><div class="line">                &#123;this.renderError()&#125;</div><div class="line">            &lt;/form&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    handleCreate(event)&#123;</div><div class="line">        event.preventDefault()</div><div class="line">        const task = this.refs.createInput.value</div><div class="line"></div><div class="line">        const error = this.validateInput(task)</div><div class="line">        if (error)&#123;</div><div class="line">            this.setState(&#123;error: error&#125;)</div><div class="line">            return </div><div class="line">        &#125;</div><div class="line">        this.props.createTask(task)</div><div class="line">        this.refs.createInput.value = &apos;&apos;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    validateInput(task)&#123;</div><div class="line">        console.log(task)</div><div class="line">        if (!task)&#123;</div><div class="line">            return &apos;Please enter a task~&apos;</div><div class="line">        &#125;else if (_.find(this.props.todos, todo =&gt; todo.task === task))&#123;</div><div class="line">            return &apos;Task already exsits!&apos;</div><div class="line">        &#125;else&#123;</div><div class="line">            return &apos;&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    renderError()&#123;</div><div class="line">        if (this.state.error)&#123;</div><div class="line">            return &lt;p&gt;&#123;this.state.error&#125;&lt;/p&gt;</div><div class="line">        &#125;</div><div class="line">        return null</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为用到了与现有的todo对比task内容，因此需要从App组件传给TodoCreate组件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">app.js</div><div class="line"></div><div class="line">class App extends React.Component &#123;</div><div class="line"></div><div class="line">  ...</div><div class="line">  </div><div class="line">    render() &#123;</div><div class="line">        return (</div><div class="line">            &lt;div&gt;</div><div class="line">                &lt;h1&gt;React Todo App&lt;/h1&gt;</div><div class="line">                // 传递todos</div><div class="line">                &lt;TodoCreate todos=&#123;this.state.todos&#125;</div><div class="line">                    createTask=&#123;this.createTask.bind(this)&#125;/&gt;</div><div class="line">                </div><div class="line">                &lt;TodoList todos=&#123;this.state.todos&#125;</div><div class="line">                          deleteTask=&#123;this.deleteTask.bind(this)&#125;</div><div class="line">                          toggleTask=&#123;this.toggleTask.bind(this)&#125;</div><div class="line">                          saveTask=&#123;this.saveTask.bind(this)&#125;/&gt;</div><div class="line">            &lt;/div&gt;</div><div class="line">        )</div><div class="line">    &#125;</div><div class="line">  ...</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="增加样式"><a href="#增加样式" class="headerlink" title="增加样式"></a>增加样式</h4><p>与create类似，save的时候，也需要对task的内容做验证。这里就不再记录。具体实现看源码即可。源码的实现，把 validateTask方法抽出为公共的方法给TodoCreate 和 TodoListItem使用。</p>
+<p>完成了基本功能之后，还需要给app披上一外衣，在这个看脸的时代，一副好皮囊至关重要。借助与webpack的模块打包功能，在react中使用css很简单，只需要把css文件当成模块import即可。例子中使用了siimple的css样式库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">index.js</div><div class="line">...</div><div class="line"></div><div class="line">import &quot;siimple.css&quot;</div><div class="line">...</div></pre></td></tr></table></figure>
+<p><a href="https://github.com/rsj217/react-todo" target="_blank" rel="external">源码</a></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>前端发展迅猛，之前jQuery一招鲜。随后backbone，angular等携带mvc等理想从后端杀入前端。一时前端战场硝烟弥漫，各种框架库层出不穷。最让人受不了的是一个工具还没掌握，就已经过时了。与其说前端发展快，私下觉得是因为前端缺少了太多东西，才需要工程师把别的端的理念在前端重新实现一遍。</p>
+<p>不管怎么样，近年来逐渐偏向与react，angular，vue几个项目。在此不想比较它们孰优孰劣。就个人的感受而言，也行angular让你在写angular，vue也让适应vue，React却让你真正的在写js，而不是react。通过todo这个应用，大致可以明白React的基本用法和其核心概念。正如React创作的组件一样，这些函数库react，redux，webpack等同样也是一个个组件，如何搭配合理，发挥他们的生态功力。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag">#react</a>
+          
+            <a href="/tags/es6/" rel="tag">#es6</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十九） --- 多进程/" rel="next" title="Elixir 简明笔记（十九） --- 多进程">
+                <i class="fa fa-chevron-left"></i> Elixir 简明笔记（十九） --- 多进程
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/TCP握手与挥手/" rel="prev" title="TCP握手与挥手">
+                TCP握手与挥手 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">58</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建项目"><span class="nav-number">1.</span> <span class="nav-text">创建项目</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化项目"><span class="nav-number">1.1.</span> <span class="nav-text">初始化项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装依赖包"><span class="nav-number">1.2.</span> <span class="nav-text">安装依赖包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置webpack"><span class="nav-number">1.3.</span> <span class="nav-text">配置webpack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hello-world"><span class="nav-number">1.4.</span> <span class="nav-text">Hello world</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#React-组件"><span class="nav-number">1.5.</span> <span class="nav-text">React 组件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写Todo"><span class="nav-number">2.</span> <span class="nav-text">编写Todo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#todo-列表"><span class="nav-number">2.1.</span> <span class="nav-text">todo 列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TodoHeader-组件"><span class="nav-number">2.2.</span> <span class="nav-text">TodoHeader 组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TodoListItem-组件"><span class="nav-number">2.3.</span> <span class="nav-text">TodoListItem 组件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Todo-创建"><span class="nav-number">3.</span> <span class="nav-text">Todo 创建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#React事件"><span class="nav-number">3.1.</span> <span class="nav-text">React事件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Todo-修改"><span class="nav-number">4.</span> <span class="nav-text">Todo 修改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#action-操作"><span class="nav-number">4.1.</span> <span class="nav-text">action 操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#todo-编辑"><span class="nav-number">4.2.</span> <span class="nav-text">todo 编辑</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#React-props特性"><span class="nav-number">5.</span> <span class="nav-text">React props特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除-amp-bugfix"><span class="nav-number">6.</span> <span class="nav-text">删除&bugfix</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#删除功能"><span class="nav-number">6.1.</span> <span class="nav-text">删除功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#验证"><span class="nav-number">6.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#增加样式"><span class="nav-number">6.3.</span> <span class="nav-text">增加样式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

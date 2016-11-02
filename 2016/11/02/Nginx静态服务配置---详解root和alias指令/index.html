@@ -1,0 +1,822 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="network,nginx,tcp," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="静态文件Nginx以其高性能著称，常用与做前端反向代理服务器。同时nginx也是一个高性能的静态文件服务器。通常都会把应用的静态文件使用nginx处理。
+配置nginx的静态文件有两个指令，一个 root 和一个 alias。对于这两个指令，是否需要在路径的后面加上斜杠，经常容易让人犯晕，本文通过尝试不同的匹配规则，归纳了一个比较通用的配置方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx静态服务配置---详解root和alias指令">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/Nginx静态服务配置---详解root和alias指令/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="静态文件Nginx以其高性能著称，常用与做前端反向代理服务器。同时nginx也是一个高性能的静态文件服务器。通常都会把应用的静态文件使用nginx处理。
+配置nginx的静态文件有两个指令，一个 root 和一个 alias。对于这两个指令，是否需要在路径的后面加上斜杠，经常容易让人犯晕，本文通过尝试不同的匹配规则，归纳了一个比较通用的配置方式。">
+<meta property="og:updated_time" content="2016-11-02T06:42:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx静态服务配置---详解root和alias指令">
+<meta name="twitter:description" content="静态文件Nginx以其高性能著称，常用与做前端反向代理服务器。同时nginx也是一个高性能的静态文件服务器。通常都会把应用的静态文件使用nginx处理。
+配置nginx的静态文件有两个指令，一个 root 和一个 alias。对于这两个指令，是否需要在路径的后面加上斜杠，经常容易让人犯晕，本文通过尝试不同的匹配规则，归纳了一个比较通用的配置方式。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/Nginx静态服务配置---详解root和alias指令/"/>
+
+
+  <title> Nginx静态服务配置---详解root和alias指令 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume">
+          <a href="/resume-en" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            resume
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Nginx静态服务配置---详解root和alias指令
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:29:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="静态文件"><a href="#静态文件" class="headerlink" title="静态文件"></a>静态文件</h3><p>Nginx以其高性能著称，常用与做前端反向代理服务器。同时nginx也是一个高性能的静态文件服务器。通常都会把应用的静态文件使用nginx处理。</p>
+<p>配置nginx的静态文件有两个指令，一个 root 和一个 alias。对于这两个指令，是否需要在路径的后面加上斜杠，经常容易让人犯晕，本文通过尝试不同的匹配规则，归纳了一个比较通用的配置方式。</p>
+<a id="more"></a>
+<h3 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h3><p>与<a href="http://www.jianshu.com/p/e154c2ef002f" target="_blank" rel="external">简明 Nginx Location Url 配置笔记</a>一文关于location url配置的实验一样，本文也使用vagrant虚拟机里的nginx。其基本配置如下：</p>
+<p>/etc/nginx/sites-enabled/pro.conf</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">        listen 80 default_server;</div><div class="line"></div><div class="line"></div><div class="line">        server_name localhost;</div><div class="line"></div><div class="line">        access_log /var/log/nginx/pro/access.log;</div><div class="line">        error_log /var/log/nginx/pro/error.log;</div><div class="line"></div><div class="line">        error_page 404 /404.html;</div><div class="line"></div><div class="line">        root /vagrant/pro;</div><div class="line">        index index.html index.htm;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>项目的目录如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">☁  pro  tree</div><div class="line">.</div><div class="line">├── 403.html</div><div class="line">├── 404.html</div><div class="line">├── index.html</div><div class="line">├── static</div><div class="line">│   ├── flask</div><div class="line">│   │   └── m.png</div><div class="line">│   └── stc.jpg</div><div class="line">└── upload</div><div class="line">    └── up.png</div><div class="line"></div><div class="line">3 directories, 6 files</div></pre></td></tr></table></figure>
+<p>分别有两个静态文件夹，一个是static，另外一个是upload。</p>
+<h3 id="初识root"><a href="#初识root" class="headerlink" title="初识root"></a>初识root</h3><p>root 是指定项目的根目录，适用与server和location。可以指定多个，如果locaiton没有指定，会往其外层的server或http中寻找继承。</p>
+<p>访问<code>http://192.168.33.10/static/stc.jpg</code> 会发现图片已经返回。我们还尚未配置 location，为啥会正确的找到文件？学习<code>root</code>或者<code>alias</code>指令的时候，最好的办法是给文件拓展名加上一个字符，使得该文件在硬盘中不存在，那么就能从<code>nginx</code>的<code>error.log</code>中看到nginx寻找文件的方式。</p>
+<p>访问 <code>http://192.168.33.10/static/stc.jpgx</code>，然后查看 <code>/var/log/nginx/pro/error.log</code>文件，可以看到如下的错误信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2016/09/28 07:41:48 [error] 4416#0: *70 open() &quot;/vagrant/pro/static/stc.jpgx&quot; failed (2: No such file or directory), client: 192.168.33.1, server: localhost, request: &quot;GET /static/stc.jpgx HTTP/1.1&quot;, host: &quot;192.168.33.10&quot;</div></pre></td></tr></table></figure>
+<p>即<code>/vagrant/pro/static/stc.jpgx</code> 文件不存在。的确我们没有这个文件。如果文件名正确，就能访问，原因是由于在server中指定了<code>root /vagrant/pro</code>，此时的nginx就在该目录下寻找文件，而url上的地址，正好和文件的路径一致</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http://192.168.33.10  /static/stc.jpg </div><div class="line">/vagrant/pro          /static/stc.jpg</div></pre></td></tr></table></figure>
+<p>由此可以猜想，nginx中root指令的地址，其实是替换了<strong>匹配后</strong>的url中的host。</p>
+<h3 id="root指令"><a href="#root指令" class="headerlink" title="root指令"></a>root指令</h3><p>为了验证上面的猜想，需要多写几个location做实验。添加一个location配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /static &#123;</div><div class="line">	root /vagrant/pro/static;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>再次访问<code>http://192.168.33.10/static/stc.jpg</code>，发现并不能显示图片了，查看error.log 返回如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2016/09/28 07:48:57 [error] 5978#0: *71 open() &quot;/vagrant/pro/static/static/stc.jpg&quot; failed (2: No such file or directory), client: 192.168.33.1, server: localhost, request: &quot;GET /static/stc.jpg HTTP/1.1&quot;, host: &quot;192.168.33.10&quot;</div></pre></td></tr></table></figure>
+<p>nginx把地址识别成<code>/vargrant/pro/static/static/stc.jpg</code>多了一个static，套用上面的规则，其组合为<code>192.168.33.10</code> == <code>/vagrant/pro/static</code> ，url是<code>/static/stc.jpg</code>。置换可以得到<code>/vagrant/pro/static</code> + <code>/static/stc.jpg</code>。与错误的error一致。解决方案就是把root中的static去掉，马上就能访问图片了。</p>
+<p>既然是那么把文件夹<code>static</code>命名为<code>stc</code>，其结果又会怎样？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /static &#123;</div><div class="line">	root /vagrant/pro;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问 <code>http://192.168.33.10/static/stc.jpg</code> 得到错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2016/09/28 07:54:46 [error] 5992#0: *73 open() &quot;/vagrant/pro/static/stc.jpg&quot; failed (2: No such file or directory), client: 192.168.33.1, server: localhost, request: &quot;GET /static/stc.jpg HTTP/1.1&quot;, host: &quot;192.168.33.10&quot;</div></pre></td></tr></table></figure>
+<p>计算路径<code>/vagrant/pro</code> + <code>/static/stc.jpg</code>， 找不到<code>/vagrant/pro/static/stc.jpg</code>文件，符合之前所说的规则，尝试修改location：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /stc &#123;</div><div class="line">	root /vagrant/pro;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为url变了，访问<code>http://192.168.33.10/stc/stc.jpg</code>，才能够找到图片。现在把stc文件夹变回static。</p>
+<h3 id="root-与-斜杠"><a href="#root-与-斜杠" class="headerlink" title="root 与 斜杠"></a>root 与 斜杠</h3><p>很多人会疑惑，路径最后的斜杠<code>/</code>是否要加呢？location中的static后面的斜杠，和匹配后的url有关，不再赘述。root中的路径的斜杠<code>/</code>可以再通过实验确定。把location配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /static/ &#123;</div><div class="line">   root /vagrant/pro/;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问<code>http://192.168.33.10/static/stc.jpg</code> 一切正常，访问<code>http://192.168.33.10/static/stc.jpg</code>，error为找不到”/vagrant/pro/static/stc.jpgs”文件。</p>
+<p>如果按照root替换host的规则，那么替换过程为</p>
+<p><code>/vagrant/pro/</code> + <code>/static/stc.jpg</code> == <code>/vagrant/pro//static/stc.jpg</code>。在*nix系统中， 多个斜杠和一个斜杠是等价的，也就是 <code>/vagrant/pro//static/stc.jpg</code> 与<code>/vagrant/pro/static/stc.jpg</code>一样。</p>
+<p>这样一来，root路径后面的斜杠，加与不加效果都一样。既然如此，肯定有人会想到这么配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ static/ &#123;</div><div class="line">    root /vagrant/pro;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果安装之前上面的即算法，那么应该是 <code>/vagrant/pro</code> + <code>static/stc.jpg</code>，相加的应该是<code>/vagrant/prostatic/stc.jpg</code>，按理说应该是错误，可是实际上却能访问图片。咄咄怪事？</p>
+<p>如果对前文nginx location的url匹配规则了解的话，应该看出来了其实 <code>^~ static/</code>并不能匹配。修改 location</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">location ^~ static/ &#123;</div><div class="line">	rewrite ^ http://google.com;</div><div class="line">   # root /vagrant/pro;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问<code>http://192.168.33.10/static/stc.jpg</code>依然可以得到图片，没有跳转google，说明并没有匹配<code>^~ static/</code>。</p>
+<p>其实原理也很简单，还记得我们第一次实验，当时尚未配置location，也同样可以返回图片。没错，尽管<code>^~ static/</code>没有匹配，而外层的server定义了root为<code>/vagrant/pro</code>，因此搜索图片正常返回，再注释外层的root，再一次访问。此时会得到一个404，查看error如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2016/09/28 08:18:15 [error] 6227#0: *82 open() &quot;/usr/share/nginx/html/static/stc.jpg&quot; failed (2: No such file or directory), client: 192.168.33.1, server: localhost, request: &quot;GET /static/stc.jpg HTTP/1.1&quot;, host: &quot;192.168.33.10&quot;</div></pre></td></tr></table></figure>
+<p><code>/usr/share/nginx/html/static/stc.jpg</code>，说明即使没有指定root，nginx默认也有一个root，<code>/usr/share/nginx/html</code>。当然，这个配置和 <code>^~ static/</code>没有关系。</p>
+<p>如果<code>~ static/stc.jpgs?</code> 那么就能命中，此时访问图片，依然能够正确的解析，因此，并不存在 <code>/vagrant/pro</code> + <code>static/stc.jpg</code>这种情况。理解这里的关键是 root替换host，并加上匹配后的url，匹配后的url当然包括前面的斜杠，匹配部分的url则不会。</p>
+<p>对于 <code>~ static/stc.jpgs?</code>模式，访问url<code>http://192.168.33.10/static/stc.jpg</code></p>
+<ul>
+<li>匹配后的url为 /static/stc.jpg</li>
+<li>匹配部分的url为  static/stc.jpg</li>
+</ul>
+<p>掌握这个很重要，直接关系到后面<code>alias</code>指令与斜杠的关系。</p>
+<p>对于root指令，我们可以归纳。</p>
+<ol>
+<li>对于匹配后的url地址，将匹配的location中的root路径替换访问url的host即得到文件的真实地址。（多个斜杠其实等价于一个斜杠）</li>
+<li>如果不匹配location，则寻找更外层的root做替换。</li>
+<li>root指令最后的斜杠可加可不加。</li>
+</ol>
+<h3 id="alias指令"><a href="#alias指令" class="headerlink" title="alias指令"></a>alias指令</h3><p>对于root，操作上很简单，只要把root地址替换host后就是文件在硬盘路径（真实地址）。对于alise，它并不是替换匹配后的url地址，而是替换匹配部分的url。alias指令也可以有多个。</p>
+<p>添加一个location，和root的方式几乎一样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /upload &#123;</div><div class="line">   alias /vagrant/pro;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问<code>http://192.168.33.10/upload/up.png</code>并没有图片，查看error得到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2016/09/28 08:36:18 [error] 6312#0: *90 open() &quot;/vagrant/pro/up.png&quot; failed (2: No such file or directory), client: 192.168.33.1, server: localhost, request: &quot;GET /upload/up.png HTTP/1.1&quot;, host: &quot;192.168.33.10&quot;</div></pre></td></tr></table></figure>
+<p>可见 alias的模式并不是<code>/vagrant/pro</code> + <code>/upload/up.png</code>，而是 <code>/vagrant/pro</code> + <code>/up.png</code>。</p>
+<p>alias这个词在计算机里很常用，字面意思是“别名”，顾名思议就是换一个名字啦。实际替换规则就是把匹配的url地址，换成alias中的路径即可。例如上述的例子替换过程可以模拟如下：</p>
+<table>
+<thead>
+<tr>
+<th>过程</th>
+<th>模式或url</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>url模式</td>
+<td>^~ /upload</td>
+</tr>
+<tr>
+<td>alias路径</td>
+<td>/vagrant/pro</td>
+</tr>
+<tr>
+<td>访问地址</td>
+<td><a href="http://192.168.33.10/upload/up.png" target="_blank" rel="external">http://192.168.33.10/upload/up.png</a></td>
+</tr>
+<tr>
+<td>匹配部分的地址</td>
+<td>/upload + /up.png</td>
+</tr>
+<tr>
+<td>替换</td>
+<td>/upload == /vagrant/pro</td>
+</tr>
+<tr>
+<td>结果</td>
+<td>/vagrant/pro + /up.png</td>
+</tr>
+</tbody>
+</table>
+<p>为了修改图片的访问，修改locaton如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /upload &#123;</div><div class="line">	alias /vagrant/pro/upload;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此时访问<code>http://192.168.33.10/upload/up.png</code>就能得到正确的图片啦，仿造上面的计算过程为：</p>
+<table>
+<thead>
+<tr>
+<th>过程</th>
+<th>模式或url</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>url模式</td>
+<td>^~ /upload</td>
+</tr>
+<tr>
+<td>alias路径</td>
+<td>/vagrant/pro/upload</td>
+</tr>
+<tr>
+<td>访问地址</td>
+<td><a href="http://192.168.33.10/upload/up.png" target="_blank" rel="external">http://192.168.33.10/upload/up.png</a></td>
+</tr>
+<tr>
+<td>匹配部分的地址</td>
+<td>/upload + /up.png</td>
+</tr>
+<tr>
+<td>替换</td>
+<td>/upload == /vagrant/pro/upload</td>
+</tr>
+<tr>
+<td>结果</td>
+<td>/vagrant/pro/upload + /up.png</td>
+</tr>
+</tbody>
+</table>
+<p>从结果可以看出，正确的找到了文件路径，如果alias指令路径加上斜杠，那么计算处理的文件路径为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">/upload == /vagrant/pro/upload</div><div class="line">/vagrant/pro/upload/ + /up.png</div></pre></td></tr></table></figure>
+<p>多个斜杠是合法的。等价于一个斜杠的情况。</p>
+<p>下面修改locaiton如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /upload/ &#123;</div><div class="line">   alias /vagrant/pro/upload;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此时匹配时的url则变成  <code>/upload/ + up.jpg</code>, 那么置换的结果为 <code>/vagrant/pro/upload</code> + <code>up.png</code>，而<code>/vagrant/pro/uploadup.png</code>的路径是非法的，从error中也能看到置换的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2016/09/28 08:52:44 [error] 6452#0: *92 open() &quot;/vagrant/pro/uploadup.png&quot; failed (2: No such file or directory), client: 192.168.33.1, server: localhost, request: &quot;GET /upload/up.png HTTP/1.1&quot;, host: &quot;192.168.33.10&quot;</div></pre></td></tr></table></figure>
+<p>解决办法也很简单，把<code>/vagrant/pro/upload</code> 改成 <code>/vagrant/pro/upload/</code>即可。由此可见，alias最后的斜杠并不像root指令那样可有可无，是否需要，取决于配合loacation的url匹配模式。</p>
+<p>前文root模式中，考虑了没有根的斜杠（<code>~ static/stc.jpgs?</code>）这种情况，alias情况下会很难捕捉错误。如果locaion配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ upload/ &#123;</div><div class="line">      alias /vagrant/pro/upload/;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>替换置换的文件路径应该为 <code>/vagrant/pro/upload/up.png</code>，可是实际测试中，这样配置alias，会一直导致一个301的重定向，如果alias目录没有打开autoindex，则会抛出一个403错误。具体情况尚未知晓，不知道是不是nginx的bug。为了避免这种情况，使用alias的时候，尽量不要配置location为 <code>^~ upload/</code>的模式，并且不从根指定url，还是显得不伦不类。</p>
+<p>alise作为别名，比起root的一大好处就是不一定要url上的路径和文件路径一样，因为alise并不是替换host，而是替换匹配部分的host。修改配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location ^~ /upload/ &#123;</div><div class="line">	alias /vagrant/pro/static/;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问 <code>http://192.168.33.10/upload/stc.jpg</code>或者 <code>http://192.168.33.10/upload/flask/m.png</code>都能正确的访问到static目录下的文件，尽管url上是upload。</p>
+<p>替换规则也很简单，<code>/upload/</code> == <code>/vagrant/pro/static/</code> 得到 <code>/vagrant/pro/static/</code> + <code>stc.jpg</code> 或 <code>/vagrant/pro/static/</code> + <code>flask/m.png</code>。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>nginx的静态文件配置中，root和alias指令都能实现。为了避免混淆，尽量不要写没有根路径的url模式，即避免  <code>static/</code>这样的开头，<strong>根路径</strong>的<strong>斜杠</strong>需要保留，没有根路径其实也很奇怪。</p>
+<p>root和alias的区别主要在于替换的部分，root模式中，会把root配置的路径替换匹配后的url中的host。alias则把他指定的路径，替换url中匹配的部分。指令中的斜杠对于root指令没有影响，对于alise则按照替换规则匹配即可。</p>
+<p>root 指令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">location /dir/ </div><div class="line">root root_path -&gt;  http://host/dir/file.txt  -&gt; root_path/dir/file.txt</div></pre></td></tr></table></figure></p>
+<p>alias 指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">location /dir</div><div class="line">alias alias_path -&gt;  http://host /dir /file.txt  -&gt; alias_path/file.txt</div><div class="line"></div><div class="line">location /dir/ </div><div class="line">alias alias_path/ -&gt;  http://host /dir/ file.txt  -&gt; alias_path/file.txt</div></pre></td></tr></table></figure>
+<p>了解了root和alise之后，通常最佳实际是配置一个项目的根root，其他的文件夹则使用alias，毕竟alias更加灵活。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag">#network</a>
+          
+            <a href="/tags/nginx/" rel="tag">#nginx</a>
+          
+            <a href="/tags/tcp/" rel="tag">#tcp</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/简明 Nginx Location Url 配置笔记/" rel="next" title="简明 Nginx Location Url 配置笔记">
+                <i class="fa fa-chevron-left"></i> 简明 Nginx Location Url 配置笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/无题/" rel="prev" title="无题">
+                无题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">58</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态文件"><span class="nav-number">1.</span> <span class="nav-text">静态文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本配置"><span class="nav-number">2.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初识root"><span class="nav-number">3.</span> <span class="nav-text">初识root</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root指令"><span class="nav-number">4.</span> <span class="nav-text">root指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root-与-斜杠"><span class="nav-number">5.</span> <span class="nav-text">root 与 斜杠</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#alias指令"><span class="nav-number">6.</span> <span class="nav-text">alias指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
