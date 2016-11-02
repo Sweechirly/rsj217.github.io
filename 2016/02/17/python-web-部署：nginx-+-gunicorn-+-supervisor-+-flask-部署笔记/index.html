@@ -210,6 +210,16 @@ nginx 不用多说，一个高性能的web服务器。通常用来在前端做�
         </li>
       
         
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-resume-zh">
           <a href="/resume" rel="section">
             
@@ -406,6 +416,22 @@ stderr_logfile=/home/rsj217/rsj217/myproject/log/nginx.err
     <div>
       
         
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
 
       
     </div>
@@ -517,10 +543,10 @@ stderr_logfile=/home/rsj217/rsj217/myproject/log/nginx.err
 
           
             <div class="site-state-item site-state-tags">
-              
+              <a href="/tags">
                 <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">标签</span>
-              
+              </a>
             </div>
           
 
