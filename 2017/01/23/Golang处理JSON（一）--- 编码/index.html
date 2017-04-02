@@ -1,0 +1,801 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="JSONhttp的交互的生命周期包含请求和响应。前面我们介绍了很多关于发起请求，处理请求的内容。现在该聊一聊返回响应内容了。对于web服务的响应，以前常见的响应是返回服务端渲染的模板。浏览器只要展示模板即可。随着Restful风格的api出现，已经前后端分离，更多的返回格式是json字串。本节我们将讨论在golang中如何编码和解码json。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang处理JSON（一）--- 编码">
+<meta property="og:url" content="http://rsj217.github.com/2017/01/23/Golang处理JSON（一）--- 编码/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="JSONhttp的交互的生命周期包含请求和响应。前面我们介绍了很多关于发起请求，处理请求的内容。现在该聊一聊返回响应内容了。对于web服务的响应，以前常见的响应是返回服务端渲染的模板。浏览器只要展示模板即可。随着Restful风格的api出现，已经前后端分离，更多的返回格式是json字串。本节我们将讨论在golang中如何编码和解码json。">
+<meta property="og:updated_time" content="2017-04-02T09:11:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang处理JSON（一）--- 编码">
+<meta name="twitter:description" content="JSONhttp的交互的生命周期包含请求和响应。前面我们介绍了很多关于发起请求，处理请求的内容。现在该聊一聊返回响应内容了。对于web服务的响应，以前常见的响应是返回服务端渲染的模板。浏览器只要展示模板即可。随着Restful风格的api出现，已经前后端分离，更多的返回格式是json字串。本节我们将讨论在golang中如何编码和解码json。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/01/23/Golang处理JSON（一）--- 编码/"/>
+
+
+  <title> Golang处理JSON（一）--- 编码 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang处理JSON（一）--- 编码
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-23T12:31:02+08:00" content="2017-01-23">
+              2017-01-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h3><p>http的交互的生命周期包含请求和响应。前面我们介绍了很多关于发起请求，处理请求的内容。现在该聊一聊返回响应内容了。对于web服务的响应，以前常见的响应是返回服务端渲染的模板。浏览器只要展示模板即可。随着Restful风格的api出现，已经前后端分离，更多的返回格式是json字串。本节我们将讨论在golang中如何编码和解码json。</p>
+<a id="more"></a>
+<p>JSON是一种数据格式描述语言。以key和value构成的哈系结构，类似javascript中的对象，python中的字典。通常json格式的key是字串，其值可以是任意类型，字串，数字，数组或者对象结构。更多关于json的可以访问<a href="http://json.org/" target="_blank" rel="external">JSON</a>了解。</p>
+<h4 id="数据结构map"><a href="#数据结构map" class="headerlink" title="数据结构map"></a>数据结构map</h4><p>json源于javascript的对象结构，golang中直接对应的数据结构，可是golang的map也是key-value结构，同时struct结构体也可以描述json。当然，对于json的数据类型，go也会有对象的结构所匹配。大致对应关系如下：</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>JSON</th>
+<th>Golang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>字串</td>
+<td>string</td>
+<td>string</td>
+</tr>
+<tr>
+<td>整数</td>
+<td>number</td>
+<td>int64</td>
+</tr>
+<tr>
+<td>浮点数</td>
+<td>number</td>
+<td>flaot64</td>
+</tr>
+<tr>
+<td>数组</td>
+<td>arrary</td>
+<td>slice</td>
+</tr>
+<tr>
+<td>对象</td>
+<td>object</td>
+<td>struct</td>
+</tr>
+<tr>
+<td>布尔</td>
+<td>bool</td>
+<td>bool</td>
+</tr>
+<tr>
+<td>空值</td>
+<td>null</td>
+<td>nil</td>
+</tr>
+</tbody>
+</table>
+<h4 id="基本结构编码"><a href="#基本结构编码" class="headerlink" title="基本结构编码"></a>基本结构编码</h4><p>golang提供了encoding/json的标准库用于编码json。大致需要两步：</p>
+<ol>
+<li>首先定义json结构体。</li>
+<li>使用 Marshal方法序列化。</li>
+</ol>
+<p>定义结构体的时候，只有字段名是大写的，才会被编码到json当中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">type Account struct &#123;</div><div class="line">    Email string</div><div class="line">    password string</div><div class="line">    Money float64</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    account := Account&#123;</div><div class="line">        Email: &quot;rsj217@gmail.com&quot;,</div><div class="line">        password: &quot;123456&quot;,</div><div class="line">        Money: 100.5,</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    rs, err := json.Marshal(account)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    fmt.Println(rs)</div><div class="line">    fmt.Println(string(rs))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到输出如下，Marshal方法接受一个空接口的参数，返回一个[]byte结构。小写命名的password字段没有被编码到json当中，生成的json结构字段和Account结构一致。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[123 34 69 109 97 105 108 34 58 34 114 115 106 50 49 55 64 103 109 97 105 108 46 99 111 109 34 44 34 77 111 110 101 121 34 58 49 48 48 46 53 125]</div><div class="line">&#123;&quot;Email&quot;:&quot;rsj217@gmail.com&quot;,&quot;Money&quot;:100.5&#125;</div><div class="line">```  </div><div class="line"></div><div class="line">#### 复合结构编码</div><div class="line"></div><div class="line">相比字串，数字等基本数据结构，slice切片，map图则是复合结构。这些结构编码也类似。不过map的key必须是字串，而value必须是同一类型的数据。</div></pre></td></tr></table></figure>
+<p>type User struct {<br>    Name    string<br>    Age     int<br>    Roles   []string<br>    Skill   map[string]float64<br>}</p>
+<p>func main() {</p>
+<pre><code>skill := make(map[string]float64)
+
+skill[&quot;python&quot;] = 99.5
+skill[&quot;elixir&quot;] = 90
+skill[&quot;ruby&quot;] = 80.0
+
+user := User{
+    Name:&quot;rsj217&quot;,
+    Age: 27,
+    Roles: []string{&quot;Owner&quot;, &quot;Master&quot;},
+    Skill: skill,
+}
+
+rs, err := json.Marshal(user)
+if err != nil{
+    log.Fatalln(err)
+}
+fmt.Println(string(rs))
+</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">  </div><div class="line">输入：</div></pre></td></tr></table></figure></p>
+<p>{<br>    “Name”:”rsj217”,<br>    “Age”:27,<br>    “Roles”:[<br>        “Owner”,<br>        “Master”<br>    ],<br>    “Skill”:{<br>        “elixir”:90,<br>        “python”:99.5,<br>        “ruby”:80<br>    }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">#### 嵌套编码</div><div class="line"></div><div class="line">slice和map可以匹配json的数组和对象，当前提是对象的value是同类型的情况。更通用的做法，对象的key可以是string，但是其值可以是多种结构。golang可以通过定义结构体实现这种构造：</div></pre></td></tr></table></figure></p>
+<p>type User struct {<br>    Name    string<br>    Age     int<br>    Roles   []string<br>    Skill   map[string]float64<br>    Account Account<br>}</p>
+<p>func main(){</p>
+<pre><code>...
+
+user := User{
+    Name:&quot;rsj217&quot;,
+    Age: 27,
+    Roles: []string{&quot;Owner&quot;, &quot;Master&quot;},
+    Skill: skill,
+    Account:account,
+}
+...
+</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">输出：</div></pre></td></tr></table></figure></p>
+<p>{<br>    “Name”:”rsj217”,<br>    “Age”:27,<br>    “Roles”:[<br>        “Owner”,<br>        “Master”<br>    ],<br>    “Skill”:{<br>        “elixir”:90,<br>        “python”:99.5,<br>        “ruby”:80<br>    },<br>    “Account”:{<br>        “Email”:”rsj217@gmail.com”,<br>        “Money”:100.5<br>    }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">通过定义嵌套的结构体Account，实现了key与value不一样的结构。golang的数组或切片，其类型也是一样的，如果遇到不同数据类型的数组，则需要借助空结构来实现：</div></pre></td></tr></table></figure></p>
+<p>type User struct {<br>    …</p>
+<pre><code>Extra []interface{}
+</code></pre><p>}</p>
+<p>extra := []interface{}{123, “hello world”}</p>
+<p>user := User{<br>    …</p>
+<pre><code>Extra:   extra,
+</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">输出：</div></pre></td></tr></table></figure>
+<p>{<br>    …<br>    “Extra”:[<br>        123,<br>        “hello world”<br>    ]<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">使用空接口，也可以定义像结构体实现那种不同value类型的字典结构。当空接口没有初始化其值的时候，零值是 nil。编码成json就是 null</div></pre></td></tr></table></figure></p>
+<p>type User struct {<br>    Name    string<br>    Age     int<br>    Roles   []string<br>    Skill   map[string]float64<br>    Account Account</p>
+<pre><code>Extra []interface{}
+
+Level map[string]interface{}
+</code></pre><p>}</p>
+<p>func main() {</p>
+<pre><code>...
+
+level := make(map[string]interface{})
+
+level[&quot;web&quot;] = &quot;Good&quot;
+level[&quot;server&quot;] = 90
+level[&quot;tool&quot;] = nil
+
+user := User{
+    Name:    &quot;rsj217&quot;,
+    Age:     27,
+    Roles:   []string{&quot;Owner&quot;, &quot;Master&quot;},
+    Skill:   skill,
+    Account: account,
+    Level:   level,
+}
+
+...
+</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">输出：</div></pre></td></tr></table></figure>
+<p>{<br>    …<br>    “Extra”:null,<br>    “Level”:{<br>        “server”:90,<br>        “tool”:null,<br>        “web”:”Good”<br>    }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">可以看到 Extra返回的并不是一个空的切片，而是null。同时Level字段实现了向字典的嵌套结构。</div><div class="line"></div><div class="line">#### StructTag 字段重名</div><div class="line"></div><div class="line">通过上面的例子，我们看到了`Level`字段中的key`server`等是小写字母，其他的都是大写字母。因为我们在定义结构的时候，只有使用大写字母开头的字段才会被导出。而通常json世界中，更盛行小写字母的方式。看起来就成了一个矛盾。其实不然，golang提供了`struct tag`的方式可以重命名结构字段的输出形式。</div></pre></td></tr></table></figure></p>
+<p>type Account struct {<br>    Email    string  <code>json:&quot;email&quot;</code><br>    Password string  <code>json:&quot;pass_word&quot;</code><br>    Money    float64 <code>json:&quot;money&quot;</code><br>}</p>
+<p>func main() {<br>    account := Account{<br>        Email:    “rsj217@gmail.com”,<br>        Password: “123456”,<br>        Money:    100.5,<br>    }</p>
+<pre><code>rs, err := json.Marshal(account)
+...
+</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">我们使用struct tag，重新给Aaccount结构的字段进行了重命名。其中email小写了，并且password字段还使用了下划线，输出的结果如下：</div></pre></td></tr></table></figure>
+<p>{“email”:”rsj217@gmail.com”,”pass_word”:”123456”,”money”:100.5}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">##### `-`忽略字段</div><div class="line"></div><div class="line">重命名的可以一个利器，这个利器还提供了更高级的选项。通常使用marshal的时候，会把结构体的所有除了私有字段都编码到json，而实际开发中，我们定义的结构可能更通用，我们需要某个字段可以导出，但是又不能编码到json中。</div><div class="line"></div><div class="line">此时使用 struact tag的 `-`符号就能完美解决，我们已经知道`_`常用于忽略字段的占位，在tag中则使用短横线`-`。</div></pre></td></tr></table></figure></p>
+<p>type Account struct {<br>    Email    string  <code>json:&quot;email&quot;</code><br>    Password string  <code>json:&quot;password,omitempty&quot;</code><br>    Money    float64 <code>json:&quot;money&quot;</code><br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">输出：</div></pre></td></tr></table></figure></p>
+<p>{“email”:”rsj217@gmail.com”,”money”:100.5}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">可见即使Password不是私有字段，因为`-`忽略了它，因此没有被编码到json输出。</div><div class="line"></div><div class="line"></div><div class="line">##### `omitempty`可选字段</div><div class="line"></div><div class="line">对于另外一种字段，当其有值的时候就输出，而没有值(零值)的时候就不输出，则可以使用另外一种选项`omitempty`。</div></pre></td></tr></table></figure></p>
+<p>type Account struct {<br>    Email    string  <code>json:&quot;email&quot;</code><br>    Password string  <code>json:&quot;password,omitempty&quot;</code><br>    Money    float64 <code>json:&quot;money&quot;</code><br>}<br>func main() {<br>    account := Account{<br>        Email:    “rsj217@gmail.com”,<br>        Password: “”,<br>        Money:    100.5,<br>    }<br>    …<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">此时password不会被编码到json输出中。</div><div class="line"></div><div class="line">##### `string`选项</div><div class="line"></div><div class="line">gplang是静态类型语言，对于类型定义的是不能动态修改。在json处理当中，struct tag的string可以起到部分动态类型的效果。有时候输出的json希望是数字的字符串，而定义的字段是数字类型，那么就可以使用string选项。</div></pre></td></tr></table></figure></p>
+<p>type Account struct {<br>    Email    string  <code>json:&quot;email&quot;</code><br>    Password string  <code>json:&quot;password,omitempty&quot;</code><br>    Money    float64 <code>json:&quot;money,string&quot;</code><br>}<br>func main() {<br>    account := Account{<br>        Email:    “rsj217@gmail.com”,<br>        Password: “123”,<br>        Money:    100.50,<br>    }</p>
+<pre><code>...
+</code></pre><p>}<br><code>``
+可以看到输出为</code>money: “100.5”<code>， money字段的值是字串。（其实能转换成</code>100.50<code>会比转换成</code>100.5`更好，可是我没有找到通过tag的方式实现 :(）。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>上面所介绍的大致覆盖了golang的json编码处理。总体原则分两步，首先定义需要编码的结构，然后调用encoding/json标准库的Marshal方法生成json byte数组，转换成string类型即可。</p>
+<p>golang和json的大部分数据结构匹配，对于复合结构，go可以借助结构体和空接口实现json的数组和对象结构。通过struct tag可以灵活的修改json编码的字段名和输出控制。</p>
+<p>既然有JSON的编码，当然就会有JSON的解码。相比编码JSON，解析JSON对于golang则需要更多的技巧。下一节我们聊一聊golang解析json相关的内容。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/17/python-magic-asyncio/" rel="next" title="Python黑魔法 --- 异步IO（ asyncio） 协程">
+                <i class="fa fa-chevron-left"></i> Python黑魔法 --- 异步IO（ asyncio） 协程
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/26/Golang处理JSON（二）--- 解码/" rel="prev" title="Golang处理JSON（二）--- 解码">
+                Golang处理JSON（二）--- 解码 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON"><span class="nav-number">1.</span> <span class="nav-text">JSON</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据结构map"><span class="nav-number">1.1.</span> <span class="nav-text">数据结构map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基本结构编码"><span class="nav-number">1.2.</span> <span class="nav-text">基本结构编码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

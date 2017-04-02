@@ -1,0 +1,742 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前后端分离的Restful架构大行其道，传统的模板技术已经不多见了。实际上只是渲染的地方由后端转移到了前端，模板的渲染技术本质上还是一样的。简而言之就是字串模板和数据的结合。
+golang提供了两个标准库用来处理模板text/template和html/template。我们使用html/template格式化html字符。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Template 简明笔记">
+<meta property="og:url" content="http://rsj217.github.com/2016/12/29/Golang Template 简明笔记/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="前后端分离的Restful架构大行其道，传统的模板技术已经不多见了。实际上只是渲染的地方由后端转移到了前端，模板的渲染技术本质上还是一样的。简而言之就是字串模板和数据的结合。
+golang提供了两个标准库用来处理模板text/template和html/template。我们使用html/template格式化html字符。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-d8ed7fda8ee06555.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-04-02T09:36:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Template 简明笔记">
+<meta name="twitter:description" content="前后端分离的Restful架构大行其道，传统的模板技术已经不多见了。实际上只是渲染的地方由后端转移到了前端，模板的渲染技术本质上还是一样的。简而言之就是字串模板和数据的结合。
+golang提供了两个标准库用来处理模板text/template和html/template。我们使用html/template格式化html字符。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-d8ed7fda8ee06555.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/12/29/Golang Template 简明笔记/"/>
+
+
+  <title> Golang Template 简明笔记 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang Template 简明笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-29T12:31:02+08:00" content="2016-12-29">
+              2016-12-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前后端分离的Restful架构大行其道，传统的模板技术已经不多见了。实际上只是渲染的地方由后端转移到了前端，模板的渲染技术本质上还是一样的。简而言之就是字串模板和数据的结合。</p>
+<p>golang提供了两个标准库用来处理模板<code>text/template</code>和<code>html/template</code>。我们使用<code>html/template</code>格式化html字符。</p>
+<a id="more"></a>
+<h3 id="模板引擎"><a href="#模板引擎" class="headerlink" title="模板引擎"></a>模板引擎</h3><p>模板引擎很多，Python的jinja，nodejs的jade等都很好。所谓模板引擎，则将模板和数据进行渲染的输出格式化后的字符程序。对于go，执行这个流程大概需要三步。</p>
+<ol>
+<li>创建模板对象</li>
+<li>加载模板字串</li>
+<li>执行渲染模板</li>
+</ol>
+<p>其中最后一步就是把加载的字符和数据进行格式化。其过程可以总结下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-d8ed7fda8ee06555.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="teamplate.png"></p>
+<h3 id="warming-up"><a href="#warming-up" class="headerlink" title="warming up"></a>warming up</h3><p>go提供的标准库<code>html/template</code>提供了很多处理模板的接口。我们的项目结构为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">├── main.go</div><div class="line">└── templates</div><div class="line">    ├── index.html</div><div class="line">    └── layout.html</div></pre></td></tr></table></figure>
+<p>templates文件夹有两个文件，分别为模板文件。 <code>layout.html</code>文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: &#123;&#123; . &#125;&#125;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>我们可以使用ParseFiles方法加载模板，该方法会返回一个模板对象和错误，接下来就可以使用模板对象执行模板，注入数据对象。go的提供了一些模板标签，称之为<strong><strong>action</strong></strong>，<code>.</code>也是一种action，更多的action稍后解释。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    t, _ :=template.ParseFiles(&quot;templates/layout.html&quot;)</div><div class="line">    fmt.Println(t.Name())</div><div class="line">    t.Execute(w, &quot;Hello world&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们打印了t模板对象的Name方法，实际上，每一个模板，都有一个名字，如果不显示指定这个名字，go将会把文件名（包括扩展名当成名字）本例则是<code>layout.html</code>。访问之后可以看见返回的html字串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -i http://127.0.0.1:8000/</div><div class="line">HTTP/1.1 200 OK</div><div class="line">Date: Fri, 09 Dec 2016 09:04:36 GMT</div><div class="line">Content-Length: 223</div><div class="line">Content-Type: text/html; charset=utf-8</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: Hello world</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>go不仅可以解析模板文件，也可以直接解析模板字串，这就是标准的处理，新建-加载-执行三部曲：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    tmpl := `&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">    &lt;head&gt;</div><div class="line">        &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt; &lt;title&gt;Go Web Programming&lt;/title&gt;</div><div class="line">    &lt;/head&gt;</div><div class="line">    &lt;body&gt;</div><div class="line">        &#123;&#123; . &#125;&#125;</div><div class="line">    &lt;/body&gt;</div><div class="line">&lt;/html&gt;`</div><div class="line"></div><div class="line">    t := template.New(&quot;layout.html&quot;)</div><div class="line">    t, _ = t.Parse(tmpl)</div><div class="line">    fmt.Println(t.Name())</div><div class="line">    t.Execute(w, &quot;Hello World&quot;)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实际开发中，最终的页面很可能是多个模板文件的嵌套结果。go的ParseFiles也支持加载多个模板文件，不过模板对象的名字则是第一个模板文件的文件名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    t, _ :=template.ParseFiles(&quot;templates/layout.html&quot;, &quot;templates/index.html&quot;)</div><div class="line">    fmt.Println(t.Name())</div><div class="line">    t.Execute(w, &quot;Hello world&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见打印的还是 layout.html的名字，执行的模板的时候，并没有index.html的模板内容。</p>
+<p>此外，还有ParseGlob方法，可以通过glob通配符加载模板。</p>
+<h3 id="模板命名与嵌套"><a href="#模板命名与嵌套" class="headerlink" title="模板命名与嵌套"></a>模板命名与嵌套</h3><h4 id="模板命名"><a href="#模板命名" class="headerlink" title="模板命名"></a>模板命名</h4><p>前文已经提及，模板对象是有名字的，可以在创建模板对象的时候显示命名，也可以让go自动命名。可是涉及到嵌套模板的时候，该如何命名模板呢，毕竟模板文件有好几个？</p>
+<p>go提供了<code>ExecuteTemplate</code>方法，用于执行指定名字的模板。例如加载layout.html模板的时候，可以指定layout.html</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    t, _ :=template.ParseFiles(&quot;templates/layout.html&quot;)</div><div class="line">    fmt.Println(t.Name())</div><div class="line">    t.ExecuteTemplate(w, &quot;layout&quot;, &quot;Hello world&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>似乎和Execute方法没有太大的差别。下面修改一下layout.html文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; define &quot;layout&quot; &#125;&#125;</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: &#123;&#123; . &#125;&#125;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line"></div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>在模板文件中，使用了<code>define</code>这个action给模板文件命名了。虽然我们ParseFiles方法返回的模板对象t的名字还是<code>layout.html</code>， 但是ExecuteTemplate执行的模板却是html文件中定义的<code>layout</code>。</p>
+<p>不仅可以通过define定义模板，还可以通过template action引入模板，类似jinja的include特性。修改 layout.html 和 index.html</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; define &quot;layout&quot; &#125;&#125;</div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: &#123;&#123; . &#125;&#125;</div><div class="line"></div><div class="line">    &#123;&#123; template &quot;index&quot; &#125;&#125;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>index.html </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; define &quot;index&quot; &#125;&#125;</div><div class="line"></div><div class="line">&lt;div style=&quot;background: yellow&quot;&gt;</div><div class="line">    this is index.html</div><div class="line">&lt;/div&gt;</div><div class="line"></div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>go的代码也需要修改，使用ParseFiles加载需要渲染的模板文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    t, _ :=template.ParseFiles(&quot;templates/layout.html&quot;, &quot;templates/index.html&quot;)</div><div class="line">    t.ExecuteTemplate(w, &quot;layout&quot;, &quot;Hello world&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问可以看到 index被layout模板include了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: Hello world</div><div class="line"></div><div class="line"> &lt;div style=&quot;background: yellow&quot;&gt;</div><div class="line">     this is index.html</div><div class="line"> &lt;/div&gt;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<h4 id="单文件嵌套"><a href="#单文件嵌套" class="headerlink" title="单文件嵌套"></a>单文件嵌套</h4><p>总而言之，创建模板对象后和加载多个模板文件，执行模板文件的时候需要指定base模板（layout），在base模板中可以include其他命名的模板。无论点<code>.</code>，define，template这些花括号包裹的东西都是go的action（模板标签）</p>
+<h3 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h3><p>action是go模板中用于动态执行一些逻辑和展示数据的形式。大致分为下面几种：</p>
+<ol>
+<li>条件语句</li>
+<li>迭代</li>
+<li>封装</li>
+<li>引用</li>
+</ol>
+<p>我们已经见识了template引用的用法，下面么再看看其他的用法</p>
+<h4 id="条件判断"><a href="#条件判断" class="headerlink" title="条件判断"></a>条件判断</h4><p>条件判断的语法很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; if arg &#125;&#125;</div><div class="line">  some content</div><div class="line">&#123;&#123; end &#125;&#125;</div><div class="line"></div><div class="line">&#123;&#123; if arg &#125;&#125;</div><div class="line">  some content</div><div class="line">&#123;&#123; else &#125;&#125;</div><div class="line">  other content</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>arg 可以是基本数据结构，也可以是表达式：if-end包裹的内容为条件为真的时候展示。与if语句一样，模板也可以有else语句。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    t, _ :=template.ParseFiles(&quot;templates/layout.html&quot;)</div><div class="line">    rand.Seed(time.Now().Unix())</div><div class="line">    t.ExecuteTemplate(w, &quot;layout&quot;, rand.Intn(10) &gt; 5)</div><div class="line">&#125;</div><div class="line"></div><div class="line">&#123;&#123; define &quot;layout&quot; &#125;&#125;</div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: &#123;&#123; . &#125;&#125;</div><div class="line"></div><div class="line">    &#123;&#123; if . &#125;&#125;</div><div class="line">      Number is greater than 5!</div><div class="line">    &#123;&#123; else &#125;&#125;</div><div class="line">      Number is 5 or less!</div><div class="line">    &#123;&#123; end &#125;&#125;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>此时就能看见，当<code>.</code>的值为true的时候显示if的逻辑，否则显示else的逻辑。</p>
+<h4 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h4><p>对于一些数组，切片或者是map，可以使用迭代的action，与go的迭代类似，使用range进行处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    t := template.Must(template.ParseFiles(&quot;templates/layout.html&quot;))</div><div class="line">    daysOfWeek := []string&#123;&quot;Mon&quot;, &quot;Tue&quot;, &quot;Wed&quot;, &quot;Ths&quot;, &quot;Fri&quot;, &quot;Sat&quot;, &quot;Sun&quot;&#125;</div><div class="line">    t.ExecuteTemplate(w, &quot;layout&quot;, daysOfWeek)</div><div class="line">&#125;</div><div class="line"></div><div class="line">&#123;&#123; define &quot;layout&quot; &#125;&#125;</div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: &#123;&#123; . &#125;&#125;</div><div class="line"></div><div class="line">    &#123;&#123; range . &#125;&#125;</div><div class="line">        &lt;li&gt;&#123;&#123; . &#125;&#125;&lt;/li&gt;</div><div class="line">    &#123;&#123; end &#125;&#125;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>可以看见输出了一堆li列表。迭代的时候，还可以使用<code>$</code>设置循环变量：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; range $key, $value := . &#125;&#125;</div><div class="line">    &lt;li&gt;key: &#123;&#123; $key &#125;&#125;, value: &#123;&#123; $value &#125;&#125;&lt;/li&gt;</div><div class="line">&#123;&#123; else &#125;&#125;</div><div class="line">    empty</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>可以看见和迭代切片很像。rang也可以使用else语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    t := template.Must(template.ParseFiles(&quot;templates/layout.html&quot;))</div><div class="line">    daysOfWeek := []string&#123;&#125;</div><div class="line">    t.ExecuteTemplate(w, &quot;layout&quot;, daysOfWeek)</div><div class="line">&#125;</div><div class="line"></div><div class="line">&#123;&#123; range . &#125;&#125;</div><div class="line">    &lt;li&gt;&#123;&#123; . &#125;&#125;&lt;/li&gt;</div><div class="line">&#123;&#123; else &#125;&#125;</div><div class="line"> empty</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>当range的结构为空的时候，则会执行else分支的逻辑。</p>
+<h4 id="with封装"><a href="#with封装" class="headerlink" title="with封装"></a>with封装</h4><p>with语言在Python中可以开启一个上下文环境。对于go模板，with语句类似，其含义就是创建一个封闭的作用域，在其范围内，可以使用<code>.</code>action，而与外面的<code>.</code>无关，只与with的参数有关：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; with arg &#125;&#125;</div><div class="line">    此时的点 . 就是arg</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; define &quot;layout&quot; &#125;&#125;</div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: &#123;&#123; . &#125;&#125;</div><div class="line"></div><div class="line">     &#123;&#123; with &quot;world&quot;&#125;&#125;</div><div class="line">        Now the dot is set to &#123;&#123; . &#125;&#125;</div><div class="line">     &#123;&#123; end &#125;&#125;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>访问结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: [Mon Tue Wed Ths Fri Sat Sun]</div><div class="line"></div><div class="line">        Now the dot is set to world</div><div class="line"></div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>可见 with语句的<code>.</code>与其外面的<code>.</code>是两个不相关的对象。with语句也可以有else。else中的<code>.</code>则和with外面的<code>.</code>一样，毕竟只有with语句内才有封闭的上下文：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; with &quot;&quot;&#125;&#125;</div><div class="line"> Now the dot is set to &#123;&#123; . &#125;&#125;</div><div class="line">&#123;&#123; else &#125;&#125;</div><div class="line"> &#123;&#123; . &#125;&#125;</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>访问效果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">☁  ~  curl http://127.0.0.1:8000/</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    template data: [Mon Tue Wed Ths Fri Sat Sun]</div><div class="line"></div><div class="line">        [Mon Tue Wed Ths Fri Sat Sun]</div><div class="line"></div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<h4 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h4><p>我们已经介绍了模板嵌套引用的技巧。引用除了模板的include，还包括参数的传递。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">func templateHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    t := template.Must(template.ParseFiles(&quot;templates/layout.html&quot;, &quot;templates/index.html&quot;))</div><div class="line">    daysOfWeek := []string&#123;&quot;Mon&quot;, &quot;Tue&quot;, &quot;Wed&quot;, &quot;Ths&quot;, &quot;Fri&quot;, &quot;Sat&quot;, &quot;Sun&quot;&#125;</div><div class="line">    t.ExecuteTemplate(w, &quot;layout&quot;, daysOfWeek)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改 layout.html, layout中引用了 index模板：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; define &quot;layout&quot; &#125;&#125;</div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    layout template data: (&#123;&#123; . &#125;&#125;)</div><div class="line"></div><div class="line">    &#123;&#123; template &quot;index&quot; &#125;&#125;</div><div class="line"></div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>index.html模板的内容也打印了 <code>.</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;&#123; define &quot;index&quot; &#125;&#125;</div><div class="line"></div><div class="line">&lt;div style=&quot;background: yellow&quot;&gt;</div><div class="line">    this is index.html (&#123;&#123; . &#125;&#125;)</div><div class="line">&lt;/div&gt;</div><div class="line"></div><div class="line">&#123;&#123; end &#125;&#125;</div></pre></td></tr></table></figure>
+<p>访问的效果如下，index.html 中的点并没有数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/</div><div class="line"></div><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;</div><div class="line">    &lt;title&gt;layout&lt;/title&gt;</div><div class="line">  &lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h3&gt;This is layout&lt;/h3&gt;</div><div class="line">    layout template data: ([Mon Tue Wed Ths Fri Sat Sun])</div><div class="line"></div><div class="line">&lt;div style=&quot;background: yellow&quot;&gt;</div><div class="line">    this is index.html ()</div><div class="line">&lt;/div&gt;</div><div class="line"></div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>我们可以修改引用语句<figure class="highlight plain"><figcaption><span>template "index" . &#125;&#125;```，把参数传给子模板，再次访问，就能看见index.html模板也有数据啦。</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p><div style="background: yellow"><br>    this is index.html ([Mon Tue Wed Ths Fri Sat Sun])<br></div><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">### 参数，变量和管道</div><div class="line"></div><div class="line">模板的参数可以是go中的基本数据类型，如字串，数字，布尔值，数组切片或者一个结构体。在模板中设置变量可以使用</div></pre></td></tr></table></figure></p>
+<p>$variable := value<br>```</p>
+<p>我们在range迭代的过程使用了设置变量的方式。</p>
+<p>go还有一个特性就是模板的管道函数，熟悉django和jinja的开发者应该很熟悉这种手法。通过定义函数过滤器，实现模板的一些简单格式化处理。并且通过管道哲学，这样的处理方式可以连成一起。<code>p1 | p2 | p3</code></p>
+<p>例如 模板内置了一些函数，比如格式化输出：<code>12.3456 | printf &quot;%.2f&quot;</code></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>关于go中的模板技术，我们已经掌握了不少内容。模板提供给了用户界面，最终是通过界面的交互，收集用户的数据。<br>数据存储将会是我们的下一个话题。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/28/Golang Cookie 简介/" rel="next" title="Golang Cookie 简介">
+                <i class="fa fa-chevron-left"></i> Golang Cookie 简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/07/Golang 持久化/" rel="prev" title="Golang 持久化">
+                Golang 持久化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#模板引擎"><span class="nav-number">1.</span> <span class="nav-text">模板引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#warming-up"><span class="nav-number">2.</span> <span class="nav-text">warming up</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模板命名与嵌套"><span class="nav-number">3.</span> <span class="nav-text">模板命名与嵌套</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模板命名"><span class="nav-number">3.1.</span> <span class="nav-text">模板命名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#单文件嵌套"><span class="nav-number">3.2.</span> <span class="nav-text">单文件嵌套</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Action"><span class="nav-number">4.</span> <span class="nav-text">Action</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#条件判断"><span class="nav-number">4.1.</span> <span class="nav-text">条件判断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代"><span class="nav-number">4.2.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#with封装"><span class="nav-number">4.3.</span> <span class="nav-text">with封装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引用"><span class="nav-number">4.4.</span> <span class="nav-text">引用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

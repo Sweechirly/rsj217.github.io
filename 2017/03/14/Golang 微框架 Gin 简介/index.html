@@ -1,0 +1,766 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="所谓框架框架一直是敏捷开发中的利器，能让开发者很快的上手并做出应用，甚至有的时候，脱离了框架，一些开发者都不会写程序了。成长总不会一蹴而就，从写出程序获取成就感，再到精通框架，快速构造应用，当这些方面都得心应手的时候，可以尝试改造一些框架，或是自己创造一个。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 微框架 Gin 简介">
+<meta property="og:url" content="http://rsj217.github.com/2017/03/14/Golang 微框架 Gin 简介/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="所谓框架框架一直是敏捷开发中的利器，能让开发者很快的上手并做出应用，甚至有的时候，脱离了框架，一些开发者都不会写程序了。成长总不会一蹴而就，从写出程序获取成就感，再到精通框架，快速构造应用，当这些方面都得心应手的时候，可以尝试改造一些框架，或是自己创造一个。">
+<meta property="og:updated_time" content="2017-04-02T09:12:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang 微框架 Gin 简介">
+<meta name="twitter:description" content="所谓框架框架一直是敏捷开发中的利器，能让开发者很快的上手并做出应用，甚至有的时候，脱离了框架，一些开发者都不会写程序了。成长总不会一蹴而就，从写出程序获取成就感，再到精通框架，快速构造应用，当这些方面都得心应手的时候，可以尝试改造一些框架，或是自己创造一个。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/03/14/Golang 微框架 Gin 简介/"/>
+
+
+  <title> Golang 微框架 Gin 简介 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang 微框架 Gin 简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-14T12:31:02+08:00" content="2017-03-14">
+              2017-03-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="所谓框架"><a href="#所谓框架" class="headerlink" title="所谓框架"></a>所谓框架</h3><p>框架一直是敏捷开发中的利器，能让开发者很快的上手并做出应用，甚至有的时候，脱离了框架，一些开发者都不会写程序了。成长总不会一蹴而就，从写出程序获取成就感，再到精通框架，快速构造应用，当这些方面都得心应手的时候，可以尝试改造一些框架，或是自己创造一个。</p>
+<a id="more"></a>
+<p>曾经我以为Python世界里的框架已经够多了，后来发现相比golang简直小巫见大巫。golang提供的net/http库已经很好了，对于http的协议的实现非常好，基于此再造框架，也不会是难事，因此生态中出现了很多框架。既然构造框架的门槛变低了，那么低门槛同样也会带来质量参差不齐的框架。</p>
+<p>考察了几个框架，通过其github的活跃度，维护的team，以及生产环境中的使用率。发现<a href="https://gin-gonic.github.io/gin/" target="_blank" rel="external">Gin</a>还是一个可以学习的轻巧框架。</p>
+<h3 id="Gin"><a href="#Gin" class="headerlink" title="Gin"></a>Gin</h3><p>Gin是一个golang的微框架，封装比较优雅，API友好，源码注释比较明确，已经发布了1.0版本。具有快速灵活，容错方便等特点。其实对于golang而言，web框架的依赖要远比Python，Java之类的要小。自身的net/http足够简单，性能也非常不错。框架更像是一些常用函数或者工具的集合。借助框架开发，不仅可以省去很多常用的封装带来的时间，也有助于团队的编码风格和形成规范。</p>
+<p>下面就Gin的用法做一个简单的介绍。</p>
+<p>首先需要安装，安装比较简单，使用go get即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">go get gopkg.in/gin-gonic/gin.v1</div></pre></td></tr></table></figure>
+<p>gin的版本托管再 gopkg的网站上。我在安装的过程中，gokpg卡住了，后来不得不根据gin里的godep的文件，把响应的源码从github上下载，然后copy到对应的目录。</p>
+<p>关于golang的包管理和依赖，我们以后再讨论。</p>
+<h3 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h3><p>使用Gin实现<code>Hello world</code>非常简单，创建一个router，然后使用其Run的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">import (</div><div class="line">	&quot;gopkg.in/gin-gonic/gin.v1&quot;</div><div class="line">	&quot;net/http&quot;</div><div class="line">)</div><div class="line"></div><div class="line">func main()&#123;</div><div class="line">	</div><div class="line">	router := gin.Default()</div><div class="line"></div><div class="line">	router.GET(&quot;/&quot;, func(c *gin.Context) &#123;</div><div class="line">		c.String(http.StatusOK, &quot;Hello World&quot;)</div><div class="line">	&#125;)</div><div class="line">	router.Run(&quot;:8000&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>简单几行代码，就能实现一个web服务。使用gin的Default方法创建一个路由handler。然后通过HTTP方法绑定路由规则和路由函数。不同于net/http库的路由函数，gin进行了封装，把request和response都封装到gin.Context的上下文环境。最后是启动路由的Run方法监听端口。麻雀虽小，五脏俱全。当然，除了GET方法，gin也支持POST,PUT,DELETE,OPTION等常用的restful方法。</p>
+<h3 id="restful路由"><a href="#restful路由" class="headerlink" title="restful路由"></a>restful路由</h3><p>gin的路由来自httprouter库。因此httprouter具有的功能，gin也具有，不过gin不支持路由正则表达式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	</div><div class="line">	router.GET(&quot;/user/:name&quot;, func(c *gin.Context) &#123;</div><div class="line">		name := c.Param(&quot;name&quot;)</div><div class="line">		c.String(http.StatusOK, &quot;Hello %s&quot;, name)</div><div class="line">	&#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>冒号<code>:</code>加上一个参数名组成路由参数。可以使用c.Params的方法读取其值。当然这个值是字串string。诸如<code>/user/rsj217</code>，和<code>/user/hello</code>都可以匹配，而<code>/user/</code>和<code>/user/rsj217/</code>不会被匹配。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/user/rsj217</div><div class="line">Hello rsj217%                                                                 ☁  ~  curl http://127.0.0.1:8000/user/rsj217/</div><div class="line">404 page not found%                                                               ☁  ~  curl http://127.0.0.1:8000/user/</div><div class="line">404 page not found%</div></pre></td></tr></table></figure>
+<p>除了<code>:</code>，gin还提供了<code>*</code>号处理参数，<code>*</code>号能匹配的规则就更多。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	</div><div class="line">	router.GET(&quot;/user/:name/*action&quot;, func(c *gin.Context) &#123;</div><div class="line">		name := c.Param(&quot;name&quot;)</div><div class="line">		action := c.Param(&quot;action&quot;)</div><div class="line">		message := name + &quot; is &quot; + action</div><div class="line">		c.String(http.StatusOK, message)</div><div class="line">	&#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问效果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/user/rsj217/</div><div class="line">rsj217 is /%                                                                  ☁  ~  curl http://127.0.0.1:8000/user/rsj217/中国</div><div class="line">rsj217 is /中国%</div></pre></td></tr></table></figure>
+<h3 id="query-string参数与body参数"><a href="#query-string参数与body参数" class="headerlink" title="query string参数与body参数"></a>query string参数与body参数</h3><p>web提供的服务通常是client和server的交互。其中客户端向服务器发送请求，除了路由参数，其他的参数无非两种，查询字符串query string和报文体body参数。所谓query string，即路由用，用<code>?</code>以后连接的<code>key1=value2&amp;key2=value2</code>的形式的参数。当然这个key-value是经过urlencode编码。</p>
+<h4 id="query-string"><a href="#query-string" class="headerlink" title="query string"></a>query string</h4><p>对于参数的处理，经常会出现参数不存在的情况，对于是否提供默认值，gin也考虑了，并且给出了一个优雅的方案：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	router.GET(&quot;/welcome&quot;, func(c *gin.Context) &#123;</div><div class="line">		firstname := c.DefaultQuery(&quot;firstname&quot;, &quot;Guest&quot;)</div><div class="line">		lastname := c.Query(&quot;lastname&quot;)</div><div class="line"></div><div class="line">		c.String(http.StatusOK, &quot;Hello %s %s&quot;, firstname, lastname)</div><div class="line">	&#125;)</div><div class="line">  router.Run()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用c.DefaultQuery方法读取参数，其中当参数不存在的时候，提供一个默认值。使用Query方法读取正常参数，当参数不存在的时候，返回空字串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/welcome</div><div class="line">Hello Guest %                                                                 ☁  ~  curl http://127.0.0.1:8000/welcome\?firstname\=中国</div><div class="line">Hello 中国 %                                                                  ☁  ~  curl http://127.0.0.1:8000/welcome\?firstname\=中国\&amp;lastname\=天朝</div><div class="line">Hello 中国 天朝%                                                              ☁  ~  curl http://127.0.0.1:8000/welcome\?firstname\=\&amp;lastname\=天朝</div><div class="line">Hello  天朝%</div><div class="line">☁  ~  curl http://127.0.0.1:8000/welcome\?firstname\=%E4%B8%AD%E5%9B%BD</div><div class="line">Hello 中国 %</div></pre></td></tr></table></figure>
+<p>之所以使用中文，是为了说明urlencode。注意，当firstname为空字串的时候，并不会使用默认的Guest值，空值也是值，DefaultQuery只作用于key不存在的时候，提供默认值。</p>
+<h4 id="body"><a href="#body" class="headerlink" title="body"></a>body</h4><p>http的报文体传输数据就比query string稍微复杂一点，常见的格式就有四种。例如<code>application/json</code>，<code>application/x-www-form-urlencoded</code>, <code>application/xml</code>和<code>multipart/form-data</code>。后面一个主要用于图片上传。json格式的很好理解，urlencode其实也不难，无非就是把query string的内容，放到了body体里，同样也需要urlencode。默认情况下，c.PostFROM解析的是<code>x-www-form-urlencoded</code>或<code>from-data</code>的参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	router.POST(&quot;/form_post&quot;, func(c *gin.Context) &#123;</div><div class="line">		message := c.PostForm(&quot;message&quot;)</div><div class="line">		nick := c.DefaultPostForm(&quot;nick&quot;, &quot;anonymous&quot;)</div><div class="line"></div><div class="line">		c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">			&quot;status&quot;:  gin.H&#123;</div><div class="line">				&quot;status_code&quot;: http.StatusOK,</div><div class="line">				&quot;status&quot;:      &quot;ok&quot;,</div><div class="line">			&#125;,</div><div class="line">			&quot;message&quot;: message,</div><div class="line">			&quot;nick&quot;:    nick,</div><div class="line">		&#125;)</div><div class="line">	&#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>与get处理query参数一样，post方法也提供了处理默认参数的情况。同理，如果参数不存在，将会得到空字串。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/form_post -H &quot;Content-Type:application/x-www-form-urlencoded&quot; -d &quot;message=hello&amp;nick=rsj217&quot; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100   104  100    79  100    25  48555  15365 --:--:-- --:--:-- --:--:-- 79000</div><div class="line">&#123;</div><div class="line">    &quot;message&quot;: &quot;hello&quot;,</div><div class="line">    &quot;nick&quot;: &quot;rsj217&quot;,</div><div class="line">    &quot;status&quot;: &#123;</div><div class="line">        &quot;status&quot;: &quot;ok&quot;,</div><div class="line">        &quot;status_code&quot;: 200</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>前面我们使用c.String返回响应，顾名思义则返回string类型。content-type是plain或者text。调用c.JSON则返回json数据。其中gin.H封装了生成json的方式，是一个强大的工具。使用golang可以像动态语言一样写字面量的json，对于嵌套json的实现，嵌套gin.H即可。</p>
+</blockquote>
+<p>发送数据给服务端，并不是post方法才行，put方法一样也可以。同时querystring和body也不是分开的，两个同时发送也可以：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	</div><div class="line">	router.PUT(&quot;/post&quot;, func(c *gin.Context) &#123;</div><div class="line">		id := c.Query(&quot;id&quot;)</div><div class="line">		page := c.DefaultQuery(&quot;page&quot;, &quot;0&quot;)</div><div class="line">		name := c.PostForm(&quot;name&quot;)</div><div class="line">		message := c.PostForm(&quot;message&quot;)</div><div class="line">		fmt.Printf(&quot;id: %s; page: %s; name: %s; message: %s \n&quot;, id, page, name, message)</div><div class="line">		c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">			&quot;status_code&quot;: http.StatusOK,</div><div class="line">		&#125;)</div><div class="line">	&#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的例子，展示了同时使用查询字串和body参数发送数据给服务器。</p>
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><h4 id="上传单个文件"><a href="#上传单个文件" class="headerlink" title="上传单个文件"></a>上传单个文件</h4><p>前面介绍了基本的发送数据，其中<code>multipart/form-data</code>转用于文件上传。gin文件上传也很方便，和原生的net/http方法类似，不同在于gin把原生的request封装到c.Request中了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	</div><div class="line">	router.POST(&quot;/upload&quot;, func(c *gin.Context) &#123;</div><div class="line">		name := c.PostForm(&quot;name&quot;)</div><div class="line">		fmt.Println(name)</div><div class="line">		file, header, err := c.Request.FormFile(&quot;upload&quot;)</div><div class="line">		if err != nil &#123;</div><div class="line">			c.String(http.StatusBadRequest, &quot;Bad request&quot;)</div><div class="line">			return</div><div class="line">		&#125;</div><div class="line">		filename := header.Filename</div><div class="line"></div><div class="line">		fmt.Println(file, err, filename)</div><div class="line"></div><div class="line">		out, err := os.Create(filename)</div><div class="line">		if err != nil &#123;</div><div class="line">			log.Fatal(err)</div><div class="line">		&#125;</div><div class="line">		defer out.Close()</div><div class="line">		_, err = io.Copy(out, file)</div><div class="line">		if err != nil &#123;</div><div class="line">			log.Fatal(err)</div><div class="line">		&#125;</div><div class="line">		c.String(http.StatusCreated, &quot;upload successful&quot;)</div><div class="line">	&#125;)</div><div class="line">	router.Run(&quot;:8000&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用<code>c.Request.FormFile</code>解析客户端文件name属性。如果不传文件，则会抛错，因此需要处理这个错误。一种方式是直接返回。然后使用os的操作，把文件数据复制到硬盘上。</p>
+<p>使用下面的命令可以测试上传，注意upload为<code>c.Request.FormFile</code>指定的参数，其值必须要是绝对路径：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -X POST http://127.0.0.1:8000/upload -F &quot;upload=@/Users/ghost/Desktop/pic.jpg&quot; -H &quot;Content-Type: multipart/form-data&quot;</div></pre></td></tr></table></figure>
+<h4 id="上传多个文件"><a href="#上传多个文件" class="headerlink" title="上传多个文件"></a>上传多个文件</h4><p>单个文件上传很简单，别以为多个文件就会很麻烦。依葫芦画瓢，所谓多个文件，无非就是多一次遍历文件，然后一次copy数据存储即可。下面只写handler，省略main函数的初始化路由和开启服务器监听了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">router.POST(&quot;/multi/upload&quot;, func(c *gin.Context) &#123;</div><div class="line">		err := c.Request.ParseMultipartForm(200000)</div><div class="line">		if err != nil &#123;</div><div class="line">			log.Fatal(err)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		formdata := c.Request.MultipartForm </div><div class="line"></div><div class="line">		files := formdata.File[&quot;upload&quot;] </div><div class="line">		for i, _ := range files &#123; /</div><div class="line">			file, err := files[i].Open()</div><div class="line">			defer file.Close()</div><div class="line">			if err != nil &#123;</div><div class="line">				log.Fatal(err)</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			out, err := os.Create(files[i].Filename)</div><div class="line"></div><div class="line">			defer out.Close()</div><div class="line"></div><div class="line">			if err != nil &#123;</div><div class="line">				log.Fatal(err)</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			_, err = io.Copy(out, file)</div><div class="line"></div><div class="line">			if err != nil &#123;</div><div class="line">				log.Fatal(err)</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			c.String(http.StatusCreated, &quot;upload successful&quot;)</div><div class="line"></div><div class="line">		&#125;</div><div class="line"></div><div class="line">	&#125;)</div></pre></td></tr></table></figure>
+<p>与单个文件上传类似，只不过使用了<code>c.Request.MultipartForm</code>得到文件句柄，再获取文件数据，然后遍历读写。</p>
+<p>使用curl上传</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -X POST http://127.0.0.1:8000/multi/upload -F &quot;upload=@/Users/ghost/Desktop/pic.jpg&quot; -F &quot;upload=@/Users/ghost/Desktop/journey.png&quot; -H &quot;Content-Type: multipart/form-data&quot;</div></pre></td></tr></table></figure>
+<h4 id="表单上传"><a href="#表单上传" class="headerlink" title="表单上传"></a>表单上传</h4><p>上面我们使用的都是curl上传，实际上，用户上传图片更多是通过表单，或者ajax和一些requests的请求完成。下面展示一下web的form表单如何上传。</p>
+<p>我们先要写一个表单页面，因此需要引入gin如何render模板。前面我们见识了c.String和c.JSON。下面就来看看c.HTML方法。</p>
+<p>首先需要定义一个模板的文件夹。然后调用c.HTML渲染模板，可以通过gin.H给模板传值。至此，无论是String，JSON还是HTML，以及后面的XML和YAML，都可以看到Gin封装的接口简明易用。</p>
+<p>创建一个文件夹templates，然后再里面创建html文件upload.html:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html lang=&quot;en&quot;&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</div><div class="line">    &lt;title&gt;upload&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">&lt;h3&gt;Single Upload&lt;/h3&gt;</div><div class="line">&lt;form action=&quot;/upload&quot;, method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</div><div class="line">    &lt;input type=&quot;text&quot; value=&quot;hello gin&quot; /&gt;</div><div class="line">    &lt;input type=&quot;file&quot; name=&quot;upload&quot; /&gt;</div><div class="line">    &lt;input type=&quot;submit&quot; value=&quot;upload&quot; /&gt;</div><div class="line">&lt;/form&gt;</div><div class="line"></div><div class="line"></div><div class="line">&lt;h3&gt;Multi Upload&lt;/h3&gt;</div><div class="line">&lt;form action=&quot;/multi/upload&quot;, method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</div><div class="line">    &lt;input type=&quot;text&quot; value=&quot;hello gin&quot; /&gt;</div><div class="line">    &lt;input type=&quot;file&quot; name=&quot;upload&quot; /&gt;</div><div class="line">    &lt;input type=&quot;file&quot; name=&quot;upload&quot; /&gt;</div><div class="line">    &lt;input type=&quot;submit&quot; value=&quot;upload&quot; /&gt;</div><div class="line">&lt;/form&gt;</div><div class="line"></div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure>
+<p>upload 很简单，没有参数。一个用于单个文件上传，一个用于多个文件上传。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">router.LoadHTMLGlob(&quot;templates/*&quot;)</div><div class="line">router.GET(&quot;/upload&quot;, func(c *gin.Context) &#123;</div><div class="line">	c.HTML(http.StatusOK, &quot;upload.html&quot;, gin.H&#123;&#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>使用LoadHTMLGlob定义模板文件路径。 </p>
+<h3 id="参数绑定"><a href="#参数绑定" class="headerlink" title="参数绑定"></a>参数绑定</h3><p>我们已经见识了<code>x-www-form-urlencoded</code>类型的参数处理，现在越来越多的应用习惯使用JSON来通信，也就是无论返回的response还是提交的request，其content-type类型都是<code>application/json</code>的格式。而对于一些旧的web表单页还是<code>x-www-form-urlencoded</code>的形式，这就需要我们的服务器能改hold住这多种content-type的参数了。</p>
+<p>Python的世界里很好解决，毕竟动态语言不需要实现定义数据模型。因此可以写一个装饰器将两个格式的数据封装成一个数据模型。golang中要处理并非易事，好在有gin，他们的model bind功能非常强大。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">type User struct &#123;</div><div class="line">	Username string `form:&quot;username&quot; json:&quot;username&quot; binding:&quot;required&quot;`</div><div class="line">	Passwd   string `form:&quot;passwd&quot; json:&quot;passwd&quot; bdinding:&quot;required&quot;`</div><div class="line">	Age      int    `form:&quot;age&quot; json:&quot;age&quot;`</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main()&#123;</div><div class="line">	router := gin.Default()</div><div class="line">	</div><div class="line">	router.POST(&quot;/login&quot;, func(c *gin.Context) &#123;</div><div class="line">		var user User</div><div class="line">		var err error</div><div class="line">		contentType := c.Request.Header.Get(&quot;Content-Type&quot;)</div><div class="line"></div><div class="line">		switch contentType &#123;</div><div class="line">		case &quot;application/json&quot;:</div><div class="line">			err = c.BindJSON(&amp;user)</div><div class="line">		case &quot;application/x-www-form-urlencoded&quot;:</div><div class="line">			err = c.BindWith(&amp;user, binding.Form)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		if err != nil &#123;</div><div class="line">			fmt.Println(err)</div><div class="line">			log.Fatal(err)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">			&quot;user&quot;:   user.Username,</div><div class="line">			&quot;passwd&quot;: user.Passwd,</div><div class="line">			&quot;age&quot;:    user.Age,</div><div class="line">		&#125;)</div><div class="line"></div><div class="line">	&#125;)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>先定义一个<code>User</code>模型结构体，然后针对客户端的content-type，一次使<code>BindJSON</code>和<code>BindWith</code>方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/x-www-form-urlencoded&quot; -d &quot;username=rsj217&amp;passwd=123&amp;age=21&quot; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    79  100    46  100    33  41181  29543 --:--:-- --:--:-- --:--:-- 46000</div><div class="line">&#123;</div><div class="line">    &quot;age&quot;: 21,</div><div class="line">    &quot;passwd&quot;: &quot;123&quot;,</div><div class="line">    &quot;username&quot;: &quot;rsj217&quot;</div><div class="line">&#125;</div><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/x-www-form-urlencoded&quot; -d &quot;username=rsj217&amp;passwd=123&amp;new=21&quot; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    78  100    45  100    33  37751  27684 --:--:-- --:--:-- --:--:-- 45000</div><div class="line">&#123;</div><div class="line">    &quot;age&quot;: 0,</div><div class="line">    &quot;passwd&quot;: &quot;123&quot;,</div><div class="line">    &quot;username&quot;: &quot;rsj217&quot;</div><div class="line">&#125;</div><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/x-www-form-urlencoded&quot; -d &quot;username=rsj217&amp;new=21&quot; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (52) Empty reply from server</div><div class="line">No JSON object could be decoded</div></pre></td></tr></table></figure>
+<p>可以看到，结构体中，设置了binding标签的字段（username和passwd），如果没传会抛错误。非banding的字段（age），对于客户端没有传，User结构会用零值填充。对于User结构没有的参数，会自动被忽略。</p>
+<p>改成json的效果类似：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/json&quot; -d &apos;&#123;&quot;username&quot;: &quot;rsj217&quot;, &quot;passwd&quot;: &quot;123&quot;, &quot;age&quot;: 21&#125;&apos; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    96  100    46  100    50  32670  35511 --:--:-- --:--:-- --:--:-- 50000</div><div class="line">&#123;</div><div class="line">    &quot;age&quot;: 21,</div><div class="line">    &quot;passwd&quot;: &quot;123&quot;,</div><div class="line">    &quot;username&quot;: &quot;rsj217&quot;</div><div class="line">&#125;</div><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/json&quot; -d &apos;&#123;&quot;username&quot;: &quot;rsj217&quot;, &quot;passwd&quot;: &quot;123&quot;, &quot;new&quot;: 21&#125;&apos; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    95  100    45  100    50  49559  55066 --:--:-- --:--:-- --:--:-- 50000</div><div class="line">&#123;</div><div class="line">    &quot;age&quot;: 0,</div><div class="line">    &quot;passwd&quot;: &quot;123&quot;,</div><div class="line">    &quot;username&quot;: &quot;rsj217&quot;</div><div class="line">&#125;</div><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/json&quot; -d &apos;&#123;&quot;username&quot;: &quot;rsj217&quot;, &quot;new&quot;: 21&#125;&apos; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (52) Empty reply from server</div><div class="line">No JSON object could be decoded</div><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/login -H &quot;Content-Type:application/json&quot; -d &apos;&#123;&quot;username&quot;: &quot;rsj217&quot;, &quot;passwd&quot;: 123, &quot;new&quot;: 21&#125;&apos; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (52) Empty reply from server</div><div class="line">No JSON object could be decoded</div></pre></td></tr></table></figure>
+<blockquote>
+<p>使用json还需要注意一点，json是有数据类型的，因此对于 <code>{&quot;passwd&quot;: &quot;123&quot;}</code> 和 <code>{&quot;passwd&quot;: 123}</code>是不同的数据类型，解析需要符合对应的数据类型,否则会出错。</p>
+</blockquote>
+<p>当然，gin还提供了更加高级方法，c.Bind，它会更加content-type自动推断是bind表单还是json的参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">router.POST(&quot;/login&quot;, func(c *gin.Context) &#123;</div><div class="line">	var user User</div><div class="line">	</div><div class="line">	err := c.Bind(&amp;user)</div><div class="line">	if err != nil &#123;</div><div class="line">		fmt.Println(err)</div><div class="line">		log.Fatal(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">		&quot;username&quot;:   user.Username,</div><div class="line">		&quot;passwd&quot;:     user.Passwd,</div><div class="line">		&quot;age&quot;:        user.Age,</div><div class="line">	&#125;)</div><div class="line"></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h3 id="多格式渲染"><a href="#多格式渲染" class="headerlink" title="多格式渲染"></a>多格式渲染</h3><p>既然请求可以使用不同的content-type，响应也如此。通常响应会有html，text，plain，json和xml等。<br>gin提供了很优雅的渲染方法。到目前为止，我们已经见识了c.String， c.JSON，c.HTML，下面介绍一下c.XML。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/render&quot;, func(c *gin.Context) &#123;</div><div class="line">	contentType := c.DefaultQuery(&quot;content_type&quot;, &quot;json&quot;)</div><div class="line">	if contentType == &quot;json&quot; &#123;</div><div class="line">		c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">			&quot;user&quot;:   &quot;rsj217&quot;,</div><div class="line">			&quot;passwd&quot;: &quot;123&quot;,</div><div class="line">		&#125;)</div><div class="line">	&#125; else if contentType == &quot;xml&quot; &#123;</div><div class="line">		c.XML(http.StatusOK, gin.H&#123;</div><div class="line">			&quot;user&quot;:   &quot;rsj217&quot;,</div><div class="line">			&quot;passwd&quot;: &quot;123&quot;,</div><div class="line">		&#125;)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl  http://127.0.0.1:8000/render\?content_type\=json</div><div class="line">&#123;&quot;passwd&quot;:&quot;123&quot;,&quot;user&quot;:&quot;rsj217&quot;&#125;</div><div class="line">☁  ~  curl  http://127.0.0.1:8000/render\?content_type\=xml</div><div class="line">&lt;map&gt;&lt;user&gt;rsj217&lt;/user&gt;&lt;passwd&gt;123&lt;/passwd&gt;&lt;/map&gt;%</div></pre></td></tr></table></figure>
+<h3 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h3><p>gin对于重定向的请求，相当简单。调用上下文的Redirect方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/redict/google&quot;, func(c *gin.Context) &#123;</div><div class="line">	c.Redirect(http.StatusMovedPermanently, &quot;https://google.com&quot;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h3 id="分组路由"><a href="#分组路由" class="headerlink" title="分组路由"></a>分组路由</h3><p>熟悉Flask的同学应该很了解蓝图分组。Flask提供了蓝图用于管理组织分组api。gin也提供了这样的功能，让你的代码逻辑更加模块化，同时分组也易于定义中间件的使用范围。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">v1 := router.Group(&quot;/v1&quot;)</div><div class="line"></div><div class="line">v1.GET(&quot;/login&quot;, func(c *gin.Context) &#123;</div><div class="line">	c.String(http.StatusOK, &quot;v1 login&quot;)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">v2 := router.Group(&quot;/v2&quot;)</div><div class="line"></div><div class="line">v2.GET(&quot;/login&quot;, func(c *gin.Context) &#123;</div><div class="line">	c.String(http.StatusOK, &quot;v2 login&quot;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>访问效果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl http://127.0.0.1:8000/v1/login</div><div class="line">v1 login%                                                                                 ☁  ~  curl http://127.0.0.1:8000/v2/login</div><div class="line">v2 login%</div></pre></td></tr></table></figure>
+<h3 id="middleware中间件"><a href="#middleware中间件" class="headerlink" title="middleware中间件"></a>middleware中间件</h3><p>golang的net/http设计的一大特点就是特别容易构建中间件。gin也提供了类似的中间件。需要注意的是中间件只对注册过的路由函数起作用。对于分组路由，嵌套使用中间件，可以限定中间件的作用范围。中间件分为全局中间件，单个路由中间件和群组中间件。</p>
+<h4 id="全局中间件"><a href="#全局中间件" class="headerlink" title="全局中间件"></a>全局中间件</h4><p>先定义一个中间件函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">func MiddleWare() gin.HandlerFunc &#123;</div><div class="line">	return func(c *gin.Context) &#123;</div><div class="line">		fmt.Println(&quot;before middleware&quot;)</div><div class="line">		c.Set(&quot;request&quot;, &quot;clinet_request&quot;)</div><div class="line">		c.Next()</div><div class="line">		fmt.Println(&quot;before middleware&quot;)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该函数很简单，只会给c上下文添加一个属性，并赋值。<strong>后面</strong>的路由处理器，可以根据被中间件装饰后提取其值。需要注意，虽然名为全局中间件，只要注册中间件的过程之前设置的路由，将不会受注册的中间件所影响。只有注册了中间件一下代码的路由函数规则，才会被中间件装饰。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">router.Use(MiddleWare())</div><div class="line">&#123;</div><div class="line">	router.GET(&quot;/middleware&quot;, func(c *gin.Context) &#123;</div><div class="line">		request := c.MustGet(&quot;request&quot;).(string)</div><div class="line">		req, _ := c.Get(&quot;request&quot;)</div><div class="line">		c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">			&quot;middile_request&quot;: request,</div><div class="line">			&quot;request&quot;: req,</div><div class="line">		&#125;)</div><div class="line">	&#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用router装饰中间件，然后在<code>/middlerware</code>即可读取request的值，注意在<code>router.Use(MiddleWare())</code>代码以上的路由函数，将不会有被中间件装饰的效果。</p>
+<blockquote>
+<p>使用花括号包含被装饰的路由函数只是一个代码规范，即使没有被包含在内的路由函数，只要使用router进行路由，都等于被装饰了。想要区分权限范围，可以使用组返回的对象注册中间件。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl  http://127.0.0.1:8000/middleware</div><div class="line">&#123;&quot;middile_request&quot;:&quot;clinet_request&quot;,&quot;request&quot;:&quot;clinet_request&quot;&#125;</div></pre></td></tr></table></figure>
+<p>如果没有注册就使用<code>MustGet</code>方法读取c的值将会抛错，可以使用Get方法取而代之。</p>
+<p>上面的注册装饰方式，会让所有下面所写的代码都默认使用了router的注册过的中间件。</p>
+<h4 id="单个路由中间件"><a href="#单个路由中间件" class="headerlink" title="单个路由中间件"></a>单个路由中间件</h4><p>当然，gin也提供了针对指定的路由函数进行注册。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/before&quot;, MiddleWare(), func(c *gin.Context) &#123;</div><div class="line">	request := c.MustGet(&quot;request&quot;).(string)</div><div class="line">	c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">		&quot;middile_request&quot;: request,</div><div class="line">	&#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>把上述代码写在 router.Use(Middleware())之前，同样也能看见<code>/before</code>被装饰了中间件。</p>
+<h4 id="群组中间件"><a href="#群组中间件" class="headerlink" title="群组中间件"></a>群组中间件</h4><p>群组的中间件也类似，只要在对于的群组路由上注册中间件函数即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">authorized := router.Group(&quot;/&quot;, MyMiddelware())</div><div class="line">// 或者这样用：</div><div class="line">authorized := router.Group(&quot;/&quot;)</div><div class="line">authorized.Use(MyMiddelware())</div><div class="line">&#123;</div><div class="line">    authorized.POST(&quot;/login&quot;, loginEndpoint)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>群组可以嵌套，因为中间件也可以根据群组的嵌套规则嵌套。</p>
+<h3 id="中间件实践"><a href="#中间件实践" class="headerlink" title="中间件实践"></a>中间件实践</h3><p>中间件最大的作用，莫过于用于一些记录log，错误handler，还有就是对部分接口的鉴权。下面就实现一个简易的鉴权中间件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/auth/signin&quot;, func(c *gin.Context) &#123;</div><div class="line">	cookie := &amp;http.Cookie&#123;</div><div class="line">		Name:     &quot;session_id&quot;,</div><div class="line">		Value:    &quot;123&quot;,</div><div class="line">		Path:     &quot;/&quot;,</div><div class="line">		HttpOnly: true,</div><div class="line">	&#125;</div><div class="line">	http.SetCookie(c.Writer, cookie)</div><div class="line">	c.String(http.StatusOK, &quot;Login successful&quot;)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">router.GET(&quot;/home&quot;, AuthMiddleWare(), func(c *gin.Context) &#123;</div><div class="line">	c.JSON(http.StatusOK, gin.H&#123;&quot;data&quot;: &quot;home&quot;&#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>登录函数会设置一个session_id的cookie，注意这里需要指定path为<code>/</code>，不然gin会自动设置cookie的path为<code>/auth</code>，一个特别奇怪的问题。<code>/homne</code>的逻辑很简单，使用中间件AuthMiddleWare注册之后，将会先执行AuthMiddleWare的逻辑，然后才到<code>/home</code>的逻辑。</p>
+<p>AuthMiddleWare的代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">func AuthMiddleWare() gin.HandlerFunc &#123;</div><div class="line">	return func(c *gin.Context) &#123;</div><div class="line">		if cookie, err := c.Request.Cookie(&quot;session_id&quot;); err == nil &#123;</div><div class="line">			value := cookie.Value</div><div class="line">			fmt.Println(value)</div><div class="line">			if value == &quot;123&quot; &#123;</div><div class="line">				c.Next()</div><div class="line">				return</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		c.JSON(http.StatusUnauthorized, gin.H&#123;</div><div class="line">			&quot;error&quot;: &quot;Unauthorized&quot;,</div><div class="line">		&#125;)</div><div class="line">		c.Abort()</div><div class="line">		return</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从上下文的请求中读取cookie，然后校对cookie，如果有问题，则终止请求，直接返回，这里使用了c.Abort()方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">In [7]: resp = requests.get(&apos;http://127.0.0.1:8000/home&apos;)</div><div class="line"></div><div class="line">In [8]: resp.json()</div><div class="line">Out[8]: &#123;u&apos;error&apos;: u&apos;Unauthorized&apos;&#125;</div><div class="line"></div><div class="line">In [9]: login = requests.get(&apos;http://127.0.0.1:8000/auth/signin&apos;)</div><div class="line"></div><div class="line">In [10]: login.cookies</div><div class="line">Out[10]: &lt;RequestsCookieJar[Cookie(version=0, name=&apos;session_id&apos;, value=&apos;123&apos;, port=None, port_specified=False, domain=&apos;127.0.0.1&apos;, domain_specified=False, domain_initial_dot=False, path=&apos;/&apos;, path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest=&#123;&apos;HttpOnly&apos;: None&#125;, rfc2109=False)]&gt;</div><div class="line"></div><div class="line">In [11]: resp = requests.get(&apos;http://127.0.0.1:8000/home&apos;, cookies=login.cookies)</div><div class="line"></div><div class="line">In [12]: resp.json()</div><div class="line">Out[12]: &#123;u&apos;data&apos;: u&apos;home&apos;&#125;</div></pre></td></tr></table></figure>
+<h3 id="异步协程"><a href="#异步协程" class="headerlink" title="异步协程"></a>异步协程</h3><p>golang的高并发一大利器就是协程。gin里可以借助协程实现异步任务。因为涉及异步过程，请求的上下文需要copy到异步的上下文，并且这个上下文是只读的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/sync&quot;, func(c *gin.Context) &#123;</div><div class="line">	time.Sleep(5 * time.Second)</div><div class="line">	log.Println(&quot;Done! in path&quot; + c.Request.URL.Path)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">router.GET(&quot;/async&quot;, func(c *gin.Context) &#123;</div><div class="line">	cCp := c.Copy()</div><div class="line">	go func() &#123;</div><div class="line">		time.Sleep(5 * time.Second)</div><div class="line">		log.Println(&quot;Done! in path&quot; + cCp.Request.URL.Path)</div><div class="line">	&#125;()</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>在请求的时候，sleep5秒钟，同步的逻辑可以看到，服务的进程睡眠了。异步的逻辑则看到响应返回了，然后程序还在<strong>后台</strong>的协程处理。</p>
+<h3 id="自定义router"><a href="#自定义router" class="headerlink" title="自定义router"></a>自定义router</h3><p>gin不仅可以使用框架本身的router进行Run，也可以配合使用net/http本身的功能：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    router := gin.Default()</div><div class="line">    http.ListenAndServe(&quot;:8080&quot;, router)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    router := gin.Default()</div><div class="line"></div><div class="line">    s := &amp;http.Server&#123;</div><div class="line">        Addr:           &quot;:8000&quot;,</div><div class="line">        Handler:        router,</div><div class="line">        ReadTimeout:    10 * time.Second,</div><div class="line">        WriteTimeout:   10 * time.Second,</div><div class="line">        MaxHeaderBytes: 1 &lt;&lt; 20,</div><div class="line">    &#125;</div><div class="line">    s.ListenAndServe()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当然还有一个优雅的重启和结束进程的方案。后面将会探索使用supervisor管理golang的进程。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Gin是一个轻巧而强大的golang web框架。涉及常见开发的功能，我们都做了简单的介绍。关于服务的启动，请求参数的处理和响应格式的渲染，以及针对上传和中间件鉴权做了例子。更好的掌握来自实践，同时gin的源码注释很详细，可以阅读源码了解更多详细的功能和魔法特性。</p>
+<p>文中的部分<a href="https://gist.github.com/rsj217/26492af115a083876570f003c64df118" target="_blank" rel="external">代码</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/26/Golang处理JSON（二）--- 解码/" rel="next" title="Golang处理JSON（二）--- 解码">
+                <i class="fa fa-chevron-left"></i> Golang处理JSON（二）--- 解码
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/22/Gin实战：Gin+Mysql简单的Restful风格的API/" rel="prev" title="Gin实战：Gin+Mysql简单的Restful风格的API">
+                Gin实战：Gin+Mysql简单的Restful风格的API <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#所谓框架"><span class="nav-number">1.</span> <span class="nav-text">所谓框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gin"><span class="nav-number">2.</span> <span class="nav-text">Gin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hello-World"><span class="nav-number">3.</span> <span class="nav-text">Hello World</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#restful路由"><span class="nav-number">4.</span> <span class="nav-text">restful路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#query-string参数与body参数"><span class="nav-number">5.</span> <span class="nav-text">query string参数与body参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#query-string"><span class="nav-number">5.1.</span> <span class="nav-text">query string</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#body"><span class="nav-number">5.2.</span> <span class="nav-text">body</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件上传"><span class="nav-number">6.</span> <span class="nav-text">文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#上传单个文件"><span class="nav-number">6.1.</span> <span class="nav-text">上传单个文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#上传多个文件"><span class="nav-number">6.2.</span> <span class="nav-text">上传多个文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#表单上传"><span class="nav-number">6.3.</span> <span class="nav-text">表单上传</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数绑定"><span class="nav-number">7.</span> <span class="nav-text">参数绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多格式渲染"><span class="nav-number">8.</span> <span class="nav-text">多格式渲染</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重定向"><span class="nav-number">9.</span> <span class="nav-text">重定向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分组路由"><span class="nav-number">10.</span> <span class="nav-text">分组路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#middleware中间件"><span class="nav-number">11.</span> <span class="nav-text">middleware中间件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局中间件"><span class="nav-number">11.1.</span> <span class="nav-text">全局中间件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#单个路由中间件"><span class="nav-number">11.2.</span> <span class="nav-text">单个路由中间件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#群组中间件"><span class="nav-number">11.3.</span> <span class="nav-text">群组中间件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#中间件实践"><span class="nav-number">12.</span> <span class="nav-text">中间件实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步协程"><span class="nav-number">13.</span> <span class="nav-text">异步协程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义router"><span class="nav-number">14.</span> <span class="nav-text">自定义router</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">15.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

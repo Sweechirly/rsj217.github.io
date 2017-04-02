@@ -1,0 +1,706 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="前段时间，看见很多大会都在分享全站HTTPS的经验。HTTPS固然好，前提是SSL证书，并且签发证书的机构要靠谱。沃通的CA证书就相继被Mozilla和Google封杀了。曾经对于普通用户，权威，安全，并且免费的证书无疑就像天上的星星，可望而不可及。现在，这些星星变成了馅饼掉了下来。没错，我们可以申请安全免费的ssl证书— Let‘s Encrypt。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Let‘s Encrypt的SSL证书配置HTTPS手记">
+<meta property="og:url" content="http://rsj217.github.com/2017/03/28/使用Let‘s Encrypt的SSL证书配置HTTPS手记/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="前段时间，看见很多大会都在分享全站HTTPS的经验。HTTPS固然好，前提是SSL证书，并且签发证书的机构要靠谱。沃通的CA证书就相继被Mozilla和Google封杀了。曾经对于普通用户，权威，安全，并且免费的证书无疑就像天上的星星，可望而不可及。现在，这些星星变成了馅饼掉了下来。没错，我们可以申请安全免费的ssl证书— Let‘s Encrypt。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-90e0be5db9c0c718.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-b282651ab910b4dd.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-04-02T09:14:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Let‘s Encrypt的SSL证书配置HTTPS手记">
+<meta name="twitter:description" content="前段时间，看见很多大会都在分享全站HTTPS的经验。HTTPS固然好，前提是SSL证书，并且签发证书的机构要靠谱。沃通的CA证书就相继被Mozilla和Google封杀了。曾经对于普通用户，权威，安全，并且免费的证书无疑就像天上的星星，可望而不可及。现在，这些星星变成了馅饼掉了下来。没错，我们可以申请安全免费的ssl证书— Let‘s Encrypt。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-90e0be5db9c0c718.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/03/28/使用Let‘s Encrypt的SSL证书配置HTTPS手记/"/>
+
+
+  <title> 使用Let‘s Encrypt的SSL证书配置HTTPS手记 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用Let‘s Encrypt的SSL证书配置HTTPS手记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-28T12:31:02+08:00" content="2017-03-28">
+              2017-03-28
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前段时间，看见很多大会都在分享全站HTTPS的经验。HTTPS固然好，前提是SSL证书，并且签发证书的机构要靠谱。沃通的CA证书就相继被Mozilla和Google封杀了。曾经对于普通用户，权威，安全，并且免费的证书无疑就像天上的星星，可望而不可及。现在，这些星星变成了馅饼掉了下来。没错，我们可以申请安全免费的ssl证书— Let‘s Encrypt。</p>
+<a id="more"></a>
+<p>Let’s Encrypt是电子前哨基金会（EFF）发布的免费 SSL 证书服务，Google，Mozilla和Microsoft都极力支持。很早之前就听说了let’s encrypt，当时碍于其证书有效期短，并且配置麻烦，遂懒得折腾。最近发现他们的网站发布了工具和一系列自动化的工作流配置。尝试了一下，还蛮不错。</p>
+<h3 id="安装-Cerbot"><a href="#安装-Cerbot" class="headerlink" title="安装 Cerbot"></a>安装 Cerbot</h3><p><a href="https://certbot.eff.org/" target="_blank" rel="external">Certbot</a>专门用来部署Let‘s encrypt的工具，其官网会根据使用的web服务器软件和操作系统平台，提供响应的安装工具和安装方法。</p>
+<p>我这里选择了<code>Nginx</code>和<code>Ubuntu16.10</code>的组合。会看到网站跳转到一个简易的使用文档。使用下面的命令安装即可：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-90e0be5db9c0c718.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="WechatIMG2.jpeg"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ sudo add-apt-repository ppa:certbot/certbot</div><div class="line">$ sudo apt-get update</div><div class="line">$ sudo apt-get install certbot</div></pre></td></tr></table></figure>
+<p>对于Ubuntu14以上的版本，可能并没有<code>add-apt-repository</code>。需要安装下面的软件包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install python-software-properties</div><div class="line">$ sudo apt-get install software-properties-common</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Cerbot是EFF为了避免以前使用letsencyrpt配置繁琐而开发的工具。因操作系统不一样，安装的软件包也不一样，例如<code>centos</code>安装的是<code>cerbot-auto</code>，以前的<code>ubuntu</code>安装的则是<code>letsencyrpt</code>。具体用那个，直接通过上面的组合，根据文档提示即可。</p>
+</blockquote>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>别担心，Cerbot就是为了减少配置而生的。这里的配置即创建一个目录，配置域名访问服务器即可。首先创建一个文件夹，用于letsencrypt的目录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo mkdir -p /etc/letsencrypt</div></pre></td></tr></table></figure>
+<p>然后编辑nginx，启动一个基本的web服务。假设你的网站根目录再<code>/var/www</code>下。nginx配置大致如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">        listen 80 default_server;</div><div class="line">      </div><div class="line">        root /var/www;</div><div class="line"></div><div class="line">        index index.html index.htm index.nginx-debian.html;</div><div class="line">        </div><div class="line">        server_name www.example.com;</div><div class="line"></div><div class="line">        location / &#123;</div><div class="line">               </div><div class="line">                try_files $uri $uri/ =404;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>配置完毕nginx，确保能访问 <code>http://www.example.com</code>。配置域名和http服务器的主要作用在于让letsencrypt校验你是该域名的所有者。因为等下调用Certbot命令的时候，会在<code>www</code>目录下创建一个隐藏的<code>.well-known/acme-challenge</code>的文件，然后letsencrypt访问<code>http://www.example.com/.well-known/acme-challenge</code>。如果无法访问，那么letsencrypt会认为该域名不是你的，自然就无法为你签发证书了。</p>
+<h3 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h3><p>又是安装，又是配置服务器。目前为止还不算复杂。当然，下面也不会复杂，有了上面的准备，生成证书只需要一条命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo certbot certonly --webroot -w /var/www -d www.example.com</div></pre></td></tr></table></figure>
+<p>运行命令之后，会有一些选择，<code>Yes</code>或者<code>No</code>，有一步需要提供一个邮箱，用于证书快过期的时候收到letsencrypt的提示。</p>
+<p>上面的命令中，certonly是子命令，<code>webroot</code>是一个插件。<code>w</code>参数表示网站的根目录，即certbot创建<code>.well-know</code>的地方，<code>d</code>参数表示签发的域名。可以一次指定多个 <code>w 网站</code>和<code>d 域名</code>的配对。</p>
+<blockquote>
+<p>对于其他系统，有可能不是这个<code>certbot</code>命令，可能是<code>certbot-auto</code>或者<code>letsencrypt</code></p>
+</blockquote>
+<p>签发成功之后，就会在<code>/etc/letsencrypt</code>下生成如下的文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ ls</div><div class="line">accounts  archive  csr  keys  live  post-hook.d  pre-hook.d  renew-hook.d  renewal</div></pre></td></tr></table></figure>
+<p>其中<code>archive</code>文件夹存放多个归档的证书，<code>keys</code>是所有的证书。这些都是跟重签证书和续有效期有关的。使用certbot的工具，我们可以忽略这些目录。当前使用的证书存放在live文件下。</p>
+<p>在<code>/etc/letsencrypt/live/www.example.com</code> 目录下有<code>README  cert.pem  chain.pem  fullchain.pem  privkey.pem</code>这几个文件，</p>
+<ul>
+<li>privkey.pem 这是私匙，对应Nginx的ssl_certificate_key选项。</li>
+<li>cert.pem 服务器证书，对应SSLCertificateFile选项。</li>
+<li>chain.pem 除服务器证书之外的所有证书，Nginx对应ssl_trusted_certificate选项。</li>
+<li>fullchain.pem 包括上面的服务器证书和其他证书，Nginx对应ssl_certificate选项。</li>
+</ul>
+<blockquote>
+<p>实际上live目录的存放的证书文件都是对archive的连接。我们只要指定该目录的文件，当证书更下的时候，会自动修改连接。</p>
+</blockquote>
+<h3 id="配置HTTPS"><a href="#配置HTTPS" class="headerlink" title="配置HTTPS"></a>配置HTTPS</h3><p>我们已经生成了SSL证书，下面就是应用到我们的服务器了。对于配置nginx的https，有mozilla的一个<a href="https://mozilla.github.io/server-side-tls/ssl-config-generator/" target="_blank" rel="external">网站</a>提供了最佳实践。我们只需要选择nginx和openssl的版本，就会自动生成一个基础配置给我们，非常方便</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-b282651ab910b4dd.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="WechatIMG3.jpeg"></p>
+<p>对于上面的配置，大致如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">    listen 80 default_server;</div><div class="line">    listen [::]:80 default_server;</div><div class="line"></div><div class="line">    # Redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.</div><div class="line">    return 301 https://$host$request_uri;</div><div class="line">&#125;</div><div class="line"></div><div class="line">server &#123;</div><div class="line">    listen 443 ssl http2;</div><div class="line">    listen [::]:443 ssl http2;</div><div class="line"></div><div class="line">    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate</div><div class="line">    ssl_certificate /path/to/signed_cert_plus_intermediates;</div><div class="line">    ssl_certificate_key /path/to/private_key;</div><div class="line">    ssl_session_timeout 1d;</div><div class="line">    ssl_session_cache shared:SSL:50m;</div><div class="line">    ssl_session_tickets off;</div><div class="line"></div><div class="line">    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits</div><div class="line">    ssl_dhparam /path/to/dhparam.pem;</div><div class="line"></div><div class="line">    # intermediate configuration. tweak to your needs.</div><div class="line">    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</div><div class="line">    ssl_ciphers &apos;ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS&apos;;</div><div class="line">    ssl_prefer_server_ciphers on;</div><div class="line"></div><div class="line">    # HSTS (ngx_http_headers_module is required) (15768000 seconds = 6 months)</div><div class="line">    add_header Strict-Transport-Security max-age=15768000;</div><div class="line"></div><div class="line">    # OCSP Stapling ---</div><div class="line">    # fetch OCSP records from URL in ssl_certificate and cache them</div><div class="line">    ssl_stapling on;</div><div class="line">    ssl_stapling_verify on;</div><div class="line"></div><div class="line">    ## verify chain of trust of OCSP response using Root CA and Intermediate certs</div><div class="line">    ssl_trusted_certificate /path/to/root_CA_cert_plus_intermediates;</div><div class="line"></div><div class="line">    ....</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>listen 443 ssl http2;</code>表示监听443端口，并开启http2，当然也可以不开启。</p>
+<p> <code>ssl_certificate</code>配置<code>fullchain.pem</code>的路径； <code>ssl_certificate_key</code>配置<code>privkey.pem</code>的路径。</p>
+<p><code>ssl_dhparam</code>的配置<code>/etc/nginx/ssl</code>。如果不存在这个文件，就自己创建。创建的命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo mkdir /etc/nginx/ssl</div><div class="line">$ sudo openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048</div></pre></td></tr></table></figure>
+<p>生成ssl_dhparam.pem文件大概需要一分钟。<code>ssl_trusted_certificate</code>的配置是可选的，并且nginx文档也提到<code>ssl_certificate</code> 如果已经包含了<code>intermediates</code>，所以我们就配置这个。</p>
+<p>resolver的作用是配置解析OCSP服务器的域名，通常会写VPS云服务商提供的DNS服务器。这里我们也忽略。</p>
+<p>配置完毕之后，重启nginx，此时再访问你的域名<code>www.example.com</code>就能看见https的协议，浏览器加上了一把绿色的小锁。</p>
+<h3 id="检测SSL的安全性"><a href="#检测SSL的安全性" class="headerlink" title="检测SSL的安全性"></a>检测SSL的安全性</h3><p>配置成功HTTPS之后，为了验证我们的成果，可以通过<a href="https://www.ssllabs.com/ssltest/index.html" target="_blank" rel="external">Qualys SSL Labs</a>网站检测。不出意外，你将得到一个A+。如果还没有，则仔细看看还差什么方面的修补啦。</p>
+<p>如果开启了nginx的HTTP2配置，也会看见浏览器访问的开发者工具中，显示的h2的协议。当然，nginx开启http需要版本在1.9.5之上，编译还需要设置<code>--with-http_v2_module</code>。对于1.10.1以上的版本，则默认安装的就能开启http2的功能。</p>
+<h3 id="更新证书"><a href="#更新证书" class="headerlink" title="更新证书"></a>更新证书</h3><p>letsencrypt的证书权威且安全，就是有效期只有90天。过期前需要续时间。好在certbot提供的工具足够简单。</p>
+<p>运行命令<code>sudo certbot renew</code>即可续时间，如果还没到过期时间，运行命令也不会有大碍。当然你可以使用命令测试<code>sudo certbot renew --dry-run</code>。续的时候certbot也会根据上面配置域名的时候，校验服务器上<code>.well-know</code>。确保你的服务器依然可以访问这个文件，不然会认证失败。</p>
+<p>成功续了时间之后，还需要重启服务器。因此需要自己写一个脚本或者cron。定期更新证书的有效期并且重启nginx服务。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Let‘s Encrypt项目刚开始的时候，使用确实很麻烦。有好心人做了第三方配置脚本，可是对不同系统的兼容性比较差。不知道是不是用户反馈还是EFF看不下去了，才开发了Certbot。Certbot确实是神器，化繁为简。由此可见，很多时候，我们可以通过技术创造去提供更好的服务。使用HTTPS，开启HTTP2.0。让letsencrypt为你的网站保驾护航。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/22/Gin实战：Gin+Mysql简单的Restful风格的API/" rel="next" title="Gin实战：Gin+Mysql简单的Restful风格的API">
+                <i class="fa fa-chevron-left"></i> Gin实战：Gin+Mysql简单的Restful风格的API
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装-Cerbot"><span class="nav-number">1.</span> <span class="nav-text">安装 Cerbot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成证书"><span class="nav-number">3.</span> <span class="nav-text">生成证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置HTTPS"><span class="nav-number">4.</span> <span class="nav-text">配置HTTPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检测SSL的安全性"><span class="nav-number">5.</span> <span class="nav-text">检测SSL的安全性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更新证书"><span class="nav-number">6.</span> <span class="nav-text">更新证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

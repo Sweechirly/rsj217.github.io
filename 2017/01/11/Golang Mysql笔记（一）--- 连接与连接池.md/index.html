@@ -1,0 +1,707 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="database/sqldatabase/sql是golang的标准库之一，它提供了一系列接口方法，用于访问关系数据库。它并不会提供数据库特有的方法，那些特有的方法交给数据库驱动去实现。
+database/sql库提供了一些type。这些类型对掌握它的用法非常重要。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Mysql笔记（一）--- 连接与连接池">
+<meta property="og:url" content="http://rsj217.github.com/2017/01/11/Golang Mysql笔记（一）--- 连接与连接池.md/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="database/sqldatabase/sql是golang的标准库之一，它提供了一系列接口方法，用于访问关系数据库。它并不会提供数据库特有的方法，那些特有的方法交给数据库驱动去实现。
+database/sql库提供了一些type。这些类型对掌握它的用法非常重要。">
+<meta property="og:updated_time" content="2017-04-02T09:11:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Mysql笔记（一）--- 连接与连接池">
+<meta name="twitter:description" content="database/sqldatabase/sql是golang的标准库之一，它提供了一系列接口方法，用于访问关系数据库。它并不会提供数据库特有的方法，那些特有的方法交给数据库驱动去实现。
+database/sql库提供了一些type。这些类型对掌握它的用法非常重要。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/01/11/Golang Mysql笔记（一）--- 连接与连接池.md/"/>
+
+
+  <title> Golang Mysql笔记（一）--- 连接与连接池 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang Mysql笔记（一）--- 连接与连接池
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-11T12:31:02+08:00" content="2017-01-11">
+              2017-01-11
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="database-sql"><a href="#database-sql" class="headerlink" title="database/sql"></a>database/sql</h3><p>database/sql是golang的标准库之一，它提供了一系列接口方法，用于访问关系数据库。它并不会提供数据库特有的方法，那些特有的方法交给数据库驱动去实现。</p>
+<p>database/sql库提供了一些type。这些类型对掌握它的用法非常重要。</p>
+<a id="more"></a>
+<p><strong><strong>DB</strong></strong> 数据库对象。 sql.DB类型代表了数据库。和其他语言不一样，它并是数据库连接。golang中的连接来自内部实现的连接池，连接的建立是惰性的，当你需要连接的时候，连接池会自动帮你创建。通常你不需要操作连接池。一切都有go来帮你完成。</p>
+<p><strong><strong>Results</strong></strong> 结果集。数据库查询的时候，都会有结果集。sql.Rows类型表示查询返回多行数据的结果集。sql.Row则表示单行查询结果的结果集。当然，对于插入更新和删除，返回的结果集类型为sql.Result。</p>
+<p><strong><strong>Statements</strong></strong> 语句。sql.Stmt类型表示sql查询语句，例如DDL，DML等类似的sql语句。可以把当成prepare语句构造查询，也可以直接使用sql.DB的函数对其操作。</p>
+<h3 id="warming-up"><a href="#warming-up" class="headerlink" title="warming up"></a>warming up</h3><p>下面就开始我们的sql数据库之旅，我们使用mysql数据库为例子，驱动使用<code>go-sql-driver/mysql</code>。</p>
+<p>对于其他语言，查询数据的时候需要创建一个连接，对于go而言则是需要创建一个数据库抽象对象。连接将会在查询需要的时候，由连接池创建并维护。使用sql.Open函数创建数据库对象。它的第一个参数是数据库驱动名，第二个参数是一个连接字串（符合DSN风格，可以是一个tcp连接，一个unix socket等）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">import (</div><div class="line">    &quot;database/sql&quot;</div><div class="line">    &quot;log&quot;</div><div class="line">    _ &quot;github.com/go-sql-driver/mysql&quot;</div><div class="line">)</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    defer db.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建了数据库对象之后，在函数退出的时候，需要释放连接，即调用sql.Close方法。例子使用了defer语句设置释放连接。</p>
+<p>接下来进行一些基本的数据库操作，首先我们使用Exec方法执行一条sql，创建一个数据表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    defer db.Close()</div><div class="line"></div><div class="line">    _, err = db.Exec(&quot;CREATE TABLE IF NOT EXISTS test.hello(world varchar(50))&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>此时可以看见，数据库生成了一个新的表。接下来再插入一些数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    rs, err := db.Exec(&quot;INSERT INTO test.hello(world) VALUES (&apos;hello world&apos;)&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    rowCount, err := rs.RowsAffected()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    log.Printf(&quot;inserted %d rows&quot;, rowCount)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同样使用Exec方法即可插入数据，返回的结果集对象是是一个sql.Result类型，它有一个<code>LastInsertId</code>方法，返回插入数据后的id。当然此例的数据表并没有id字段，就返回一个0.</p>
+<p>插入了一些数据，接下来再简单的查询一下数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line">    </div><div class="line">    ... </div><div class="line">    </div><div class="line">    rows, err := db.Query(&quot;SELECT world FROM test.hello&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    for rows.Next()&#123;</div><div class="line">        var s string</div><div class="line">        err = rows.Scan(&amp;s)</div><div class="line">        if err !=nil&#123;</div><div class="line">            log.Fatalln(err)</div><div class="line">        &#125;</div><div class="line">        log.Printf(&quot;found row containing %q&quot;, s)</div><div class="line">    &#125;</div><div class="line">    rows.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们使用了Query方法执行select查询语句，返回的是一个sql.Rows类型的结果集。迭代后者的Next方法，然后使用Scan方法给变量s赋值，以便取出结果。最后再把结果集关闭（释放连接）。</p>
+<p>通过上面一个简单的例子，介绍了database/sql的基本数据查询操作。而对于开篇所说的几个结构类型尚未进行详细的介绍。下面我们再针对database/sql库的类型和数据库交互做更深的探究。</p>
+<h3 id="sql-DB"><a href="#sql-DB" class="headerlink" title="sql.DB"></a>sql.DB</h3><p>正如上文所言，sql.DB是数据库的抽象，虽然通常它容易被误以为是数据库连接。它提供了一些跟数据库交互的函数，同时管理维护一个数据库连接池，帮你处理了单调而重复的管理工作，并且在多个goroutines也是十分安全。</p>
+<p>sql.DB表示是数据库抽象，因此你有几个数据库就需要为每一个数据库创建一个sql.DB对象。因为它维护了一个连接池，因此不需要频繁的创建和销毁。它需要长时间保持，因此最好是设置成一个全局变量以便其他代码可以访问。</p>
+<p>创建数据库对象需要引入标准库database/sql，同时还需要引入驱动go-sql-driver/mysql。使用<code>_</code>表示引入驱动的变量，这样做的目的是为了在你的代码中不至于和标注库的函数变量namespace冲突。</p>
+<h3 id="连接池"><a href="#连接池" class="headerlink" title="连接池"></a>连接池</h3><p>只用sql.Open函数创建连接池，可是此时只是初始化了连接池，并没有创建任何连接。连接创建都是惰性的，只有当你真正使用到连接的时候，连接池才会创建连接。连接池很重要，它直接影响着你的程序行为。</p>
+<p>连接池的工作原来却相当简单。当你的函数(例如Exec，Query)调用需要访问底层数据库的时候，函数首先会向连接池请求一个连接。如果连接池有空闲的连接，则返回给函数。否则连接池将会创建一个新的连接给函数。一旦连接给了函数，连接则归属于函数。函数执行完毕后，要不把连接所属权归还给连接池，要么传递给下一个需要连接的（Rows）对象，最后使用完连接的对象也会把连接释放回到连接池。</p>
+<p>请求一个连接的函数有好几种，执行完毕处理连接的方式稍有差别，大致如下：</p>
+<ul>
+<li>db.Ping() 调用完毕后会马上把连接返回给连接池。</li>
+<li>db.Exec() 调用完毕后会马上把连接返回给连接池，但是它返回的Result对象还保留这连接的引用，当后面的代码需要处理结果集的时候连接将会被重用。</li>
+<li>db.Query() 调用完毕后会将连接传递给sql.Rows类型，当然后者迭代完毕或者显示的调用.Clonse()方法后，连接将会被释放回到连接池。</li>
+<li>db.QueryRow()调用完毕后会将连接传递给sql.Row类型，当.Scan()方法调用之后把连接释放回到连接池。</li>
+<li>db.Begin() 调用完毕后将连接传递给sql.Tx类型对象，当.Commit()或.Rollback()方法调用后释放连接。</li>
+</ul>
+<p>因为每一个连接都是惰性创建的，如何验证sql.Open调用之后，sql.DB对象可用呢？通常使用db.Ping()方法初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">db, err := sql.Open(&quot;driverName&quot;, &quot;dataSourceName&quot;)</div><div class="line">if err != nil&#123;</div><div class="line">    log.Fatalln(err)</div><div class="line">&#125;</div><div class="line"></div><div class="line">defer db.Close()</div><div class="line"></div><div class="line">err = db.Ping()</div><div class="line">if err != nil&#123;</div><div class="line">   log.Fatalln(err)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用了Ping之后，连接池一定会初始化一个数据库连接。当然，实际上对于失败的处理，应该定义一个符合自己需要的方式，现在为了演示，简单的使用<code>log.Fatalln(err)</code>表示了。</p>
+<h4 id="连接失败"><a href="#连接失败" class="headerlink" title="连接失败"></a>连接失败</h4><p>关于连接池另外一个知识点就是你不必检查或者尝试处理连接失败的情况。当你进行数据库操作的时候，如果连接失败了，database/sql会帮你处理。实际上，当从连接池取出的连接断开的时候，database/sql会自动尝试重连10次。仍然无法重连的情况下会自动从连接池再获取一个或者新建另外一个。好比去买鸡蛋，售货员会从箱子里掏出鸡蛋，如果发现是坏蛋则连续掏10次，仍然找不到合适的就会换一个箱子招，或者从别的库房再拿一个给你。</p>
+<h4 id="连接池配置"><a href="#连接池配置" class="headerlink" title="连接池配置"></a>连接池配置</h4><p>无论哪一个版本的go都不会提供很多控制连接池的接口。知道1.2版本以后才有一些简单的配置。可是1.2版本的连接池有一个bug，请升级更高的版本。</p>
+<p>配置连接池有两个的方法：</p>
+<ul>
+<li>db.SetMaxOpenConns(n int) 设置打开数据库的最大连接数。包含正在使用的连接和连接池的连接。如果你的函数调用需要申请一个连接，并且连接池已经没有了连接或者连接数达到了最大连接数。此时的函数调用将会被block，直到有可用的连接才会返回。设置这个值可以避免并发太高导致连接mysql出现too many connections的错误。该函数的默认设置是0，表示无限制。</li>
+<li>db.SetMaxIdleConns(n int) 设置连接池中的保持连接的最大连接数。默认也是0，表示连接池不会保持释放会连接池中的连接的连接状态：即当连接释放回到连接池的时候，连接将会被关闭。这会导致连接再连接池中频繁的关闭和创建。</li>
+</ul>
+<p>对于连接池的使用依赖于你是如何配置连接池，如果使用不当会导致下面问题：</p>
+<ol>
+<li>大量的连接空闲，导致额外的工作和延迟。</li>
+<li>连接数据库的连接过多导致错误。</li>
+<li>连接阻塞。</li>
+<li>连接池有超过十个或者更多的死连接，限制就是10次重连。</li>
+</ol>
+<p>大多数时候，如何使用sql.DB对连接的影响大过连接池配置的影响。这些具体问题我们会再使用sql.DB的时候逐一介绍。</p>
+<p>掌握了database/sql关于数据库连接池管理内容，下一步则是使用这些连接，进行数据的交互操作啦。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/07/Golang 持久化/" rel="next" title="Golang 持久化">
+                <i class="fa fa-chevron-left"></i> Golang 持久化
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/13/Golang Mysql笔记（二）--- CURD基础/" rel="prev" title="Golang Mysql笔记（二）--- CURD基础">
+                Golang Mysql笔记（二）--- CURD基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#database-sql"><span class="nav-number">1.</span> <span class="nav-text">database/sql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#warming-up"><span class="nav-number">2.</span> <span class="nav-text">warming up</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql-DB"><span class="nav-number">3.</span> <span class="nav-text">sql.DB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接池"><span class="nav-number">4.</span> <span class="nav-text">连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#连接失败"><span class="nav-number">4.1.</span> <span class="nav-text">连接失败</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连接池配置"><span class="nav-number">4.2.</span> <span class="nav-text">连接池配置</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

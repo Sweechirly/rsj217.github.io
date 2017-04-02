@@ -1,0 +1,764 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="我们已经了解了Golang的Gin框架。对于Webservice服务，restful风格几乎一统天下。Gin也天然的支持restful。下面就使用gin写一个简单的服务，麻雀虽小，五脏俱全。我们先以一个单文件开始，然后再逐步分解模块成包，组织代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gin实战：Gin+Mysql简单的Restful风格的API">
+<meta property="og:url" content="http://rsj217.github.com/2017/03/22/Gin实战：Gin+Mysql简单的Restful风格的API/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="我们已经了解了Golang的Gin框架。对于Webservice服务，restful风格几乎一统天下。Gin也天然的支持restful。下面就使用gin写一个简单的服务，麻雀虽小，五脏俱全。我们先以一个单文件开始，然后再逐步分解模块成包，组织代码。">
+<meta property="og:updated_time" content="2017-04-02T09:13:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gin实战：Gin+Mysql简单的Restful风格的API">
+<meta name="twitter:description" content="我们已经了解了Golang的Gin框架。对于Webservice服务，restful风格几乎一统天下。Gin也天然的支持restful。下面就使用gin写一个简单的服务，麻雀虽小，五脏俱全。我们先以一个单文件开始，然后再逐步分解模块成包，组织代码。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/03/22/Gin实战：Gin+Mysql简单的Restful风格的API/"/>
+
+
+  <title> Gin实战：Gin+Mysql简单的Restful风格的API |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Gin实战：Gin+Mysql简单的Restful风格的API
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-03-22T12:31:02+08:00" content="2017-03-22">
+              2017-03-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>我们已经了解了Golang的Gin框架。对于Webservice服务，restful风格几乎一统天下。Gin也天然的支持restful。下面就使用gin写一个简单的服务，麻雀虽小，五脏俱全。我们先以一个单文件开始，然后再逐步分解模块成包，组织代码。</p>
+<a id="more"></a>
+<h3 id="It-works"><a href="#It-works" class="headerlink" title="It works"></a>It works</h3><p>使用Gin的前提是安装，我们需要安装gin和mysql的驱动，具体的安装方式就不在赘述。可以参考<a href="http://www.jianshu.com/p/a31e4ee25305" target="_blank" rel="external">Golang 微框架Gin简介</a>和<a href="http://www.jianshu.com/p/015aca3e11ae" target="_blank" rel="external">Golang持久化</a>。</p>
+<p>创建一个文件夹用来为项目，新建一个文件main.go：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  newland  tree</div><div class="line">.</div><div class="line">└── main.go</div></pre></td></tr></table></figure>
+<p>main.go</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">package main</div><div class="line"></div><div class="line">import (</div><div class="line"> &quot;gopkg.in/gin-gonic/gin.v1&quot;</div><div class="line"> &quot;net/http&quot;</div><div class="line">)</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line"> router := gin.Default()</div><div class="line"></div><div class="line"> router.GET(&quot;/&quot;, func(c *gin.Context) &#123;</div><div class="line">  c.String(http.StatusOK, &quot;It works&quot;)</div><div class="line"> &#125;)</div><div class="line"></div><div class="line"> router.Run(&quot;:8000&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">☁  newland  go run main.go</div><div class="line">[GIN-debug] [WARNING] Running in &quot;debug&quot; mode. Switch to &quot;release&quot; mode in production.</div><div class="line"> - using env: export GIN_MODE=release</div><div class="line"> - using code: gin.SetMode(gin.ReleaseMode)</div><div class="line"></div><div class="line">[GIN-debug] GET    /                         --&gt; main.main.func1 (3 handlers)</div><div class="line">[GIN-debug] Listening and serving HTTP on :8000</div></pre></td></tr></table></figure>
+<p>访问 <code>/</code>即可看见我们返回的字串<code>It works</code></p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>安装完毕框架，完成一次请求响应之后。接下来就是安装数据库驱动和初始化数据相关的操作了。首先，我们需要新建数据表。一个及其简单的数据表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `person` (</div><div class="line">  `id` int(11) NOT NULL AUTO_INCREMENT,</div><div class="line">  `first_name` varchar(40) NOT NULL DEFAULT &apos;&apos;,</div><div class="line">  `last_name` varchar(40) NOT NULL DEFAULT &apos;&apos;,</div><div class="line">  PRIMARY KEY (`id`)</div><div class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8;</div></pre></td></tr></table></figure>
+<p>创建数据表之后，初始化数据库连接池：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line"></div><div class="line"> db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line"> defer db.Close()</div><div class="line"> if err != nil&#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> </div><div class="line"> db.SetMaxIdleConns(20)</div><div class="line"> db.SetMaxOpenConns(20)</div><div class="line"> </div><div class="line"> if err := db.Ping(); err != nil&#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> router := gin.Default()</div><div class="line"> router.GET(&quot;/&quot;, func(c *gin.Context) &#123;</div><div class="line">  c.String(http.StatusOK, &quot;It works&quot;)</div><div class="line"> &#125;)</div><div class="line"></div><div class="line"> router.Run(&quot;:8000&quot;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用sql.Open方法会创建一个数据库连接池db。这个db不是数据库连接，它是一个连接池，只有当真正数据库通信的时候才创建连接。例如这里的<code>db.Ping</code>的操作。<code>db.SetMaxIdleConns(20)</code>和<code>db.SetMaxOpenConns(20)</code>分别设置数据库的空闲连接和最大打开连接，即向Mysql服务端发出的所有连接的最大数目。</p>
+<blockquote>
+<p>如果不设置，默认都是0，表示打开的连接没有限制。我在压测的时候，发现会存在大量的TIME_WAIT状态的连接，虽然mysql的连接数没有上升。设置了这两个参数之后，不在存在大量TIME_WAIT状态的连接了。而且qps也没有明显的变化，出于对数据库的保护，最好设置这连个参数。</p>
+</blockquote>
+<h3 id="CURD-增删改查"><a href="#CURD-增删改查" class="headerlink" title="CURD 增删改查"></a>CURD 增删改查</h3><p>Restful的基本就是对资源的curd操作。下面开启我们的第一个api接口，增加一个资源。</p>
+<h4 id="增"><a href="#增" class="headerlink" title="增"></a>增</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line"></div><div class="line"> ...</div><div class="line"> </div><div class="line"> router.POST(&quot;/person&quot;, func(c *gin.Context) &#123;</div><div class="line">  firstName := c.Request.FormValue(&quot;first_name&quot;)</div><div class="line">  lastName := c.Request.FormValue(&quot;last_name&quot;)</div><div class="line"></div><div class="line">  rs, err := db.Exec(&quot;INSERT INTO person(first_name, last_name) VALUES (?, ?)&quot;, firstName, lastName)</div><div class="line">  if err != nil &#123;</div><div class="line">   log.Fatalln(err)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  id, err := rs.LastInsertId()</div><div class="line">  if err != nil &#123;</div><div class="line">   log.Fatalln(err)</div><div class="line">  &#125;</div><div class="line">  fmt.Println(&quot;insert person Id &#123;&#125;&quot;, id)</div><div class="line">  msg := fmt.Sprintf(&quot;insert successful %d&quot;, id)</div><div class="line">  c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">   &quot;msg&quot;: msg,</div><div class="line">  &#125;)</div><div class="line"> &#125;)</div><div class="line"> </div><div class="line"> ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>执行非query操作，使用db的Exec方法，在mysql中使用<code>?</code>做占位符。最后我们把插入后的id返回给客户端。请求得到的结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST http://127.0.0.1:8000/person -d &quot;first_name=hello&amp;last_name=world&quot; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    62  100    30  100    32   5054   5391 --:--:-- --:--:-- --:--:--  6400</div><div class="line">&#123;</div><div class="line">    &quot;msg&quot;: &quot;insert successful 1&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面可以随意增加几条记录。</p>
+<h4 id="查"><a href="#查" class="headerlink" title="查"></a>查</h4><h5 id="查询列表-Query"><a href="#查询列表-Query" class="headerlink" title="查询列表 Query"></a>查询列表 Query</h5><p>上面我们增加了一条记录，下面就获取这个记录，查一般有两个操作，一个是查询列表，其次就是查询具体的某一条记录。两种大同小异。</p>
+<p>为了给查询结果绑定到golang的变量或对象，我们需要先定义一个结构来绑定对象。在main函数的上方定义Person结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">type Person struct &#123;</div><div class="line"> Id        int    `json:&quot;id&quot; form:&quot;id&quot;`</div><div class="line"> FirstName string `json:&quot;first_name&quot; form:&quot;first_name&quot;`</div><div class="line"> LastName  string `json:&quot;last_name&quot; form:&quot;last_name&quot;`</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后查询我们的数据列表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/persons&quot;, func(c *gin.Context) &#123;</div><div class="line"> rows, err := db.Query(&quot;SELECT id, first_name, last_name FROM person&quot;)</div><div class="line"> defer rows.Close()</div><div class="line"> </div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> persons := make([]Person, 0)</div><div class="line"></div><div class="line"> for rows.Next() &#123;</div><div class="line">  var person Person</div><div class="line">  rows.Scan(&amp;person.Id, &amp;person.FirstName, &amp;person.LastName)</div><div class="line">  persons = append(persons, person)</div><div class="line"> &#125;</div><div class="line"> if err = rows.Err(); err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">  &quot;persons&quot;: persons,</div><div class="line"> &#125;)</div><div class="line"></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>读取mysql的数据需要有一个绑定的过程，db.Query方法返回一个rows对象，这个数据库连接随即也转移到这个对象，因此我们需要定义row.Close操作。然后创建一个<code>[]Person</code>的切片。</p>
+<blockquote>
+<p>使用make，而不是直接使用<code>var persons []Person</code>的声明方式。还是有所差别的，使用make的方式，当数组切片没有元素的时候，Json会返回<code>[]</code>。如果直接声明，json会返回<code>null</code>。</p>
+</blockquote>
+<p>接下来就是使用rows对象的Next方法，遍历所查询的数据，一个个绑定到person对象上，最后append到persons切片。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl  http://127.0.0.1:8000/persons | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100   113  100   113    0     0   101k      0 --:--:-- --:--:-- --:--:--  110k</div><div class="line">&#123;</div><div class="line">    &quot;persons&quot;: [</div><div class="line">        &#123;</div><div class="line">            &quot;first_name&quot;: &quot;hello&quot;,</div><div class="line">            &quot;id&quot;: 1,</div><div class="line">            &quot;last_name&quot;: &quot;world&quot;</div><div class="line">        &#125;,</div><div class="line">        &#123;</div><div class="line">            &quot;first_name&quot;: &quot;vanyar&quot;,</div><div class="line">            &quot;id&quot;: 2,</div><div class="line">            &quot;last_name&quot;: &quot;elves&quot;</div><div class="line">        &#125;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h6 id="查询单条记录-QueryRow"><a href="#查询单条记录-QueryRow" class="headerlink" title="查询单条记录 QueryRow"></a>查询单条记录 QueryRow</h6><p>查询列表需要使用迭代rows对象，查询单个记录，就没这么麻烦了。虽然也可以迭代一条记录的结果集。因为查询单个记录的操作实在太常用了，因此golang的database/sql也专门提供了查询方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">router.GET(&quot;/person/:id&quot;, func(c *gin.Context) &#123;</div><div class="line"> id := c.Param(&quot;id&quot;)</div><div class="line"> var person Person</div><div class="line"> err := db.QueryRow(&quot;SELECT id, first_name, last_name FROM person WHERE id=?&quot;, id).Scan(</div><div class="line">  &amp;person.Id, &amp;person.FirstName, &amp;person.LastName,</div><div class="line"> )</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Println(err)</div><div class="line">  c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">   &quot;person&quot;: nil,</div><div class="line">  &#125;)</div><div class="line">  return</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">  &quot;person&quot;: person,</div><div class="line"> &#125;)</div><div class="line"></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>查询结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl  http://127.0.0.1:8000/person/1 | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    60  100    60    0     0  20826      0 --:--:-- --:--:-- --:--:-- 30000</div><div class="line">&#123;</div><div class="line">    &quot;person&quot;: &#123;</div><div class="line">        &quot;first_name&quot;: &quot;hello&quot;,</div><div class="line">        &quot;id&quot;: 1,</div><div class="line">        &quot;first_name&quot;: &quot;world&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>查询单个记录有一个小问题，当数据不存在的时候，同样也会抛出一个错误。粗暴的使用log退出有点不妥。返回一个nil的时候，万一真的是因为错误，比如sql错误。这种情况如何解决。还需要具体场景设计程序。</p>
+<h4 id="改"><a href="#改" class="headerlink" title="改"></a>改</h4><p>增删改查，下面进行更新的操作。前面增加记录我们使用了urlencode的方式提交，更新的api我们自动匹配绑定content-type</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">router.PUT(&quot;/person/:id&quot;, func(c *gin.Context) &#123;</div><div class="line"> cid := c.Param(&quot;id&quot;)</div><div class="line"> id, err := strconv.Atoi(cid)</div><div class="line"> person := Person&#123;Id: id&#125;</div><div class="line"> err = c.Bind(&amp;person)</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> stmt, err := db.Prepare(&quot;UPDATE person SET first_name=?, last_name=? WHERE id=?&quot;)</div><div class="line"> defer stmt.Close()</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> rs, err := stmt.Exec(person.FirstName, person.LastName, person.Id)</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> ra, err := rs.RowsAffected()</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> msg := fmt.Sprintf(&quot;Update person %d successful %d&quot;, person.Id, ra)</div><div class="line"> c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">  &quot;msg&quot;: msg,</div><div class="line"> &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>使用 urlencode的方式更新：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X PUT http://127.0.0.1:8000/person/2 -d &quot;first_name=noldor&amp;last_name=elves&quot; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    72  100    39  100    33   3921   3317 --:--:-- --:--:-- --:--:--  4333</div><div class="line">&#123;</div><div class="line">    &quot;msg&quot;: &quot;Update person 2 successful 1&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用json的方式更新：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X PUT http://127.0.0.1:8000/person/2 -H &quot;Content-Type: application/json&quot;  -d &apos;&#123;&quot;first_name&quot;: &quot;vanyar&quot;, &quot;last_name&quot;: &quot;elves&quot;&#125;&apos; | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    85  100    39  100    46   4306   5079 --:--:-- --:--:-- --:--:--  5750</div><div class="line">&#123;</div><div class="line">    &quot;msg&quot;: &quot;Update person 2 successful 1&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="删"><a href="#删" class="headerlink" title="删"></a>删</h4><p>最后一个操作就是删除了，删除所需要的功能特性，上面的例子都覆盖了。实现删除也就特别简单了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">router.DELETE(&quot;/person/:id&quot;, func(c *gin.Context) &#123;</div><div class="line"> cid := c.Param(&quot;id&quot;)</div><div class="line"> id, err := strconv.Atoi(cid)</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> rs, err := db.Exec(&quot;DELETE FROM person WHERE id=?&quot;, id)</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> ra, err := rs.RowsAffected()</div><div class="line"> if err != nil &#123;</div><div class="line">  log.Fatalln(err)</div><div class="line"> &#125;</div><div class="line"> msg := fmt.Sprintf(&quot;Delete person %d successful %d&quot;, id, ra)</div><div class="line"> c.JSON(http.StatusOK, gin.H&#123;</div><div class="line">  &quot;msg&quot;: msg,</div><div class="line"> &#125;)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>我们可以使用删除接口，把数据都删除了，再来验证上面post接口获取列表的时候，当记录没有的时候，切片被json序列化<code>[]</code>还是<code>null</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl  http://127.0.0.1:8000/persons | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    15  100    15    0     0  11363      0 --:--:-- --:--:-- --:--:-- 15000</div><div class="line">&#123;</div><div class="line">    &quot;persons&quot;: []</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把<code>persons := make([]Person, 0)</code>改成<code>persons []Person</code>。编译运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl  http://127.0.0.1:8000/persons | python -m json.tool</div><div class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</div><div class="line">                                 Dload  Upload   Total   Spent    Left  Speed</div><div class="line">100    17  100    17    0     0  13086      0 --:--:-- --:--:-- --:--:-- 17000</div><div class="line">&#123;</div><div class="line">    &quot;persons&quot;: null</div><div class="line">&#125;</div><div class="line">``` </div><div class="line"></div><div class="line">至此，基本的CURD操作的restful风格的API已经完成。内容其实不复杂，甚至相当简单。完整的代码可以通过[GIST](https://gist.github.com/rsj217/26492af115a083876570f003c64df118#file-golang-gin-mysql-restful-gp)获取。</div><div class="line"></div><div class="line">### 组织代码</div><div class="line"></div><div class="line">实现了一个基本点restful服务，可惜我们的代码都在一个文件中。对于一个库，单文件或许很好，对于稍微大一点的项目，单文件总是有点非主流。当然，更多原因是为了程序的可读和维护，我们也需要重新组织代码，拆分模块和包。</div><div class="line"></div><div class="line">#### 封装模型方法</div><div class="line"></div><div class="line">我们的handler出来函数中，对请求的出来和数据库的交互，都糅合在一起。首先我们基于创建的Person结构创建数据模型，以及模型的方法。把数据库交互拆分出来。</div><div class="line"></div><div class="line">创建一个单例的数据库连接池对象：</div></pre></td></tr></table></figure>
+<p>var db *sql.DB</p>
+<p>func main() {<br> var err error<br> db, err = sql.Open(“mysql”, “root:@tcp(127.0.0.1:3306)/test?parseTime=true”)<br> if err != nil {<br>  log.Fatalln(err)<br> }</p>
+<p> defer db.Close()</p>
+<p> if err := db.Ping(); err != nil {<br>  log.Fatalln(err)<br> }<br> …<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">这样在main包中，db就能随意使用了。</div><div class="line"></div><div class="line">接下来，再把增加记录的的函数封装成Person结构的方法：</div></pre></td></tr></table></figure></p>
+<p>func (p *Person) AddPerson() (id int64, err error) {<br> rs, err := db.Exec(“INSERTs INTO person(first_name, last_name) VALUES (?, ?)”, p.FirstName, p.LastName)<br> if err != nil {<br>  return<br> }<br> id, err = rs.LastInsertId()<br> return<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">然后handler函数也跟着修改，先创建一个Person结构的实例，然后调用其方法即可：</div></pre></td></tr></table></figure></p>
+<p> router.POST(“/person”, func(c *gin.Context) {<br>  firstName := c.Request.FormValue(“first_name”)<br>  lastName := c.Request.FormValue(“last_name”)</p>
+<p>  person := Person{FirstName: firstName, LastName: lastName}</p>
+<p>  ra_rows, err := person.AddPerson()<br>  if err != nil {<br>   log.Fatalln(err)<br>  }<br>  msg := fmt.Sprintf(“insert successful %d”, ra_rows)<br>  c.JSON(http.StatusOK, gin.H{<br>   “msg”: msg,<br>  })<br> })<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">对于获取列表的模型方法和handler函数也很好改：</div></pre></td></tr></table></figure></p>
+<p>func (p *Person) GetPersons() (persons []Person, err error) {<br> persons = make([]Person, 0)<br> rows, err := db.Query(“SELECT id, first_name, last_name FROM person”)<br> defer rows.Close()</p>
+<p> if err != nil {<br>  return<br> }</p>
+<p> for rows.Next() {<br>  var person Person<br>  rows.Scan(&amp;person.Id, &amp;person.FirstName, &amp;person.LastName)<br>  persons = append(persons, person)<br> }<br> if err = rows.Err(); err != nil {<br>  return<br> }<br> return<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">和</div></pre></td></tr></table></figure></p>
+<p> router.POST(“/person”, func(c *gin.Context) {<br>  firstName := c.Request.FormValue(“first_name”)<br>  lastName := c.Request.FormValue(“last_name”)</p>
+<p>  person := Person{FirstName: firstName, LastName: lastName}</p>
+<p>  ra_rows, err := person.AddPerson()<br>  if err != nil {<br>   log.Fatalln(err)<br>  }<br>  msg := fmt.Sprintf(“insert successful %d”, ra_rows)<br>  c.JSON(http.StatusOK, gin.H{<br>   “msg”: msg,<br>  })<br> })<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">剩下的函数和方法就不再一一举例了。</div><div class="line"></div><div class="line">&gt; 增加记录的接口中，我们使用了客户端参数和Person创建实例，然后再调用其方法。而获取列表的接口中，我们直接声明了Person对象。两种方式都可以。</div><div class="line"></div><div class="line">#### Handler函数</div><div class="line"></div><div class="line">gin提供了`router.Get(url, handler func)`的格式。首先我们可以把所有的handler函数从router中提取出来。</div><div class="line"></div><div class="line">例如把增加记录和获取列表的handle提取出来</div></pre></td></tr></table></figure></p>
+<p>func AddPersonApi(c *gin.Context) {<br> firstName := c.Request.FormValue(“first_name”)<br> lastName := c.Request.FormValue(“last_name”)</p>
+<p> person := Person{FirstName: firstName, LastName: lastName}</p>
+<p> ra_rows, err := person.AddPerson()<br> if err != nil {<br>  log.Fatalln(err)<br> }<br> msg := fmt.Sprintf(“insert successful %d”, ra_rows)<br> c.JSON(http.StatusOK, gin.H{<br>  “msg”: msg,<br> })<br>}</p>
+<p>func main(){<br> …<br> router.POST(“/person”, AddPersonApi)<br> …<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">把modle和handler抽出来之后，我们的代码结构变得更加清晰，具体可以参考这个[GIST](https://gist.github.com/rsj217/26492af115a083876570f003c64df118#file-golang-gin-mysql-restful-1-go)</div><div class="line"></div><div class="line">### 组织项目</div><div class="line"></div><div class="line">经过上面的model和handler的分离，代码结构变得更加清晰，可是我们还是单文件。下一步将进行封装不同的包。</div><div class="line"></div><div class="line">#### 数据库处理</div><div class="line"></div><div class="line">在项目根目录创建下面三个文件夹，`apis`，`databases`和`models`，并在文件夹内创建文件。此时我们的目录结果如下：</div></pre></td></tr></table></figure></p>
+<p>☁  newland  tree<br>.<br>├── apis<br>│   └── person.go<br>├── database<br>│   └── mysql.go<br>├── main.go<br>├── models<br>│   └── person.go<br>└── router.go<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">apis文件夹存放我们的handler函数，models文件夹用来存放我们的数据模型。</div><div class="line"></div><div class="line">myql.go的包代码如下：</div></pre></td></tr></table></figure></p>
+<p>package database</p>
+<p>import (<br> “database/sql”<br> _ “github.com/go-sql-driver/mysql”<br> “log”<br>)</p>
+<p>var SqlDB *sql.DB</p>
+<p>func init() {<br> var err error<br> SqlDB, err = sql.Open(“mysql”, “root:@tcp(127.0.0.1:3306)/test?parseTime=true”)<br> if err != nil {<br>  log.Fatal(err.Error())<br> }<br> err = SqlDB.Ping()<br> if err != nil {<br>  log.Fatal(err.Error())<br> }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">因为我们需要在别的地方使用SqlDB这个变量，因此依照golang的习惯，变量名必须大写开头。</div><div class="line"></div><div class="line">#### 数据model封装</div><div class="line"></div><div class="line">修改models文件夹下的person.go，把对应的Person结构及其方法移到这里：</div></pre></td></tr></table></figure></p>
+<p>package models</p>
+<p>import (<br> “log”<br> db “newland/database”<br>)</p>
+<p>type Person struct {<br> Id        int    <code>json:&quot;id&quot; form:&quot;id&quot;</code><br> FirstName string <code>json:&quot;first_name&quot; form:&quot;first_name&quot;</code><br> LastName  string <code>json:&quot;last_name&quot; form:&quot;last_name&quot;</code><br>}</p>
+<p>func (p *Person) AddPerson() (id int64, err error) {<br> rs, err := db.SqlDB.Exec(“INSERT INTO person(first_name, last_name) VALUES (?, ?)”, p.FirstName, p.LastName)<br> if err != nil {<br>  return<br> }<br> id, err = rs.LastInsertId()<br> return<br>}</p>
+<p>func (p *Person) GetPersons() (persons []Person, err error) {<br> persons = make([]Person, 0)<br> rows, err := db.SqlDB.Query(“SELECT id, first_name, last_name FROM person”)<br> defer rows.Close()</p>
+<p> if err != nil {<br>  return<br> }</p>
+<p> for rows.Next() {<br>  var person Person<br>  rows.Scan(&amp;person.Id, &amp;person.FirstName, &amp;person.LastName)<br>  persons = append(persons, person)<br> }<br> if err = rows.Err(); err != nil {<br>  return<br> }<br> return<br>}</p>
+<p>….</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### handler</div><div class="line"></div><div class="line">然后把具体的handler函数封装到api包中，因为handler函数要操作数据库，所以会引用model包</div></pre></td></tr></table></figure>
+<p>package apis</p>
+<p>import (<br> “net/http”<br> “log”<br> “fmt”<br> “strconv”<br> “gopkg.in/gin-gonic/gin.v1”<br> . “newland/models”<br>)</p>
+<p>func IndexApi(c *gin.Context) {<br> c.String(http.StatusOK, “It works”)<br>}</p>
+<p>func AddPersonApi(c *gin.Context) {<br> firstName := c.Request.FormValue(“first_name”)<br> lastName := c.Request.FormValue(“last_name”)</p>
+<p> p := Person{FirstName: firstName, LastName: lastName}</p>
+<p> ra, err := p.AddPerson()<br> if err != nil {<br>  log.Fatalln(err)<br> }<br> msg := fmt.Sprintf(“insert successful %d”, ra)<br> c.JSON(http.StatusOK, gin.H{<br>  “msg”: msg,<br> })<br>}</p>
+<p>…<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### 路由</div><div class="line"></div><div class="line">最后就是把路由抽离出来，修改router.go，我们在路由文件中封装路由函数</div></pre></td></tr></table></figure></p>
+<p>package main</p>
+<p>import (<br> “gopkg.in/gin-gonic/gin.v1”<br> . “newland/apis”<br>)</p>
+<p>func initRouter() *gin.Engine {<br> router := gin.Default()</p>
+<p> router.GET(“/“, IndexApi)</p>
+<p> router.POST(“/person”, AddPersonApi)</p>
+<p> router.GET(“/persons”, GetPersonsApi)</p>
+<p> router.GET(“/person/:id”, GetPersonApi)</p>
+<p> router.PUT(“/person/:id”, ModPersonApi)</p>
+<p> router.DELETE(“/person/:id”, DelPersonApi)</p>
+<p> return router<br>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#### app入口</div><div class="line"></div><div class="line">最后就是main函数的app入口，将路由导入，同时我们要在main函数结束的时候，关闭全局的数据库连接池：</div><div class="line"></div><div class="line">main.go</div></pre></td></tr></table></figure>
+<p>package main</p>
+<p>import (<br> db “newland/database”<br>)</p>
+<p>func main() {<br> defer db.SqlDB.Close()<br> router := initRouter()<br> router.Run(“:8000”)<br>}</p>
+<p>```</p>
+<p>至此，我们就把简单程序进行了更好的组织。当然，golang的程序组织依包为基础，不拘泥，根据具体的应用场景可以组织。</p>
+<blockquote>
+<p>此时运行项目，不能像之前简单的使用<code>go run main.go</code>，因为包main包含main.go和router.go的文件，因此需要运行<code>go run *.go</code>命令编译运行。如果是最终编译二进制项目，则运行<code>go build -o app</code></p>
+</blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过上述的实践，我们了解了Gin框架创建基本的的restful服务。并且了解了如何组织golang的代码包。我们讨论了很多内容，但是唯独缺少测试。测试很重要，考察一个框架或者三方包的时候，是否有测试文件以及测试覆盖率是一个重要的参考。因为测试的内容很多，我们这里就不做单独的测试介绍。后面会结合gofight给gin的api增加测试代码。</p>
+<p>此外，更多的内容，可以阅读别人优秀的开源项目，学习并实践，以提升自己的编码能力。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/14/Golang 微框架 Gin 简介/" rel="next" title="Golang 微框架 Gin 简介">
+                <i class="fa fa-chevron-left"></i> Golang 微框架 Gin 简介
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/28/使用Let‘s Encrypt的SSL证书配置HTTPS手记/" rel="prev" title="使用Let‘s Encrypt的SSL证书配置HTTPS手记">
+                使用Let‘s Encrypt的SSL证书配置HTTPS手记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#It-works"><span class="nav-number">1.</span> <span class="nav-text">It works</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">2.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CURD-增删改查"><span class="nav-number">3.</span> <span class="nav-text">CURD 增删改查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#增"><span class="nav-number">3.1.</span> <span class="nav-text">增</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查"><span class="nav-number">3.2.</span> <span class="nav-text">查</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#查询列表-Query"><span class="nav-number">3.2.1.</span> <span class="nav-text">查询列表 Query</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#查询单条记录-QueryRow"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">查询单条记录 QueryRow</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改"><span class="nav-number">3.3.</span> <span class="nav-text">改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删"><span class="nav-number">3.4.</span> <span class="nav-text">删</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -266,8 +266,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（三）/" itemprop="url">
-                  Python-SocketServer-py-源码分析（三）
+                <a class="post-title-link" href="/2016/08/31/python-magic-contextor/" itemprop="url">
+                  python黑魔法---上下文管理器（contextor）
                 </a>
               
             
@@ -280,8 +280,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T16:30:04+08:00" content="2016-02-17">
-              2016-02-17
+            <time itemprop="dateCreated" datetime="2016-08-31T11:36:46+08:00" content="2016-08-31">
+              2016-08-31
             </time>
           </span>
 
@@ -328,10 +328,12 @@
 
       
         
-          <p>前面我们见识了实现TCPServer的方法。最早关于介绍BaseServer的时候，我们知道python对BaseServer设计的时候，预留了可用于Mixin扩展多线程或多进程的接口。mixin通过复写父类的parse_request方法实现。</p>
-<h3 id="ThreadingMixIn"><a href="#ThreadingMixIn" class="headerlink" title="ThreadingMixIn"></a>ThreadingMixIn</h3><p>ThreadingMixIn 类实现了多线程的方式，它只有两个方法，分别是process_request和 process_request_thread方法。多进程的方式是ForkingMixIn，暂且略过。</p>
+          <h3 id="所谓上下文"><a href="#所谓上下文" class="headerlink" title="所谓上下文"></a>所谓上下文</h3><p>计算机上下文（Context）对于我而言，一直是一个很抽象的名词。就像<code>形而上</code>一样，经常听见有人说，但是无法和现实认知世界相结合。</p>
+<p>最直观的上下文，莫过于小学的语文课，经常会问<code>联系上下文，推测...，回答...，表明作者...</code>。文章里的上下文比较好懂，无非就是<code>前</code>与<code>后</code>。</p>
+<p>直到了解了计算机的执行状态，程式的运行，才稍微对计算机的上下文(context)有了一定的认识，多半还是只可意会，不可言传。本文所讨论的上下文，简而言之，就是程式所执行的环境状态，或者说程式运行的情景。</p>
+<p>关于上下文的定义，我就不在多言，具体通过程式来理解。既然提及上下文，就不可避免的涉及Python中关于上下文的魔法，即上下文管理器（contextor）。</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（三）/#more" rel="contents">
+            <a class="btn" href="/2016/08/31/python-magic-contextor/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -382,8 +384,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（二）/" itemprop="url">
-                  Python-SocketServer-py-源码分析（二）
+                <a class="post-title-link" href="/2016/02/18/Elixir-管道一试/" itemprop="url">
+                  Elixir 管道一试
                 </a>
               
             
@@ -396,8 +398,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T16:30:03+08:00" content="2016-02-17">
-              2016-02-17
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:22+08:00" content="2016-02-18">
+              2016-02-18
             </time>
           </span>
 
@@ -444,11 +446,14 @@
 
       
         
-          <p>BaseServer 和 BaseRequestHandler是网络处理的两个基类。实际应用中，网络操作更多是使用 TCP 或 HTTP 协议。SocketServer.py 也提供了更高级的TCP、UDP封装。下面就来看下关于TCP方面的网络模块（UDP和TCP的在代码组织上差别不是特别大，暂且忽略）。</p>
-<h3 id="TCPServer"><a href="#TCPServer" class="headerlink" title="TCPServer"></a>TCPServer</h3><p>TCPServer 继承了BaseServer，初始化的时候，进行了socket套接字的创建。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, server_address, RequestHandlerClass, bind_and_activate=True)</span>:</span></div><div class="line">    BaseServer.__init__(self, server_address, RequestHandlerClass)</div><div class="line">    self.socket = socket.socket(self.address_family,</div><div class="line">                                self.socket_type)</div><div class="line">    <span class="keyword">if</span> bind_and_activate:</div><div class="line">        self.server_bind()</div><div class="line">        self.server_activate()</div></pre></td></tr></table></figure>
+          <blockquote>
+<p>子贡倦于学，告孔子曰：愿有所息。子曰：生无所息。</p>
+</blockquote>
+<p>近来的状态，大抵如此。好想多多休息。有时候学一门语言，刚开始激情满满，随着深入，又渐渐斗志泯灭。对于Elixir，我就是这样的一个状态，当初为了学习掌握函数式的编程，没日没夜的啃。尔后因为工作忙碌，逐渐遗忘了。</p>
+<p>遗忘却不能忘却。恰巧最近一个面试过程，又可以体验elxir的优雅和强大。</p>
+<p>部门面试喜欢出一道题，大致如下：</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（二）/#more" rel="contents">
+            <a class="btn" href="/2016/02/18/Elixir-管道一试/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -499,8 +504,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（一）/" itemprop="url">
-                  Python-SocketServer-py-源码分析（一）
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（十二）---模块/" itemprop="url">
+                  Elixir-简明笔记（十二）-- 模块
                 </a>
               
             
@@ -513,8 +518,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T16:30:01+08:00" content="2016-02-17">
-              2016-02-17
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:12+08:00" content="2016-02-18">
+              2016-02-18
             </time>
           </span>
 
@@ -561,11 +566,9 @@
 
       
         
-          <h2 id="BaseServer-和-BaseRequestHandler"><a href="#BaseServer-和-BaseRequestHandler" class="headerlink" title="BaseServer 和 BaseRequestHandler"></a>BaseServer 和 BaseRequestHandler</h2><p>Python为网络编程提高了更高级的封装。SocketServer.py 提供了不少网络服务的类。它们的设计很优雅。Python把网络服务抽象成两个主要的类，一个是Server类，用于处理连接相关的网络操作，另外一个则是RequestHandler类，用于处理数据相关的操作。并且提供两个MixIn 类，用于扩展 Server，实现多进程或多线程。在构建网络服务的时候，Server 和 RequestHandler 并不是分开的，RequestHandler的实例对象在Server 内配合 Server工作。</p>
-<p>改模块的主要几个<code>Server</code>关系如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">+------------+</div><div class="line">| BaseServer |</div><div class="line">+------------+</div><div class="line">      |</div><div class="line">      v</div><div class="line">+-----------+        +------------------+</div><div class="line">| TCPServer |-------&gt;| UnixStreamServer |</div><div class="line">+-----------+        +------------------+</div><div class="line">      |</div><div class="line">      v</div><div class="line">+-----------+        +--------------------+</div><div class="line">| UDPServer |-------&gt;| UnixDatagramServer |</div><div class="line">+-----------+        +--------------------+</div></pre></td></tr></table></figure>
+          <p>模块可以定义命名空间。模块里面定义命名函数。他们也可以用来做宏(macros)，结构(structs)，协议(protocols)或者其他模块(modules)的包裹封装。在模块外部调用函数需要加上模块名前缀，在模块内部调用函数的时候，则可以省略前缀，例如：</p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（一）/#more" rel="contents">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（十二）---模块/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -616,8 +619,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/17/Epoll-模型简介/" itemprop="url">
-                  Epoll-模型简介
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（十一）---神奇的管道/" itemprop="url">
+                  Elixir-简明笔记（十一）-- 神奇的管道
                 </a>
               
             
@@ -630,8 +633,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:21+08:00" content="2016-02-17">
-              2016-02-17
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:11+08:00" content="2016-02-18">
+              2016-02-18
             </time>
           </span>
 
@@ -678,9 +681,11 @@
 
       
         
-          <p>网络IO的模型中，之前介绍了<a href="http://www.jianshu.com/p/edb9ddd51c3d">select模型</a>。select 确实是一个简明好用的模型。可是现在的服务器却越来越少采取这样的模型，原因之一就是它的性能让人担忧。虽然后来升级了poll模型，本质上还是和select模型类似。当然，当一个技术逐渐被人放弃的时候，很大程度上是有了更好的替代方案。没错，还有select/poll模型更好的网络IO模型，就是今天介绍的主角—Epoll。在很多地方，epoll都是高性能代名词，准确的说epoll是Linux内核升级的多路复用IO模型，在Unix和MacOS上类似的则是 Kqueue。</p>
+          <p>Elixir崇尚简洁，Unix的一个重要哲学就是管道操作符，Elxiir也完美的试用与函数。</p>
+<p>通常而言，程序员把功能点写成一个个精巧的函数。然后通过函数的组合嵌套实现功能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">people = DB.find_customers</div><div class="line">orders = Orders.for_customers(people)</div><div class="line">tax = sales_tax(orders, 2013)</div><div class="line">filing = prepare_filing(tax)</div></pre></td></tr></table></figure>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Epoll-模型简介/#more" rel="contents">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（十一）---神奇的管道/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -731,8 +736,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/17/Select-模型简介/" itemprop="url">
-                  Select-模型简介
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（十）---命名函数/" itemprop="url">
+                  Elixir-简明笔记（十）-- 命名函数
                 </a>
               
             
@@ -745,8 +750,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:20+08:00" content="2016-02-17">
-              2016-02-17
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:10+08:00" content="2016-02-18">
+              2016-02-18
             </time>
           </span>
 
@@ -793,10 +798,10 @@
 
       
         
-          <h3 id="多路复用I-O"><a href="#多路复用I-O" class="headerlink" title="多路复用I/O"></a>多路复用I/O</h3><p>在<a href="http://www.jianshu.com/p/55eb83d60ab1">简明网络I/O模型</a>文章可以知道常用的<code>IO</code>模型。其中同步模型中，使用多路复用<code>I/O</code>可以提高服务器的性能。</p>
-<p>在多路复用的模型中，比较常用的有<code>select</code>模型和<code>poll</code>模型。这两个都是系统接口，由操作系统提供。当然，<code>Python</code>的<code>select</code>模块进行了更高级的封装。<code>select</code>与<code>poll</code>的底层原理都差不多。下面就介绍<code>select</code>。</p>
+          <p>程序由几行代码开始，逐渐变多之后，开发者期望一种结构化的方式组织代码。Elixir模块化代码很简单。你只需要将函数拆分写入模块中，当然Elixir中的函数（指命名函数，接下来除非特别指出匿名函数，否则所有函数都指命名函数）在模块中定义。</p>
+<p>先看一个简单的例子。在你的目录中创建一个Elixir源文件<code>times.exs</code></p>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Select-模型简介/#more" rel="contents">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（十）---命名函数/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -847,8 +852,8 @@
             
               
                 
-                <a class="post-title-link" href="/2016/02/17/简明网络I-O模型---同步异步阻塞非阻塞之惑/" itemprop="url">
-                  简明网络I-O模型---同步异步阻塞非阻塞之惑
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（九）---匿名函数/" itemprop="url">
+                  Elixir-简明笔记（九）-- 匿名函数
                 </a>
               
             
@@ -861,8 +866,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:10+08:00" content="2016-02-17">
-              2016-02-17
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:09+08:00" content="2016-02-18">
+              2016-02-18
             </time>
           </span>
 
@@ -909,485 +914,478 @@
 
       
         
-          <h3 id="网络I-O模型"><a href="#网络I-O模型" class="headerlink" title="网络I/O模型"></a>网络I/O模型</h3><p>人多了，就会有问题。web刚出现的时候，光顾的人很少。近年来网络应用规模逐渐扩大，应用的架构也需要随之改变。C10k的问题，让工程师们需要思考服务的性能与应用的并发能力。</p>
-<p>网络应用需要处理的无非就是两大类问题，<strong>网络I/O</strong>，<strong>数据计算</strong>。相对于后者，网络I/O的延迟，给应用带来的性能瓶颈大于后者。网络I/O的模型大致有如下几种：</p>
+          <p>Elixir 是函数式语言，函数是 Elixir 的核心，也是一种基本类型。前面我们已经知道一些内建的函数，例如div，rem，is_list等。与大多数语言语言，函数可以调用，通常使用一对圆括号，与大多数语言不一样，Elixir 的函数是可以省略圆括号。</p>
+<p>当然这个特性 Ruby也有。Elixr的函数其实分为两种，一种是匿名函数，另外一种则是命名函数。它们都是函数，却有着不一样的地方。我们先了解匿名函数。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（九）---匿名函数/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（八）----变可变，非常变/" itemprop="url">
+                  Elixir-简明笔记（八）-- 变可变，非常变
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:08+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="Think-Different"><a href="#Think-Different" class="headerlink" title="Think Different"></a>Think Different</h3><p>Dave Thomas大神曾经把学习 Elixir 比成 Take the red pill。诚然，相对于传统的编程语言而言，函数式编程有点“异端”。实际上，恰恰是这些“异端”，可以领阅更多的编程思想，了解更多的编程模型。简而言之就是Think Different。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（八）----变可变，非常变/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（七）---列表/" itemprop="url">
+                  Elixir-简明笔记（七）-- 列表
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:07+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>列表是Elixir中重要的数据结构。相信其他编程语言中也有类似列表的结构。Lisp的命名来自对列表的处理。在C，Java语言中，列表类似数组结构。Elixir的列表远比数组强大，它更像高级语言python的列表。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（七）---列表/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（六）---元组/" itemprop="url">
+                  Elixir-简明笔记（六）-- 元组
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:06+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>编程语言都有类似集合的容器类型。最典型的莫过于数组和哈希结构。</p>
+<p>通常数组是一些列有序元素的集合。有的语言的数组需要初始化大小，有的则是动态变化。那些动态变化的数组，在高级语言通常是列表。当然也有一些序列集合一旦创建了，就不能改变，这类序列通常称之为元组（tuple）。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（六）---元组/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/18/Elixir-简明笔记（五）---运算符和操作符/" itemprop="url">
+                  Elixir-简明笔记（五）-- 运算符和操作符
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-18T15:30:05+08:00" content="2016-02-18">
+              2016-02-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>编程语言有了基本数据结构，那么可以遣词造句了。等等，词组是有了，可是如何把这些词组组合起来呢？</p>
+<p>本节将会介绍运算符，基本数据结构通过运算符的计算，获得预期的值。Elixir的运算符与其他语言类似，并没有特别之处。主要有下面几类：</p>
 <ul>
-<li>同步模型（synchronous I/O）<ul>
-<li>阻塞I/O（bloking I/O）</li>
-<li>非阻塞I/O（non-blocking I/O）</li>
-<li>多路复用I/O（multiplexing I/O）</li>
-<li>信号驱动式I/O（signal-driven I/O）</li>
-</ul>
-</li>
-<li>异步I/O（asynchronous I/O）</li>
+<li>布尔操作符 （Boolean operators）</li>
+<li>比较操作符 （Comparison operators）</li>
+<li>算术运算符（Arithmetic operators）</li>
+<li>包含操作符（in operator）</li>
 </ul>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/简明网络I-O模型---同步异步阻塞非阻塞之惑/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/17/Socket通信原理简介/" itemprop="url">
-                  Socket通信原理简介
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:02+08:00" content="2016-02-17">
-              2016-02-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="何谓socket"><a href="#何谓socket" class="headerlink" title="何谓socket"></a>何谓socket</h3><p>计算机，顾名思义即是用来做计算。因而也需要输入和输出，输入需要计算的条件，输出计算结果。这些输入输出可以抽象为I/O（input output）。</p>
-<p>Unix的计算机处理IO是通过文件的抽象。计算机不同的进程之间也有输入输出，也就是通信。因此这这个通信也是通过文件的抽象文件描述符来进行。</p>
-<p>在同一台计算机，进程之间可以这样通信，如果是不同的计算机呢？网络上不同的计算机，也可以通信，那么就得使用网络套接字（socket）。socket就是在不同计算机之间进行通信的一个抽象。他工作于TCP/IP协议中应用层和传输层之间的一个抽象。如下图：</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Socket通信原理简介/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/17/并发与并行/" itemprop="url">
-                  并发与并行
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T15:30:01+08:00" content="2016-02-17">
-              2016-02-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>并发（Concurrency）与并行（Parallelism）中文仅一字之差。咋一看以为是一回事，其实两个概念还是有差别的，英文尽管字面看上去没多大关系，实际含义也需要仔细推敲琢磨。下面则解释这两个概念的关系。</p>
-<p>理解并发和并行的主要要理解<strong>同时</strong>和<strong>任务</strong>。完成一项任务可能要做什么多事。例如我们有一个智能化的餐馆。之所以智能，源于我们的智能餐厅没有服务员，而是机器人取代了服务员。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/并发与并行/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/17/Python-第三方库安装技巧/" itemprop="url">
-                  Python-第三方库安装技巧
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-17T10:43:32+08:00" content="2016-02-17">
-              2016-02-17
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p> <code>Python</code> 是一门优雅的语言，简洁的语法，强大的功能。当然丰富的第三方库，更能加速开发。那么问题来了，如何安装这些第三方库（包）呢？</p>
-<p>安装第三方库的方式其实不多。下面就介绍一些技巧。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/17/Python-第三方库安装技巧/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/16/递归与尾递归/" itemprop="url">
-                  递归和尾递归
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
-              2016-02-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>编程很复杂，编程也很简单。简单的逻辑，通过代码组织，就可以变成复杂程序或者系统。以前学物理的时候，老师就说考试的物理题其过程是相当复杂的（简单的就没有必要考了）。解题方法众多，分解法即是一个行之有效的方式。复杂的过程经过分解，会变成简单的定理。如同螺丝，轮胎，玻璃都很简单，却能组合而成复杂的汽车。</p>
-<p>编程也类似，核心哲学甚至简单得令人发指，其一是<code>指针</code>，其二是<code>递归</code>。深入理解者两个概念，很多复杂的系统或者设计，都会化繁为简，一目了然。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/16/递归与尾递归/#more" rel="contents">
+            <a class="btn" href="/2016/02/18/Elixir-简明笔记（五）---运算符和操作符/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1421,7 +1419,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1462,7 +1460,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">58</span>
+              <span class="site-state-item-count">76</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1479,7 +1477,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-count">31</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

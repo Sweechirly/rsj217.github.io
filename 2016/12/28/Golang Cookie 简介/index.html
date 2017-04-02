@@ -1,0 +1,683 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Cookie互联网隐私一直是一个敏感话题。很多爆炸新闻或者香艳的丑闻，似乎就像病毒一样每隔一段时间就爆发。这不仅是网民茶余饭后的谈资调侃，也让部分安全公司开始吵作。用户在安全，隐私，cookie之类宣传攻势，不知所以。有的人认为cookie是泄露隐私的元凶。对于开发者，cookie的是web开发里程上的一大发明，cookie是小甜点，绝不是恶魔。但是，如果使用不当，小甜点发霉了一样会有毒。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Cookie 简介">
+<meta property="og:url" content="http://rsj217.github.com/2016/12/28/Golang Cookie 简介/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Cookie互联网隐私一直是一个敏感话题。很多爆炸新闻或者香艳的丑闻，似乎就像病毒一样每隔一段时间就爆发。这不仅是网民茶余饭后的谈资调侃，也让部分安全公司开始吵作。用户在安全，隐私，cookie之类宣传攻势，不知所以。有的人认为cookie是泄露隐私的元凶。对于开发者，cookie的是web开发里程上的一大发明，cookie是小甜点，绝不是恶魔。但是，如果使用不当，小甜点发霉了一样会有毒。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-b997d3b9e202c8ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-04-02T09:00:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Cookie 简介">
+<meta name="twitter:description" content="Cookie互联网隐私一直是一个敏感话题。很多爆炸新闻或者香艳的丑闻，似乎就像病毒一样每隔一段时间就爆发。这不仅是网民茶余饭后的谈资调侃，也让部分安全公司开始吵作。用户在安全，隐私，cookie之类宣传攻势，不知所以。有的人认为cookie是泄露隐私的元凶。对于开发者，cookie的是web开发里程上的一大发明，cookie是小甜点，绝不是恶魔。但是，如果使用不当，小甜点发霉了一样会有毒。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-b997d3b9e202c8ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/12/28/Golang Cookie 简介/"/>
+
+
+  <title> Golang Cookie 简介 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang Cookie 简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-28T12:31:02+08:00" content="2016-12-28">
+              2016-12-28
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h3><p>互联网隐私一直是一个敏感话题。很多爆炸新闻或者香艳的丑闻，似乎就像病毒一样每隔一段时间就爆发。这不仅是网民茶余饭后的谈资调侃，也让部分安全公司开始吵作。用户在安全，隐私，cookie之类宣传攻势，不知所以。有的人认为cookie是泄露隐私的元凶。对于开发者，cookie的是web开发里程上的一大发明，cookie是小甜点，绝不是恶魔。但是，如果使用不当，小甜点发霉了一样会有毒。</p>
+<a id="more"></a>
+<h4 id="前世今生"><a href="#前世今生" class="headerlink" title="前世今生"></a>前世今生</h4><p>Cookie的诞生挺有意思。试想一下，当我们去银行办业务的时候，银行职员会提供一个卡号，待会较叫号的时候，拿着卡号给柜台业务员。这样简单的一种”认证“，就是cookie的一种应用。</p>
+<blockquote>
+<p>在1994年6月的某天，24岁的，网景公司第九位工程师，moutulli，坐在键盘前，遇到和大家描述的一模一样的困难，他凭借着他高超的编程技能和思想设计出了一个五页纸的方案来解决这些棘手的问题，这个五页纸后来也就演变成了最初版本的Netscape Cookie规范。五页纸的核心观点就是在用户的电脑上存放一个小的文件来记录用户对网站的访问情况。moutulli将其简称为cookie。</p>
+</blockquote>
+<h3 id="Golang的Cookie"><a href="#Golang的Cookie" class="headerlink" title="Golang的Cookie"></a>Golang的Cookie</h3><p>web开发免不了要和cookie打交道。go的http库也提供了cookie的相关操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">type Cookie struct &#123;</div><div class="line">  Name       string</div><div class="line">  Value      string</div><div class="line">  Path       string</div><div class="line">  Domain     string</div><div class="line">  Expires    time.Time</div><div class="line">  RawExpires string</div><div class="line">  MaxAge     int</div><div class="line">  Secure     bool</div><div class="line">  HttpOnly   bool</div><div class="line">  Raw        string</div><div class="line">  Unparsed   []string</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Name字段为cookie的名字，Value是其值，剩下的Path和Domain则是cookie的存储的范围。Expires是cookie的过期时间，如果不设置，那么这是一个session型的cookie，即浏览器会话有用，一旦关闭浏览器，cookie随即会被删除。</p>
+<h4 id="设置cookie"><a href="#设置cookie" class="headerlink" title="设置cookie"></a>设置cookie</h4><p>cookie是header一项内容，因此可以使用reponse的Header方法设置cookie。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">func setCookieHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    c1 := http.Cookie&#123;</div><div class="line">        Name: &quot;first_cookie&quot;,</div><div class="line">        Value: &quot;vanyar&quot;,</div><div class="line">        HttpOnly: true,</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    c2 := http.Cookie&#123;</div><div class="line">        Name: &quot;second_cookie&quot;,</div><div class="line">        Value: &quot;noldor&quot;,</div><div class="line">        HttpOnly:true,</div><div class="line">    &#125;</div><div class="line">    w.Header().Set(&quot;Set-Cookie&quot;, c1.String())</div><div class="line">    w.Header().Add(&quot;Set-Cookie&quot;, c2.String())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-b997d3b9e202c8ee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="cookie.png"></p>
+<p>这里也可以测试验证 Set和Add两个方法的差别。当然，和文件上传类似，go也提供了常用的工具函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http.SetCookie(w, &amp;c1)</div><div class="line">http.SetCookie(w, &amp;c2)</div></pre></td></tr></table></figure>
+<p>http的SetCookie方法也可以设置cookie，就不需要关系Set和Add的先后顺序了，当然第二个参数是一个Cookie的指针对象。设置了cookie，接下来就是需要读cookie。</p>
+<h4 id="读取cookie"><a href="#读取cookie" class="headerlink" title="读取cookie"></a>读取cookie</h4><p>读取cookie的方式也有很多，cookie封装在header中，当然可以通过header方法处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">func getCookieHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    h := r.Header[&quot;Cookie&quot;]</div><div class="line">    fmt.Fprintln(w, h)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>不使用Header方法，也可以使用Request的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">func getCookieHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    c1, err := r.Cookie(&quot;first_cookie&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        fmt.Fprintln(w, &quot;Cannot get cookie&quot;)</div><div class="line">    &#125;</div><div class="line">    cs := r.Cookies()</div><div class="line">    fmt.Fprintln(w, c1)</div><div class="line">    fmt.Fprintln(w, cs)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>访问的时候可以发现，r.Cookie返回了对于key的键值对，而r.Cookies则返回了所有cookie的key的键值对值。</p>
+<h3 id="cookie与消息"><a href="#cookie与消息" class="headerlink" title="cookie与消息"></a>cookie与消息</h3><p>cookie的作用很多，通常记录客户端的一些信息，用来做用户的登录验证。现在我们需要使用cookie来做一个小特性—消息。通常web请求发出后，response返回数据，也可以设置一些消息用来指引用户。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">func setMessageHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    msg := []byte(&quot;Hello World&quot;)</div><div class="line">    c := http.Cookie&#123;</div><div class="line">        Name: &quot;flash&quot;,</div><div class="line">        Value:base64.URLEncoding.EncodeToString(msg),</div><div class="line">    &#125;</div><div class="line">    http.SetCookie(w, &amp;c)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func getMessageHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    c, err := r.Cookie(&quot;flash&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        if err == http.ErrNoCookie &#123;</div><div class="line">            fmt.Fprintln(w, &quot;No message found&quot;)</div><div class="line">        &#125;</div><div class="line">    &#125;else&#123;</div><div class="line">        rc := http.Cookie&#123;</div><div class="line">            Name: &quot;flash&quot;,</div><div class="line">            MaxAge: -1,</div><div class="line">            Expires:time.Unix(1, 0),</div><div class="line">        &#125;</div><div class="line">        http.SetCookie(w, &amp;rc)</div><div class="line">        val, _ := base64.URLEncoding.DecodeString(c.Value)</div><div class="line">        fmt.Fprintln(w, string(val))</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>setMessageHandler 函数很简单，就是创建一个cookie实例，然后把消息写入到cookie，然后再返回给客户端。</p>
+<p>getMessageHandler首先会读取key为flash的cookie，如果没读到内容，则表示消息不存在，否则就创建另外一个cookie，设置其过期时间这里等于清除cookie。然后把读取出来的message返回给客户端。完成消息通信。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>我们讨论了go中cookie的基本应用。现在的web开发中，人们越来越重视网络安全，因此cookie的安全也成为用户关心的内容。go原生的cookie封装比较简单。go的社区却开发了很多轮子，实现了secure cookie，例如gorilla/securecookie库。实际开发中，可能会借助一些三方的库或包来完成功能。</p>
+<p>cookie用来做认证需要跟用户有交互，承载交互的当然是用户界面。既然是关于用户界面，学习go的模板技术就是顺其自然之事。虽然现在前后端分离技术，传统的模板技术已经逐步被前端渲染取代了，但是对于一些同构项目，还是依赖部分服务端模板渲染。下一个话题再讨论go的模板。</p>
+<p>相关阅读：</p>
+<p><a href="https://zh.wikipedia.org/wiki/Cookie" target="_blank" rel="external">cookie wiki</a><br><a href="http://www.webryan.net/2011/08/wiki-of-http-cookie/" target="_blank" rel="external">全面解读HTTP Cookie</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/27/Golang Http请求/" rel="next" title="Golang Http请求">
+                <i class="fa fa-chevron-left"></i> Golang Http请求
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/29/Golang Template 简明笔记/" rel="prev" title="Golang Template 简明笔记">
+                Golang Template 简明笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie"><span class="nav-number">1.</span> <span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前世今生"><span class="nav-number">1.1.</span> <span class="nav-text">前世今生</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Golang的Cookie"><span class="nav-number">2.</span> <span class="nav-text">Golang的Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#设置cookie"><span class="nav-number">2.1.</span> <span class="nav-text">设置cookie</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取cookie"><span class="nav-number">2.2.</span> <span class="nav-text">读取cookie</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie与消息"><span class="nav-number">3.</span> <span class="nav-text">cookie与消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Golang标准库http包提供了基础的http服务，这个服务又基于Handler接口和ServeMux结构的做Mutilpexer。实际上，go的作者设计Handler这样的接口，不仅提供了默认的ServeMux对象，开发者也可以自定义ServeMux对象。
+本质上ServeMux只是一个路由管理器，而它本身也实现了Handler接口的ServeHTTP方法。因此围绕Handler接口的方法Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang构建HTTP服务（二）--- Handler，ServeMux与中间件">
+<meta property="og:url" content="http://rsj217.github.com/2016/12/22/Golang构建HTTP服务（二）--- Handler，ServeMux与中间件/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Golang标准库http包提供了基础的http服务，这个服务又基于Handler接口和ServeMux结构的做Mutilpexer。实际上，go的作者设计Handler这样的接口，不仅提供了默认的ServeMux对象，开发者也可以自定义ServeMux对象。
+本质上ServeMux只是一个路由管理器，而它本身也实现了Handler接口的ServeHTTP方法。因此围绕Handler接口的方法Se">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-7c01fb296175f3df.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2017-04-02T09:11:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang构建HTTP服务（二）--- Handler，ServeMux与中间件">
+<meta name="twitter:description" content="Golang标准库http包提供了基础的http服务，这个服务又基于Handler接口和ServeMux结构的做Mutilpexer。实际上，go的作者设计Handler这样的接口，不仅提供了默认的ServeMux对象，开发者也可以自定义ServeMux对象。
+本质上ServeMux只是一个路由管理器，而它本身也实现了Handler接口的ServeHTTP方法。因此围绕Handler接口的方法Se">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-7c01fb296175f3df.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/12/22/Golang构建HTTP服务（二）--- Handler，ServeMux与中间件/"/>
+
+
+  <title> Golang构建HTTP服务（二）--- Handler，ServeMux与中间件 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang构建HTTP服务（二）--- Handler，ServeMux与中间件
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-22T19:30:02+08:00" content="2016-12-22">
+              2016-12-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Golang标准库http包提供了基础的http服务，这个服务又基于Handler接口和ServeMux结构的做Mutilpexer。实际上，go的作者设计Handler这样的接口，不仅提供了默认的ServeMux对象，开发者也可以自定义ServeMux对象。</p>
+<p>本质上ServeMux只是一个路由管理器，而它本身也实现了Handler接口的ServeHTTP方法。因此围绕Handler接口的方法ServeHTTP，可以轻松的写出go中的中间件。</p>
+<p>在go的http路由原理讨论中，追本溯源还是讨论Handler接口和ServeMux结构。下面就基于这两个对象开始更多关于go中http的故事吧。</p>
+<p>介绍http库源码的时候，创建http服务的代码很简单，实际上代码隐藏了很多细节，才有了后来的流程介绍。本文的目的主要是把这些细节暴露，从更底层的方式开始，一步步隐藏细节，完成样例代码的一样的逻辑。了解更多http包的原理之后，才能基于此构建中间件。</p>
+<a id="more"></a>
+<h3 id="自定义的Handler"><a href="#自定义的Handler" class="headerlink" title="自定义的Handler"></a>自定义的Handler</h3><p>标准库http提供了Handler接口，用于开发者实现自己的handler。只要实现接口的ServeHTTP方法即可。</p>
+<blockquote>
+<p>关于约定名词 <strong>handler函数</strong>，<strong>handler处理器</strong>，<strong>handler</strong>，请参考<a href="http://www.jianshu.com/p/be3d9cdc680b" target="_blank" rel="external">http原理与源码笔记</a>中的定义。不然对下文的描述将会很困惑。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">type textHandler struct &#123;</div><div class="line">    responseText string</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (th *textHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    fmt.Fprintf(w, th.responseText)</div><div class="line">&#125;</div><div class="line"></div><div class="line">type indexHandler struct &#123;&#125;</div><div class="line"></div><div class="line">func (ih *indexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    w.Header().Set(&quot;Content-Type&quot;, &quot;text/html&quot;)</div><div class="line"></div><div class="line">    html := `&lt;doctype html&gt;</div><div class="line">        &lt;html&gt;</div><div class="line">        &lt;head&gt;</div><div class="line">          &lt;title&gt;Hello World&lt;/title&gt;</div><div class="line">        &lt;/head&gt;</div><div class="line">        &lt;body&gt;</div><div class="line">        &lt;p&gt;</div><div class="line">          &lt;a href=&quot;/welcome&quot;&gt;Welcome&lt;/a&gt; |  &lt;a href=&quot;/message&quot;&gt;Message&lt;/a&gt;</div><div class="line">        &lt;/p&gt;</div><div class="line">        &lt;/body&gt;</div><div class="line">&lt;/html&gt;`</div><div class="line">    fmt.Fprintln(w, html)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    mux := http.NewServeMux()</div><div class="line"></div><div class="line">    mux.Handle(&quot;/&quot;, &amp;indexHandler&#123;&#125;)</div><div class="line"></div><div class="line">    thWelcome := &amp;textHandler&#123;&quot;TextHandler !&quot;&#125;</div><div class="line">    mux.Handle(&quot;/text&quot;,thWelcome)</div><div class="line"></div><div class="line">    http.ListenAndServe(&quot;:8000&quot;, mux)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面自定义了两个handler结构，都实现了ServeHTTP方法。我们知道，NewServeMux可以创建一个ServeMux实例，ServeMux同时也实现了ServeHTTP方法，因此代码中的mux也是一种handler。把它当成参数传给http.ListenAndServe方法，后者会把mux传给Server实例。因为指定了handler，因此整个http服务就不再是DefaultServeMux，而是mux，无论是在注册路由还是提供请求服务的时候。</p>
+<p>有一点值得注意，这里并没有使用HandleFunc注册路由，而是直接使用了mux注册路由。当没有指定mux的时候，系统需要创建一个默认的defaultServeMux，此时我们已经有了mux，因此不再需要http.HandleFucn方法了，直接使用mux的Handle方法注册即可。</p>
+<p>此外，Handle第二个参数是一个handler(处理器)，并不是HandleFunc的一个handler函数，其原因也是因为mux.Handle本质上就需要绑定url的pattern模式和handler(处理器)即可。既然indexHandler是handle(处理器)，当然就能作为参数，一切请求的处理过程，都交给器实现的接口方法ServeHTTP就行了。这个过程有点饶，如果不甚了解，建议先阅读<a href="http://www.jianshu.com/p/be3d9cdc680b" target="_blank" rel="external">http原理与源码笔记</a>了解注册路由的本质。下图</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-7c01fb296175f3df.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="handleFunc-handle.jpeg"></p>
+<p>左边的12两步只是为了创建一个ServeMux实例，然后调用实例的Handle方法，右边的直接就调用了mux实例的Handle方法。</p>
+<h3 id="创建handler处理器"><a href="#创建handler处理器" class="headerlink" title="创建handler处理器"></a>创建handler处理器</h3><p>上面费劲口舌罗嗦，不就是1，2，3与3的差别么，并且1，2的两步操作，封装程度更高，开发者只需要写函数即可，不用再定义结构。代码更简洁，因此，下面将直接创建handler函数，调用go的方法将函数转变成handler(处理器)。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">func text(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">    fmt.Fprintln(w, &quot;hello world&quot;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func index(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    w.Header().Set(&quot;Content-Type&quot;, &quot;text/html&quot;)</div><div class="line"></div><div class="line">    html := `&lt;doctype html&gt;</div><div class="line">        &lt;html&gt;</div><div class="line">        &lt;head&gt;</div><div class="line">          &lt;title&gt;Hello World&lt;/title&gt;</div><div class="line">        &lt;/head&gt;</div><div class="line">        &lt;body&gt;</div><div class="line">        &lt;p&gt;</div><div class="line">          &lt;a href=&quot;/welcome&quot;&gt;Welcome&lt;/a&gt; |  &lt;a href=&quot;/message&quot;&gt;Message&lt;/a&gt;</div><div class="line">        &lt;/p&gt;</div><div class="line">        &lt;/body&gt;</div><div class="line">&lt;/html&gt;`</div><div class="line">    fmt.Fprintln(w, html)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    mux := http.NewServeMux()</div><div class="line">    mux.Handle(&quot;/&quot;, http.HandlerFunc(index))</div><div class="line">    mux.HandleFunc(&quot;/text&quot;, text)</div><div class="line">    http.ListenAndServe(&quot;:8000&quot;, mux)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码中使用了<code>http.HandlerFunc</code>方法直接将一个handler函数转变成实现了handler(处理器)。等价与图中的3的步骤。</p>
+<p>而<code>mux.HandleFunc(&quot;/text&quot;, text)</code>就更进一步，与图中的2步骤一致，与<code>defaultServemux.HandleFunc(pattern, function)</code>的用法一样。</p>
+<h3 id="使用默认的DefaultServeMux"><a href="#使用默认的DefaultServeMux" class="headerlink" title="使用默认的DefaultServeMux"></a>使用默认的DefaultServeMux</h3><p>经过了上面两个过程的转化，隐藏了更多的细节，代码与defaultServeMux的方式越来越像。下面再去掉自定义的ServeMux，只需要修改main函数的逻辑如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    http.Handle(&quot;/&quot;, http.HandlerFunc(index))</div><div class="line">    http.HandleFunc(&quot;/text&quot;, text)</div><div class="line">    http.ListenAndServe(&quot;:8000&quot;, nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述的代码就和前文的例子一样，当代码中不显示的创建serveMux对象，http包就默认创建一个DefaultServeMux对象用来做路由管理器mutilplexer。</p>
+<h3 id="自定义Server"><a href="#自定义Server" class="headerlink" title="自定义Server"></a>自定义Server</h3><p>默认的DefaultServeMux创建的判断来自server对象，如果server对象不提供handler，才会使用默认的serveMux对象。既然ServeMux可以自定义，那么Server对象一样可以。</p>
+<p>使用http.Server 即可创建自定义的server对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">func main()&#123;</div><div class="line">    http.HandleFunc(&quot;/&quot;, index)</div><div class="line"></div><div class="line">    server := &amp;http.Server&#123;</div><div class="line">        Addr: &quot;:8000&quot;,</div><div class="line">        ReadTimeout: 60 * time.Second,</div><div class="line">        WriteTimeout: 60 * time.Second,</div><div class="line">    &#125;</div><div class="line">    server.ListenAndServe()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>自定义的serverMux对象也可以传到server对象中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line"></div><div class="line">    mux := http.NewServeMux()</div><div class="line">    mux.HandleFunc(&quot;/&quot;, index)</div><div class="line"></div><div class="line">    server := &amp;http.Server&#123;</div><div class="line">        Addr: &quot;:8000&quot;,</div><div class="line">        ReadTimeout: 60 * time.Second,</div><div class="line">        WriteTimeout: 60 * time.Second,</div><div class="line">        Handler: mux,</div><div class="line">    &#125;</div><div class="line">    server.ListenAndServe()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可见go中的路由和处理函数之间关系非常密切，同时又很灵活。通过巧妙的使用Handler接口，可以设计出优雅的中间件程序。</p>
+<h3 id="中间件Middleware"><a href="#中间件Middleware" class="headerlink" title="中间件Middleware"></a>中间件Middleware</h3><p>所谓中间件，就是连接上下级不同功能的函数或者软件，通常进行一些包裹函数的行为，为被包裹函数提供添加一些功能或行为。前文的HandleFunc就能把签名为 <code>func(w http.ResponseWriter, r *http.Reqeust)</code>的函数包裹成handler。这个函数也算是中间件。</p>
+<p>这里我们以HTTP请求的中间件为例子，提供一个log中间件，能够打印出每一个请求的log。</p>
+<p>go的http中间件很简单，只要实现一个函数签名为<code>func(http.Handler) http.Handler</code>的函数即可。http.Handler是一个接口，接口方法我们熟悉的为serveHTTP。返回也是一个handler。因为go中的函数也可以当成变量传递或者或者返回，因此也可以在中间件函数中传递定义好的函数，只要这个函数是一个handler即可，即实现或者被handlerFunc包裹成为handler处理器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">func middlewareHandler(next http.Handler) http.Handler&#123;</div><div class="line">    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request)&#123;</div><div class="line">        // 执行handler之前的逻辑</div><div class="line">        next.ServeHTTP(w, r)</div><div class="line">        // 执行完毕handler后的逻辑</div><div class="line">    &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这种方式在Elixir的Plug框架中很流行，思想偏向于函数式范式。熟悉python的朋友一定也想到了装饰器。闲话少说，来看看go是如何实现的吧：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">func loggingHandler(next http.Handler) http.Handler &#123;</div><div class="line">    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">        start := time.Now()</div><div class="line">        log.Printf(&quot;Started %s %s&quot;, r.Method, r.URL.Path)</div><div class="line">        next.ServeHTTP(w, r)</div><div class="line">        log.Printf(&quot;Comleted %s in %v&quot;, r.URL.Path, time.Since(start))</div><div class="line">    &#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    http.Handle(&quot;/&quot;, loggingHandler(http.HandlerFunc(index)))</div><div class="line">    http.ListenAndServe(&quot;:8000&quot;, nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>loggingHandler即是一个中间件函数，将请求的和完成的时间处理。可以看见请求或go的输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">2016/12/04 21:18:13 Started GET /</div><div class="line">2016/12/04 21:18:13 Comleted / in 13.365µs</div><div class="line">2016/12/04 21:18:20 Started GET /</div><div class="line">2016/12/04 21:18:20 Comleted / in 17.541µs</div></pre></td></tr></table></figure>
+<p>既然中间件是一种函数，并且签名都是一样，那么很容易就联想到函数一层包一层的中间件。再添加一个函数，然后修改main函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">func hook(next http.Handler) http.Handler&#123;</div><div class="line">    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">        log.Println(&quot;before hook&quot;)</div><div class="line">        next.ServeHTTP(w, r)</div><div class="line">        log.Println(&quot;after hook&quot;)</div><div class="line"></div><div class="line">    &#125;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    http.Handle(&quot;/&quot;, hook(loggingHandler(http.HandlerFunc(index))))</div><div class="line">    http.ListenAndServe(&quot;:8000&quot;, nil)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在loggingHandler再包了一层hook，可以看到输出为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">2016/12/04 21:26:30 before hook</div><div class="line">2016/12/04 21:26:30 Started GET /</div><div class="line">2016/12/04 21:26:30 Comleted / in 14.016µs</div><div class="line">2016/12/04 21:26:30 after hook</div></pre></td></tr></table></figure>
+<p>函数调用形成了一条链，可以是在这条链上做很多事情。当然go的写法上，比起elixir的<code>|&gt;</code>的符号，优雅性略差。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过对http包的源码学习，我们了解了Handler接口和ServeMux结构。并且知道如何配合他们实现go的中间件函数。当然，对于几个约定名词，handler函数，handler处理器和handler对象的理解，是掌握它们关系的关键因素，而handler处理器和handler对象的关系，恰恰又是go接口使用的经典例子，让go具有一些动态类型的特性。</p>
+<p>了解了http服务如何构建之后，处理请求和返回响应就是下一个故事。而实现处理逻辑恰恰在我们一直在强调的ServeHTTP接口方法中。</p>
+<p>接下来将会更详细的讨论请求和响应相关的函数对象。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/03/Golang构建HTTP服务（一）--- net:http库源码笔记/" rel="next" title="Golang构建HTTP服务（一）--- net/http库源码笔记">
+                <i class="fa fa-chevron-left"></i> Golang构建HTTP服务（一）--- net/http库源码笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/27/Golang Http请求/" rel="prev" title="Golang Http请求">
+                Golang Http请求 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义的Handler"><span class="nav-number">1.</span> <span class="nav-text">自定义的Handler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建handler处理器"><span class="nav-number">2.</span> <span class="nav-text">创建handler处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用默认的DefaultServeMux"><span class="nav-number">3.</span> <span class="nav-text">使用默认的DefaultServeMux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义Server"><span class="nav-number">4.</span> <span class="nav-text">自定义Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#中间件Middleware"><span class="nav-number">5.</span> <span class="nav-text">中间件Middleware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

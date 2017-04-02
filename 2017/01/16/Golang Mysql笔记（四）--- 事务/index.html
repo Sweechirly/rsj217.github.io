@@ -1,0 +1,679 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="Transaction 事务事务处理是数据的重要特性。尤其是对于一些支付系统，事务保证性对业务逻辑会有重要影响。golang的mysql驱动也封装好了事务相关的操作。我们已经学习了db的Query和Exec方法处理查询和修改数据库。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Mysql笔记（四）--- 事务">
+<meta property="og:url" content="http://rsj217.github.com/2017/01/16/Golang Mysql笔记（四）--- 事务/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Transaction 事务事务处理是数据的重要特性。尤其是对于一些支付系统，事务保证性对业务逻辑会有重要影响。golang的mysql驱动也封装好了事务相关的操作。我们已经学习了db的Query和Exec方法处理查询和修改数据库。">
+<meta property="og:updated_time" content="2017-04-02T09:11:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Mysql笔记（四）--- 事务">
+<meta name="twitter:description" content="Transaction 事务事务处理是数据的重要特性。尤其是对于一些支付系统，事务保证性对业务逻辑会有重要影响。golang的mysql驱动也封装好了事务相关的操作。我们已经学习了db的Query和Exec方法处理查询和修改数据库。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/01/16/Golang Mysql笔记（四）--- 事务/"/>
+
+
+  <title> Golang Mysql笔记（四）--- 事务 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang Mysql笔记（四）--- 事务
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-16T12:31:02+08:00" content="2017-01-16">
+              2017-01-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Transaction-事务"><a href="#Transaction-事务" class="headerlink" title="Transaction 事务"></a>Transaction 事务</h2><p>事务处理是数据的重要特性。尤其是对于一些支付系统，事务保证性对业务逻辑会有重要影响。golang的mysql驱动也封装好了事务相关的操作。我们已经学习了db的Query和Exec方法处理查询和修改数据库。</p>
+<a id="more"></a>
+<h3 id="tx对象"><a href="#tx对象" class="headerlink" title="tx对象"></a>tx对象</h3><p>一般查询使用的是db对象的方法，事务则是使用另外一个对象。sql.Tx对象。使用db的Begin方法可以创建tx对象。tx对象也有数据库交互的Query,Exec和Prepare方法。用法和db的相关用法类似。查询或修改的操作完毕之后，需要调用tx对象的Commit提交或者Rollback方法回滚。</p>
+<p>一旦创建了tx对象，事务处理都依赖与tx对象，这个对象会从连接池中取出一个空闲的连接，接下来的sql执行都基于这个连接，直到commit或者rollback调用之后，才会把连接释放到连接池。</p>
+<p>在事务处理的时候，不能使用db的查询方法，虽然后者可以获取数据，可是这不属于同一个事务处理，将不会接受commit和rollback的改变，一个简单的事务例子如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">tx, err := db.Begin()</div><div class="line">tx.Exec(query1)</div><div class="line">tx.Exec(query2)</div><div class="line">tx.commit()</div></pre></td></tr></table></figure>
+<p>在tx中使用db是错误的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">tx, err := db.Begin()</div><div class="line">db.Exec(query1)</div><div class="line">tx.Exec(query2)</div><div class="line">tx.commit()</div></pre></td></tr></table></figure>
+<p>上述代码在调用db的Eexc方法的时候，tx会绑定连接到事务中，db则是额外的一个连接，两者不是同一个事务。需要注意，Begin和Commit方法，与sql语句中的BEGIN或COMMIT语句没有关系。</p>
+<h3 id="事务与连接"><a href="#事务与连接" class="headerlink" title="事务与连接"></a>事务与连接</h3><p>创建Tx对象的时候，会从连接池中取出连接，然后调用相关的Exec方法的时候，连接仍然会绑定在改事务处理中。在实际的事务处理中，go可能创建不同的连接，但是那些其他连接都不属于该事务。例如上面例子中db创建的连接和tx的连接就不是一回事。</p>
+<p>事务的连接生命周期从Beigin函数调用起，直到Commit和Rollback函数的调用结束。事务也提供了prepare语句的使用方式，但是需要使用Tx.Stmt方法创建。prepare设计的初衷是多次执行，对于事务，有可能需要多次执行同一个sql。然而无论是正常的prepare和事务处理，prepare对于连接的管理都有点小复杂。因此私以为尽量避免在事务中使用prepare方式。例如下面例子就容易导致错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">tx, _ := db.Begin()</div><div class="line">defer tx.Rollback()</div><div class="line">stmt, _ tx.Prepare(&quot;INSERT ...&quot;)</div><div class="line">defer stmt.Close()</div><div class="line">tx.Commit()</div></pre></td></tr></table></figure>
+<p>因为stmt.Close使用defer语句，即函数退出的时候再清理stmt，可是实际执行过程的时候，tx.Commit就已经释放了连接。当函数退出的时候，再执行stmt.Close的时候，连接可能有被使用了。</p>
+<h3 id="事务并发"><a href="#事务并发" class="headerlink" title="事务并发"></a>事务并发</h3><p>对于sql.Tx对象，因为事务过程只有一个连接，事务内的操作都是顺序执行的，在开始下一个数据库交互之前，必须先完成上一个数据库交互。例如下面的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">rows, _ := db.Query(&quot;SELECT id FROM user&quot;) </div><div class="line">for rows.Next() &#123;</div><div class="line">    var mid, did int</div><div class="line">    rows.Scan(&amp;mid)</div><div class="line">    db.QueryRow(&quot;SELECT id FROM detail_user WHERE master = ?&quot;, mid).Scan(&amp;did)</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用了Query方法之后，在Next方法中取结果的时候，rows是维护了一个连接，再次调用QueryRow的时候，db会再从连接池取出一个新的连接。rows和db的连接两者可以并存，并且相互不影响。</p>
+<p>可是，这样逻辑在事务处理中将会失效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rows, _ := tx.Query(&quot;SELECT id FROM user&quot;)</div><div class="line">for rows.Next() &#123;</div><div class="line">   var mid, did int</div><div class="line">   rows.Scan(&amp;mid)</div><div class="line">   tx.QueryRow(&quot;SELECT id FROM detail_user WHERE master = ?&quot;, mid).Scan(&amp;did)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>tx执行了Query方法后，连接转移到rows上，在Next方法中，tx.QueryRow将尝试获取该连接进行数据库操作。因为还没有调用rows.Close，因此底层的连接属于busy状态，tx是无法再进行查询的。上面的例子看起来有点傻，毕竟涉及这样的操作，使用query的join语句就能规避这个问题。例子只是为了说明tx的使用问题。</p>
+<h3 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h3><p>前面对事务解释了一堆，说了那么多，其实还不如share的code。下面就事务的使用做简单的介绍。因为事务是单个连接，因此任何事务处理过程的出现了异常，都需要使用rollback，一方面是为了保证数据完整一致性，另一方面是释放事务绑定的连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">func doSomething()&#123;</div><div class="line">    panic(&quot;A Panic Running Error&quot;)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func clearTransaction(tx *sql.Tx)&#123;</div><div class="line">    err := tx.Rollback()</div><div class="line">    if err != sql.ErrTxDone &amp;&amp; err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    defer db.Close()</div><div class="line"></div><div class="line">    tx, err := db.Begin()</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    defer clearTransaction(tx)</div><div class="line"></div><div class="line">    rs, err := tx.Exec(&quot;UPDATE user SET gold=50 WHERE real_name=&apos;vanyarpy&apos;&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    rowAffected, err := rs.RowsAffected()</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    fmt.Println(rowAffected)</div><div class="line"></div><div class="line">    rs, err = tx.Exec(&quot;UPDATE user SET gold=150 WHERE real_name=&apos;noldorpy&apos;&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    rowAffected, err = rs.RowsAffected()</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    fmt.Println(rowAffected)</div><div class="line"></div><div class="line">    doSomething()</div><div class="line"></div><div class="line">    if err := tx.Commit(); err != nil &#123;</div><div class="line">        // tx.Rollback() 此时处理错误，会忽略doSomthing的异常</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们定义了一个clearTransaction(tx)函数，该函数会执行rollback操作。因为我们事务处理过程中，任何一个错误都会导致main函数退出，因此在main函数退出执行defer的rollback操作，回滚事务和释放连接。</p>
+<p>如果不添加defer，只在最后Commit后check错误err后再rollback，那么当doSomething发生异常的时候，函数就退出了，此时还没有执行到tx.Commit。这样就导致事务的连接没有关闭，事务也没有回滚。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>database/sql提供了事务处理的功能。通过Tx对象实现。db.Begin会创建tx对象，后者的Exec和Query执行事务的数据库操作，最后在tx的Commit和Rollback中完成数据库事务的提交和回滚，同时释放连接。</p>
+<p>tx事务环境中，只有一个数据库连接，事务内的Eexc都是依次执行的，事务中也可以使用db进行查询，但是db查询的过程会新建连接，这个连接的操作不属于该事务。</p>
+<p>关于database/sql和mysql的驱动，我们已经分三部分内容介绍了。下一节，将会对之前的内容进行梳理总结，包括错误处理和注意事项的补充。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/14/Golang Mysql笔记（三）--- Prepared剖析/" rel="next" title="Golang Mysql笔记（三）--- Prepared剖析">
+                <i class="fa fa-chevron-left"></i> Golang Mysql笔记（三）--- Prepared剖析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/17/python-magic-asyncio/" rel="prev" title="Python黑魔法 --- 异步IO（ asyncio） 协程">
+                Python黑魔法 --- 异步IO（ asyncio） 协程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Transaction-事务"><span class="nav-number">1.</span> <span class="nav-text">Transaction 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tx对象"><span class="nav-number">1.1.</span> <span class="nav-text">tx对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务与连接"><span class="nav-number">1.2.</span> <span class="nav-text">事务与连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事务并发"><span class="nav-number">1.3.</span> <span class="nav-text">事务并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实践"><span class="nav-number">1.4.</span> <span class="nav-text">实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,http," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="请求的结构HTTP的交互以请求和响应的应答模式。go的请求我们早就见过了，handler函数的第二个参数http.Requests。其结构为：
+12345678910111213141516171819type Request struct &amp;#123;    Method string    URL *url.URL    Proto      string // &amp;quot;HTTP/1.0&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Http请求">
+<meta property="og:url" content="http://rsj217.github.com/2016/12/27/Golang Http请求/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="请求的结构HTTP的交互以请求和响应的应答模式。go的请求我们早就见过了，handler函数的第二个参数http.Requests。其结构为：
+12345678910111213141516171819type Request struct &amp;#123;    Method string    URL *url.URL    Proto      string // &amp;quot;HTTP/1.0&amp;">
+<meta property="og:updated_time" content="2017-04-02T08:59:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Http请求">
+<meta name="twitter:description" content="请求的结构HTTP的交互以请求和响应的应答模式。go的请求我们早就见过了，handler函数的第二个参数http.Requests。其结构为：
+12345678910111213141516171819type Request struct &amp;#123;    Method string    URL *url.URL    Proto      string // &amp;quot;HTTP/1.0&amp;">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/12/27/Golang Http请求/"/>
+
+
+  <title> Golang Http请求 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang Http请求
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-27T01:31:02+08:00" content="2016-12-27">
+              2016-12-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="请求的结构"><a href="#请求的结构" class="headerlink" title="请求的结构"></a>请求的结构</h3><p>HTTP的交互以请求和响应的应答模式。go的请求我们早就见过了，handler函数的第二个参数http.Requests。其结构为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">type Request struct &#123;</div><div class="line">    Method string</div><div class="line"></div><div class="line">    URL *url.URL</div><div class="line">    Proto      string // &quot;HTTP/1.0&quot;</div><div class="line">    ProtoMajor int    // 1</div><div class="line">    ProtoMinor int    // 0</div><div class="line">    Header Header</div><div class="line">    Body io.ReadCloser</div><div class="line">    ContentLength int64</div><div class="line">    TransferEncoding []string</div><div class="line">    Close bool</div><div class="line">    Host string</div><div class="line">    Form url.Values</div><div class="line">    PostForm url.Values</div><div class="line">    MultipartForm *multipart.Form</div><div class="line">  ....</div><div class="line">    ctx context.Context</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从request结构可以看到，http请求的基本信息都囊括了。对于请求而言，主要关注一下请求的URL，Method，Header，Body这些结构。</p>
+<a id="more"></a>
+<h3 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h3><p>HTTP的url请求格式为<code>scheme://[userinfo@]host/path[?query][#fragment]</code>， go的提供了一个URL结构，用来映射HTTP的请求URL。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">type URL struct &#123;</div><div class="line">  Scheme   string</div><div class="line">  Opaque   string</div><div class="line">  User     *Userinfo</div><div class="line">  Host     string</div><div class="line">  Path     string</div><div class="line">  RawQuery string</div><div class="line">  Fragment string</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>URL的格式比较明确，其实更好的名词应该是URI，统一资源定位。url中比较重要的是查询字符串query。通常作为get请求的参数。query是一些使用<code>&amp;</code>符号分割的<code>key1=value1&amp;key2=value2</code>键值对，由于url编码是ASSIC码，因此query需要进行urlencode。go可以通过request.URI.RawQuery读取query</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    info := fmt.Sprintln(&quot;URL&quot;, r.URL, &quot;HOST&quot;, r.Host, &quot;Method&quot;, r.Method, &quot;RequestURL&quot;, r.RequestURI, &quot;RawQuery&quot;, r.URL.RawQuery)</div><div class="line">    fmt.Fprintln(w, info)</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/x-www-form-urlencoded&quot; -d &apos;name=vanyar&amp;age=27&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">URL /?lang=zh&amp;version=1.1.0 HOST 127.0.0.1:8000 Method POST RequestURL /?lang=zh&amp;version=1.1.0 RawQuery lang=zh&amp;version=1.1.0</div></pre></td></tr></table></figure>
+<h3 id="header"><a href="#header" class="headerlink" title="header"></a>header</h3><p>header也是HTTP中重要的组成部分。Request结构中就有Header结构，Header本质上是一个map（<code>map[string][]string</code>）。将http协议的header的key-value进行映射成一个图：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Host: example.com</div><div class="line">accept-encoding: gzip, deflate</div><div class="line">Accept-Language: en-us</div><div class="line">fOO: Bar</div><div class="line">foo: two</div><div class="line"></div><div class="line"></div><div class="line">Header = map[string][]string&#123;</div><div class="line">    &quot;Accept-Encoding&quot;: &#123;&quot;gzip, deflate&quot;&#125;,</div><div class="line">    &quot;Accept-Language&quot;: &#123;&quot;en-us&quot;&#125;,</div><div class="line">    &quot;Foo&quot;: &#123;&quot;Bar&quot;, &quot;two&quot;&#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>header中的字段包含了很多通信的设置，很多时候请求都需要指定<code>Content-Type</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line"> </div><div class="line">    info := fmt.Sprintln(r.Header.Get(&quot;Content-Type&quot;))</div><div class="line">    fmt.Fprintln(w, info)</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/x-www-form-urlencoded&quot; -d &apos;name=vanyar&amp;age=27&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">application/x-www-form-urlencoded</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Golng 提供了不少打印函数，基本上分为三类三种。即 <code>Print</code> <code>Println</code> 和<code>Printf</code>。<br><code>Print</code>比较简单，打印输出到标准输出流，<code>Println</code>则也一样不同在于多打印一个换行符。至于<code>Printf</code>则是打印格式化字符串，三个方法都返回打印的bytes数。<code>Sprint</code>，<code>Sprinln</code>和<code>Sprintf</code>则返回打印的字符串，不会输出到标准流中。<code>Fprint</code>，<code>Fprintf</code>和<code>Fprinln</code>则把输出的结果打印输出到<code>io.Writer</code>接口中，http中则是<code>http.ReponseWriter</code>这个对象中，返回打印的bytes数。</p>
+</blockquote>
+<h3 id="Body"><a href="#Body" class="headerlink" title="Body"></a>Body</h3><p>http中数据通信，主要通过body传输。go把body封装成Request的Body，它是一个ReadCloser接口。接口方法Reader也是一个接口，后者有一个<code>Read(p []byte) (n int, err error)</code>方法，因此body可以通过读取byte数组获取请求的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line"></div><div class="line">    info := fmt.Sprintln(r.Header.Get(&quot;Content-Type&quot;))</div><div class="line">    len := r.ContentLength</div><div class="line">    body := make([]byte, len)</div><div class="line">    r.Body.Read(body)</div><div class="line">    fmt.Fprintln(w, info, string(body))</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/x-www-form-urlencoded&quot; -d &apos;name=vanyar&amp;age=27&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">application/x-www-form-urlencoded</div><div class="line"> name=vanyar&amp;age=27</div></pre></td></tr></table></figure>
+<p>可见，当请求的content-type为application/x-www-form-urlencoded， body也是和query一样的格式，key-value的键值对。换成json的请求方式则如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/json&quot; -d &apos;&#123;name: &quot;vanyar&quot;, age: 27&#125;&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">application/json</div><div class="line"> &#123;name: &quot;vanyar&quot;, age: 27&#125;</div></pre></td></tr></table></figure>
+<p>multipart/form-data的格式用来上传图片，请求的body如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW&quot; -F &quot;name=vanyar&quot; -F &quot;age=27&quot; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW; boundary=------------------------d07972c7800e4c23</div><div class="line"> --------------------------d07972c7800e4c23</div><div class="line">Content-Disposition: form-data; name=&quot;name&quot;</div><div class="line"></div><div class="line">vanyar</div><div class="line">--------------------------d07972c7800e4c23</div><div class="line">Content-Disposition: form-data; name=&quot;age&quot;</div><div class="line"></div><div class="line">27</div><div class="line">--------------------------d07972c7800e4c23--</div></pre></td></tr></table></figure>
+<h3 id="表单"><a href="#表单" class="headerlink" title="表单"></a>表单</h3><p>解析body可以读取客户端请求的数据。而这个数据是无论是键值对还是form-data数据，都比较原始。直接读取解析还是挺麻烦的。这些body数据通常也是表单提供。因此go提供处理这些表单数据的方法。</p>
+<h4 id="Form"><a href="#Form" class="headerlink" title="Form"></a>Form</h4><p>go提供了ParseForm方法用来解析表单提供的数据，即content-type 为 x-www-form-urlencode的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line"></div><div class="line">    contentType := fmt.Sprintln(r.Header.Get(&quot;Content-Type&quot;))</div><div class="line"></div><div class="line">    r.ParseForm()</div><div class="line">    fromData := fmt.Sprintf(&quot;%#v&quot;, r.Form)</div><div class="line">    fmt.Fprintf(w, contentType, fromData)</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/x-www-form-urlencoded&quot; -d &apos;name=vanyar&amp;age=27&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">application/x-www-form-urlencoded</div><div class="line">%!(EXTRA string=url.Values&#123;&quot;name&quot;:[]string&#123;&quot;vanyar&quot;&#125;, &quot;age&quot;:[]string&#123;&quot;27&quot;&#125;, &quot;lang&quot;:[]string&#123;&quot;zh&quot;&#125;, &quot;version&quot;:[]string&#123;&quot;1.1.0&quot;&#125;&#125;)%</div></pre></td></tr></table></figure>
+<p>用来读取数据的结构和方法大致有下面几个：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">fmt.Println(r.Form[&quot;lang&quot;])</div><div class="line">fmt.Println(r.PostForm[&quot;lang&quot;])</div><div class="line">fmt.Println(r.FormValue(&quot;lang&quot;))</div><div class="line">fmt.Println(r.PostFormValue(&quot;lang&quot;))</div></pre></td></tr></table></figure>
+<p>其中<code>r.Form</code>和<code>r.PostForm</code>必须在调用<code>ParseForm</code>之后，才会有数据，否则则是空数组。<br>而<code>r.FormValue</code>和<code>r.PostFormValue(&quot;lang&quot;)</code>无需<code>ParseForm</code>的调用就能读取数据。</p>
+<p>此外r.Form和r.PostForm都是数组结构，对于body和url都存在的同名参数，r.Form会有两个值，即 [“en”, “zh”]，而带<code>POST</code>前缀的数组和方法，都只能读取body的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/x-www-form-urlencoded&quot; -d &apos;name=vanyar&amp;age=27&amp;lang=en&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">application/x-www-form-urlencoded</div><div class="line">%!(EXTRA string=url.Values&#123;&quot;version&quot;:[]string&#123;&quot;1.1.0&quot;&#125;, &quot;name&quot;:[]string&#123;&quot;vanyar&quot;&#125;, &quot;age&quot;:[]string&#123;&quot;27&quot;&#125;, &quot;lang&quot;:[]string&#123;&quot;en&quot;, &quot;zh&quot;&#125;&#125;)%</div></pre></td></tr></table></figure>
+<p>此时可以看到，lang参数不仅url的query提供了，post的body也提供了，go默认以body的数据优先，两者的数据都有，并不会覆盖。</p>
+<p>如果不想读取url的参数，调用<code>PostForm</code>或<code>PostFormValue</code>读取字段的值即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">r.PostForm[&quot;lang&quot;][0]</div><div class="line">r.PostFormValue[&quot;lang&quot;]</div></pre></td></tr></table></figure>
+<p>对于form-data的格式的数据，ParseForm的方法只会解析url中的参数，并不会解析body中的参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW&quot; -F &quot;name=vanyar&quot; -F &quot;age=27&quot; -F &quot;lang=en&quot; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW; boundary=------------------------5f87d5bfa764488d</div><div class="line">%!(EXTRA string=url.Values&#123;&quot;lang&quot;:[]string&#123;&quot;zh&quot;&#125;, &quot;version&quot;:[]string&#123;&quot;1.1.0&quot;&#125;&#125;</div><div class="line">)%</div></pre></td></tr></table></figure>
+<p>因此当请求的content-type为form-data的时候，ParseFrom则需要改成 MutilpartFrom，否则r.From是读取不到body的内容，只能读取到query string中的内容。</p>
+<h4 id="MutilpartFrom"><a href="#MutilpartFrom" class="headerlink" title="MutilpartFrom"></a>MutilpartFrom</h4><p>ParseMutilpartFrom方法需要提供一个读取数据长度的参数，然后使用同样的方法读取表单数据，MutilpartFrom只会读取body的数据，不会读取url的query数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    r.ParseMultipartForm(1024)</div><div class="line"></div><div class="line">    fmt.Println(r.Form[&quot;lang&quot;])</div><div class="line">    fmt.Println(r.PostForm[&quot;lang&quot;])</div><div class="line">    fmt.Println(r.FormValue(&quot;lang&quot;))</div><div class="line">    fmt.Println(r.PostFormValue(&quot;lang&quot;))</div><div class="line">    fmt.Println(r.MultipartForm.Value[&quot;lang&quot;])</div><div class="line"></div><div class="line">    fmt.Fprintln(w, r.MultipartForm.Value)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到请求之后返回 <code>map[name:[vanyar] age:[27] lang:[en]]</code>。即<code>r.MultipartForm.Value</code>并没有url中的参数。</p>
+<p>总结一下，读取urlencode的编码方式，只需要ParseForm即可，读取form-data编码需要使用ParseMultipartForm方法。如果参数中既有url，又有body，From和FromValue方法都能读取。而带<code>Post</code>前缀的方法，只能读取body的数据内容。其中MultipartForm的数据通过<code>r.MultipartForm.Value</code>访问得到。</p>
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>form-data格式用得最多方式就是在图片上传的时候。<code>r.MultipartForm.Value</code>是post的body字段数据，<code>r.MultipartForm.File</code>则包含了图片数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line"></div><div class="line">    r.ParseMultipartForm(1024)</div><div class="line">    fileHeader := r.MultipartForm.File[&quot;file&quot;][0]</div><div class="line">    fmt.Println(fileHeader)</div><div class="line">    file, err := fileHeader.Open()</div><div class="line">    if err == nil&#123;</div><div class="line">        data, err := ioutil.ReadAll(file)</div><div class="line">        if err == nil&#123;</div><div class="line">            fmt.Println(len(data))</div><div class="line">            fmt.Fprintln(w, string(data))</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    fmt.Println(err)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>发出请求之后，可以看见返回了图片。当然，go提供了更好的工具函数<code>r.FormFile</code>，直接读取上传文件数据。而不需要再使用 ParseMultipartForm 方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">file, _, err := r.FormFile(&quot;file&quot;)</div><div class="line"></div><div class="line">if err == nil&#123;</div><div class="line">    data, err := ioutil.ReadAll(file)</div><div class="line">    if err == nil&#123;</div><div class="line">        fmt.Println(len(data))</div><div class="line">        fmt.Fprintln(w, string(data))</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">fmt.Println(err)</div></pre></td></tr></table></figure>
+<p>这种情况只适用于出了文件字段没有其他字段的时候，如果仍然需要读取lang参数，还是需要加上 ParseMultipartForm 调用的。读取到了上传文件，接下来就是很普通的写文件的io操作了。</p>
+<h3 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h3><p>现在流行前后端分离，客户端兴起了一些框架，angular，vue，react等提交的数据，通常习惯为json的格式。对于json格式，body就是原生的json字串。也就是go解密json为go的数据结构。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">type Person struct &#123;</div><div class="line">    Name string</div><div class="line">    Age int</div><div class="line">&#125;</div><div class="line"></div><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    decode := json.NewDecoder(r.Body)</div><div class="line">    var p Person</div><div class="line">    err := decode.Decode(&amp;p)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    info := fmt.Sprintf(&quot;%T\n%#v\n&quot;, p, p)</div><div class="line">    fmt.Fprintln(w, info)</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -X POST -H &quot;Content-Type: application/json&quot;  -d &apos;&#123;&quot;name&quot;: &quot;vanyar&quot;, &quot;age&quot;: 27 &#125;&apos; &quot;http://127.0.0.1:8000?lang=zh&amp;version=1.1.0&quot;</div><div class="line">main.Person</div><div class="line">main.Person&#123;Name:&quot;vanyar&quot;, Age:27&#125;</div></pre></td></tr></table></figure>
+<p>更多关于json的细节，以后再做讨论。访问官网<a href="https://blog.golang.org/json-and-go" target="_blank" rel="external">文档</a>获取更多的信息。</p>
+<h3 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h3><p>请求和响应是http的孪生兄弟，不仅它们的报文格式类似，相关的处理和构造也类似。go构造响应的结构是<code>ResponseWriter</code>接口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">type ResponseWriter interface &#123;</div><div class="line">    Header() Header</div><div class="line">    Write([]byte) (int, error)</div><div class="line">    WriteHeader(int)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>里面的方法也很简单，<code>Header</code>方法返回一个header的map结构。<code>WriteHeader</code>则会返回响应的状态码。<code>Write</code>返回给客户端的数据。</p>
+<p>我们已经使用了fmt.Fprintln 方法，直接向w写入响应的数据。也可以调用Write方法返回的字符。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    str := `&lt;html&gt;</div><div class="line">&lt;head&gt;&lt;title&gt;Go Web Programming&lt;/title&gt;&lt;/head&gt;</div><div class="line">&lt;body&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&lt;/body&gt;</div><div class="line">&lt;/html&gt;`</div><div class="line">    w.Write([]byte(str))</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -i http://127.0.0.1:8000/</div><div class="line">HTTP/1.1 200 OK</div><div class="line">Date: Wed, 07 Dec 2016 09:13:04 GMT</div><div class="line">Content-Length: 95</div><div class="line">Content-Type: text/html; charset=utf-8</div><div class="line"></div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;&lt;title&gt;Go Web Programming&lt;/title&gt;&lt;/head&gt;</div><div class="line">&lt;body&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&lt;/body&gt;</div><div class="line">&lt;/html&gt;%                                                                                  ☁  ~</div></pre></td></tr></table></figure>
+<p>go根据返回的字符，自动修改成了<code>text/html</code>的<code>Content-Type</code>格式。返回数据自定义通常需要修改header相关信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    w.WriteHeader(501)</div><div class="line">    fmt.Fprintln(w, &quot;No such service, try next door&quot;)</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">☁  ~  curl -i http://127.0.0.1:8000/</div><div class="line">HTTP/1.1 501 Not Implemented</div><div class="line">Date: Wed, 07 Dec 2016 09:14:58 GMT</div><div class="line">Content-Length: 31</div><div class="line">Content-Type: text/plain; charset=utf-8</div><div class="line"></div><div class="line">No such service, try next door</div></pre></td></tr></table></figure>
+<h4 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h4><p>重定向的功能可以更加设置header的location和http状态码实现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    w.Header().Set(&quot;Location&quot;, &quot;https://google.com&quot;)</div><div class="line">    w.WriteHeader(302)</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -i http://127.0.0.1:8000/</div><div class="line">HTTP/1.1 302 Found</div><div class="line">Location: https://google.com</div><div class="line">Date: Wed, 07 Dec 2016 09:20:19 GMT</div><div class="line">Content-Length: 31</div><div class="line">Content-Type: text/plain; charset=utf-8</div></pre></td></tr></table></figure>
+<p>重定向是常用的功能，因此go也提供了工具方法，<code>http.Redirect(w, r, &quot;https://google.com&quot;, http.StatusFound)</code>。</p>
+<p>与请求的Header结构一样，w.Header也有几个方法用来设置headers</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">func (h Header) Add(key, value string) &#123;</div><div class="line">    textproto.MIMEHeader(h).Add(key, value)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (h Header) Set(key, value string) &#123;</div><div class="line">    textproto.MIMEHeader(h).Set(key, value)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (h MIMEHeader) Add(key, value string) &#123;</div><div class="line">    key = CanonicalMIMEHeaderKey(key)</div><div class="line">    h[key] = append(h[key], value)</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (h MIMEHeader) Set(key, value string) &#123;</div><div class="line">    h[CanonicalMIMEHeaderKey(key)] = []string&#123;value&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Set和Add方法都可以设置headers，对于已经存在的key，Add会追加一个值value的数组中，，set则是直接替换value的值。即 append和赋值的差别。</p>
+<h3 id="Json"><a href="#Json" class="headerlink" title="Json"></a>Json</h3><p>请求发送的数据可以是JSON，同样响应的数据也可以是json。restful风格的api也是返回json格式的数据。对于请求是解码json字串，响应则是编码json字串，go提供了标准库 <code>encoding/json</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">type Post struct &#123;</div><div class="line">    User string</div><div class="line">    Threads []string</div><div class="line">&#125;</div><div class="line"></div><div class="line">func indexHandler(w http.ResponseWriter, r *http.Request) &#123;</div><div class="line">    w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)</div><div class="line">    post := &amp;Post&#123;</div><div class="line">        User: &quot;vanyar&quot;,</div><div class="line">        Threads: []string&#123;&quot;first&quot;, &quot;second&quot;, &quot;third&quot;&#125;,</div><div class="line">    &#125;</div><div class="line">    json, _ := json.Marshal(post)</div><div class="line">    w.Write(json)</div><div class="line">&#125;</div><div class="line"></div><div class="line">☁  ~  curl -i http://127.0.0.1:8000/</div><div class="line">HTTP/1.1 200 OK</div><div class="line">Content-Type: application/json</div><div class="line">Date: Thu, 08 Dec 2016 06:45:17 GMT</div><div class="line">Content-Length: 54</div><div class="line"></div><div class="line">&#123;&quot;User&quot;:&quot;vanyar&quot;,&quot;Threads&quot;:[&quot;first&quot;,&quot;second&quot;,&quot;third&quot;]&#125;%</div></pre></td></tr></table></figure>
+<p>当然，更多的json处理细节稍后再做介绍。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>对于web应用程式，处理请求，返回响应是基本的内容。golang很好的封装了Request和ReponseWriter给开发者。无论是请求还是响应，都是针对url，header和body相关数据的处理。也是http协议的基本内容。</p>
+<p>除了body的数据处理，有时候也需要处理header中的数据，一个常见的例子就是处理cookie。这将会在cookie的话题中讨论。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/http/" rel="tag">#http</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/22/Golang构建HTTP服务（二）--- Handler，ServeMux与中间件/" rel="next" title="Golang构建HTTP服务（二）--- Handler，ServeMux与中间件">
+                <i class="fa fa-chevron-left"></i> Golang构建HTTP服务（二）--- Handler，ServeMux与中间件
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/28/Golang Cookie 简介/" rel="prev" title="Golang Cookie 简介">
+                Golang Cookie 简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#请求的结构"><span class="nav-number">1.</span> <span class="nav-text">请求的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URL"><span class="nav-number">2.</span> <span class="nav-text">URL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#header"><span class="nav-number">3.</span> <span class="nav-text">header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Body"><span class="nav-number">4.</span> <span class="nav-text">Body</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表单"><span class="nav-number">5.</span> <span class="nav-text">表单</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Form"><span class="nav-number">5.1.</span> <span class="nav-text">Form</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MutilpartFrom"><span class="nav-number">5.2.</span> <span class="nav-text">MutilpartFrom</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件上传"><span class="nav-number">6.</span> <span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON"><span class="nav-number">7.</span> <span class="nav-text">JSON</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Response"><span class="nav-number">8.</span> <span class="nav-text">Response</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#重定向"><span class="nav-number">8.1.</span> <span class="nav-text">重定向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Json"><span class="nav-number">9.</span> <span class="nav-text">Json</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">10.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

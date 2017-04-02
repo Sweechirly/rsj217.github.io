@@ -1,0 +1,709 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="数据库查询我们了解了数据库连接与连接池。拿到了连接当然就是为了跟数据库交互。对于数据库交互，无怪乎两类操作，读和写。其中怎么读，怎么写，读和写的过程糅合一起就会遇到复杂的事务。本篇内容主要关注数据库的读写操作，后面再涉及事务的介绍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Mysql笔记（二）--- CURD基础">
+<meta property="og:url" content="http://rsj217.github.com/2017/01/13/Golang Mysql笔记（二）--- CURD基础/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="数据库查询我们了解了数据库连接与连接池。拿到了连接当然就是为了跟数据库交互。对于数据库交互，无怪乎两类操作，读和写。其中怎么读，怎么写，读和写的过程糅合一起就会遇到复杂的事务。本篇内容主要关注数据库的读写操作，后面再涉及事务的介绍。">
+<meta property="og:updated_time" content="2017-04-02T09:11:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Mysql笔记（二）--- CURD基础">
+<meta name="twitter:description" content="数据库查询我们了解了数据库连接与连接池。拿到了连接当然就是为了跟数据库交互。对于数据库交互，无怪乎两类操作，读和写。其中怎么读，怎么写，读和写的过程糅合一起就会遇到复杂的事务。本篇内容主要关注数据库的读写操作，后面再涉及事务的介绍。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/01/13/Golang Mysql笔记（二）--- CURD基础/"/>
+
+
+  <title> Golang Mysql笔记（二）--- CURD基础 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang Mysql笔记（二）--- CURD基础
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-13T12:31:02+08:00" content="2017-01-13">
+              2017-01-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="数据库查询"><a href="#数据库查询" class="headerlink" title="数据库查询"></a>数据库查询</h2><p>我们了解了数据库连接与连接池。拿到了连接当然就是为了跟数据库交互。对于数据库交互，无怪乎两类操作，读和写。其中怎么读，怎么写，读和写的过程糅合一起就会遇到复杂的事务。本篇内容主要关注数据库的读写操作，后面再涉及事务的介绍。</p>
+<a id="more"></a>
+<h3 id="读取数据"><a href="#读取数据" class="headerlink" title="读取数据"></a>读取数据</h3><p>database/sql提供了Query和QueryRow方法进行查询数据库。对于Query方法的原理，正如前文介绍的主要分为三步：</p>
+<ol>
+<li>从连接池中请求一个连接</li>
+<li>执行查询的sql语句</li>
+<li>将数据库连接的所属权传递给Result结果集</li>
+</ol>
+<p>Query返回的结果集是sql.Rows类型。它有一个Next方法，可以迭代数据库的游标，进而获取每一行的数据，大概使用范式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">rows, err := db.Query(&quot;SELECT world FROM test.hello&quot;)</div><div class="line">if err != nil&#123;</div><div class="line">    log.Fatalln(err)</div><div class="line">&#125;</div><div class="line"></div><div class="line">for rows.Next()&#123;</div><div class="line">    var s string</div><div class="line">    err = rows.Scan(&amp;s)</div><div class="line">    if err !=nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    log.Printf(&quot;found row containing %q&quot;, s)</div><div class="line">&#125;</div><div class="line">rows.Close()</div></pre></td></tr></table></figure>
+<p>上述代码我们已经见过好多次了，想必大家都轻车熟路啦。rows.Next方法设计用来迭代。当它迭代到最后一行数据之后，会触发一个io.EOF的信号，即引发一个错误，同时go会自动调用rows.Close方法释放连接，然后返回false。此时循环将会结束退出。</p>
+<p>通常你会正常迭代完数据然后退出循环。可是如果并没有正常的循环而因其他错误导致退出了循环。此时rows.Next处理结果集的过程并没有完成，归属于rows的连接不会被释放回到连接池。因此十分有必要正确的处理rows.Close事件。如果没有关闭rows连接，将导致大量的连接并且不会被其他函数重用，就像溢出了一样。最终将导致数据库无法使用。</p>
+<p>那么如何阻止这样的行为呢？上述代码已经展示，无论循环是否完成或者因为其他原因退出，都显示的调用rows.Close方法，确保连接释放。又或者使用defer指令在函数退出的时候释放连接，即使连接已经释放了，rows.Close仍然可以调用多次，是无害的。</p>
+<p>使用defer的时候需要注意，如果一个函数执行很长的逻辑，例如main函数，那么rows的连接释放就会也很长，好的实践方案是尽可能的越早释放连接。</p>
+<p>rows.Next循环迭代的时候，因为触发了io.EOF而退出循环。为了检查是否是迭代正常退出还是异常退出，需要检查rows.Err。例如上面的代码应该改成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">rows, err := db.Query(&quot;SELECT world FROM test.hello&quot;)</div><div class="line">if err != nil&#123;</div><div class="line">    log.Fatalln(err)</div><div class="line">&#125;</div><div class="line">defer rows.Close()</div><div class="line"></div><div class="line">for rows.Next()&#123;</div><div class="line">    var s string</div><div class="line">    err = rows.Scan(&amp;s)</div><div class="line">    if err !=nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    log.Printf(&quot;found row containing %q&quot;, s)</div><div class="line">&#125;</div><div class="line">rows.Close()</div><div class="line">if err = rows.Err(); err != nil &#123;</div><div class="line">    log.Fatal(err)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="读取单条记录"><a href="#读取单条记录" class="headerlink" title="读取单条记录"></a>读取单条记录</h3><p>Query方法是读取多行结果集，实际开发中，很多查询只需要单条记录，不需要再通过Next迭代。golang提供了QueryRow方法用于查询单条记录的结果集。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">var s string</div><div class="line">err = db.QueryRow(&quot;SELECT world FROM test.hello LIMIT 1&quot;).Scan(&amp;s)</div><div class="line">if err != nil&#123;</div><div class="line">    if err == sql.ErrNoRows&#123;</div><div class="line">        log.Println(&quot;There is not row&quot;)</div><div class="line">    &#125;else &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">log.Println(&quot;found a row&quot;, s)</div></pre></td></tr></table></figure>
+<p>QueryRow方法的使用很简单，它要么返回sql.Row类型，要么返回一个error，如果是发送了错误，则会延迟到Scan调用结束后返回，如果没有错误，则Scan正常执行。只有当查询的结果为空的时候，会触发一个sql.ErrNoRows错误。你可以选择先检查错误再调用Scan方法，或者先调用Scan再检查错误。</p>
+<h3 id="rows-Scan原理"><a href="#rows-Scan原理" class="headerlink" title="rows.Scan原理"></a>rows.Scan原理</h3><p>结果集方法Scan可以把数据库取出的字段值赋值给指定的数据结构。它的参数是一个空接口的切片，这就意味着可以传入任何值。通常把需要赋值的目标变量的指针当成参数传入，它能将数据库取出的值赋值到指针值对象上。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var var1, var2 string</div><div class="line">err = row.Scan(&amp;var1, &amp;var2)</div></pre></td></tr></table></figure>
+<p>在一些特殊案例中，如果你不想把值赋值给指定的目标变量，那么需要使用<code>*sql.RawBytes</code>类型。如何使用<em>sql.RawBytes需要参考更细的官方文档。大多数情况下我们不必这么做。但是还是需要注意在db.QueryRow().Scan()中不能使用 </em>sql.RawBytes。</p>
+<p>Scan还会帮我们自动推断除数据字段匹配目标变量。比如有个数据库字段的类型是<code>VARCHAR</code>，而他的值是一个数字串，例如<code>&quot;1&quot;</code>。如果我们定义目标变量是string，则scan赋值后目标变量是数字string。如果声明的目标变量是一个数字类型，那么scan会自动调用strconv.ParseInt()或者strconv.ParseInt()方法将字段转换成和声明的目标变量一致的类型。当然如果有些字段无法转换成功，则会返回错误。因此在调用scan后都需要检查错误。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var world int</div><div class="line">err = stmt.QueryRow(1).Scan(&amp;world)</div></pre></td></tr></table></figure>
+<p>此时scan会把字段转变成数字整型的赋值给world变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var world string</div><div class="line">err = stmt.QueryRow(1).Scan(&amp;world)</div></pre></td></tr></table></figure>
+<p>此时scan取出的字段就是字串。同样的如果字段是int类型，声明的变量是string类型，scan也会自动将数字转换成字串赋值给目标变量。</p>
+<h3 id="空值处理"><a href="#空值处理" class="headerlink" title="空值处理"></a>空值处理</h3><p>数据库有一个特殊的类型，NULL空值。可是NULL不能通过scan直接跟普遍变量赋值，甚至也不能将null赋值给<code>nil</code>。对于null必须指定特殊的类型，这些类型定义在database/sql库中。例如sql.NullFloat64。如果在标准库中找不到匹配的类型，可以尝试在驱动中寻找。下面是一个简单的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var (</div><div class="line">   s1 string</div><div class="line">	s2 sql.NullString i1 int</div><div class="line">	f1 float64</div><div class="line">	f2 float64</div><div class="line">)</div><div class="line">// 假设数据库的记录为 [&quot;hello&quot;, NULL, 12345, &quot;12345.6789&quot;, &quot;not-a-float&quot;]</div><div class="line">err = rows.Scan(&amp;s1, &amp;s2, &amp;i1, &amp;f1, &amp;f2) if err != nil &#123;</div><div class="line">log.Fatal(err) &#125;</div></pre></td></tr></table></figure>
+<p>因为最后一个f2字段的值不是float，这会英法一个错误。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sql: Scan error on column index 4: converting string &quot;not-a- oat&quot; to a  oat64: strconv.ParseFloat: parsing &quot;not-a- oat&quot;: invalid syntax</div></pre></td></tr></table></figure>
+<p>如果忽略err，强行读取目标变量，可以看到最后一个值转换错误会处理，而不是抛出异常：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">err = rows.Scan(&amp;s1, &amp;s2, &amp;i1, &amp;f1, &amp;f2)</div><div class="line">log.Printf(&quot;%q %#v %d %f %f&quot;, s1, s2, i1, f1, f2)</div><div class="line"></div><div class="line">// 输出</div><div class="line"> &quot;hello&quot; sql.NullString&#123;String:&quot;&quot;, Valid:false&#125; 12345 12345.678900</div><div class="line">0.000000</div></pre></td></tr></table></figure>
+<p>可以看到，除了最后一个转换失败变成了零值之外，其他都正常的取出了值，尤其是null匹配了NullString类型的目标变量。</p>
+<p>对于null的操作，通常仍然需要验证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">var world sql.NullString</div><div class="line">err := db.QueryRow(&quot;SELECT world FROM hello WHERE id = ?&quot;, id).Scan(&amp;world)</div><div class="line">...</div><div class="line">if world.Valid &#123;</div><div class="line">	  wrold.String </div><div class="line">&#125; else &#123;</div><div class="line">    // 数据库的value是不是null的时候，输出 world的字符串值， 空字符串   </div><div class="line">    world.String</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对应的，如果world字段是一个int，那么声明的目标变量类似是sql.NullInt64，读取其值的方法为world.Int64。</p>
+<p>但是有时候我们并不关心值是不是Null,我们只需要吧他当一个空字符串来对待就行。这时候我们可以使用[]byte（null byte[]可以转化为空string）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var world []byte</div><div class="line">err := db.QueryRow(&quot;SELECT world FROM hello WHERE id = ?&quot;, id).Scan(&amp;world)</div><div class="line">...</div><div class="line">log.Println(string(real_name)) // 有值则取出字串值，null则转换成 空字串。</div></pre></td></tr></table></figure>
+<h3 id="自动匹配字段"><a href="#自动匹配字段" class="headerlink" title="自动匹配字段"></a>自动匹配字段</h3><p>在执行查询的时候，我们定义了目标变量，同时查询的时候也写明了字段，如果不指名字段，或者字段的顺序和查询的不一样，都有可能出错。因此如果能够自动匹配查询的字段值，将会十分节省代码，同时也易于维护。</p>
+<p>go提供了Columns方法用获取字段名，与大多数函数一样，读取失败将会返回一个err，因此需要检查错误。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cols, err := rows.Columns()</div><div class="line">if err != nil&#123;</div><div class="line">   log.Fatalln(er)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于不定字段查询，我们可以定义一个map的key和value用来表示数据库一条记录的row的值。通过rows.Columns得到的col作为map的key值。下面是一个例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    db, err := sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/test?parseTime=true&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    defer db.Close()</div><div class="line"></div><div class="line">    rows, err := db.Query(&quot;SELECT * FROM user WHERE gid = 1&quot;)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    defer rows.Close()</div><div class="line"></div><div class="line"></div><div class="line">    cols, err := rows.Columns()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    fmt.Println(cols)</div><div class="line">    vals := make([][]byte, len(cols))</div><div class="line">    scans := make([]interface&#123;&#125;, len(cols))</div><div class="line"></div><div class="line">    for i := range vals&#123;</div><div class="line">        scans[i] = &amp;vals[i]</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    var results []map[string]string</div><div class="line"></div><div class="line">    for rows.Next()&#123;</div><div class="line">        err = rows.Scan(scans...)</div><div class="line">        if err != nil&#123;</div><div class="line">            log.Fatalln(err)</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        row := make(map[string]string)</div><div class="line">        for k, v := range vals&#123;</div><div class="line">            key := cols[k]</div><div class="line">            row[key] = string(v)</div><div class="line">        &#125;</div><div class="line">        results = append(results, row)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    for k, v :=range results&#123;</div><div class="line">        fmt.Println(k, v)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>数据表user有三个字段，id（int），gid（int），real_name（varchar）。我们使用<code>*</code>取出所有的字段。使用rows.Columns()获取字段名，是一个string的数组。然后创建一个切片vals，用来存放所取出来的数据结果，类似是byte的切片。接下来还需要定义一个切片，这个切片用来scan，将数据库的值复制到给它。</p>
+<p>完成这一步之后，vals则得到了scan复制给他的值，因为是byte的切片，因此在循环一次，将其转换成string即可。</p>
+<p>转换后的row即我们取出的数据行值，最后组装到result切片中。</p>
+<p>运行结果如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[id gid real_name]</div><div class="line">0 map[id:4 gid:1 real_name:瑟兰督依]</div><div class="line">1 map[real_name:来格拉斯 id:5 gid:1]</div><div class="line">2 map[id:15 gid:1 real_name:]</div></pre></td></tr></table></figure>
+<p>有一条记录的 real_name 值为空字串，因为其数据库存储的是NULL。</p>
+<h3 id="Exec"><a href="#Exec" class="headerlink" title="Exec"></a>Exec</h3><p>前面介绍了很多关于查询方面的内容，查询是读方便的内容，对于写，即插入更新和删除。这类操作与query不太一样，写的操作只关系是否写成功了。database/sql提供了Exec方法用于执行写的操作。</p>
+<p>我们也见识到了，Eexc返回一个sql.Result类型，它有两个方法<code>LastInsertId</code>和<code>RowsAffected</code>。LastInsertId返回是一个数据库自增的id，这是一个int64类型的值。</p>
+<p>Exec执行完毕之后，连接会立即释放回到连接池中，因此不需要像query那样再手动调用row的close方法。</p>
+<p>关于<code>LastInsertId</code>和<code>RowsAffected</code>方法执行错误的返回，这跟底层的数据库是有关系的。因此更多的细节可以参考驱动的文档。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前，我们大致了解了数据库的CURD操作。对于读的操作，需要定义目标变量才能scan数据记录。scan会智能的帮我们转换一些数据，取决于定义的目标变量类型。对于null的处理，可以使用database/sql或驱动提供的类型声明，也可以使用[]byte将其转换成空字串。除了读数据之外，对于写的操作，database/sql也提供了Exec方法，并且对于sql.Result提供了<code>LastInsertId</code>和<code>RowsAffected</code>方法用于获取写后的结果。</p>
+<p>在实际应用中，与数据库交互，往往写的sql语句还带有参数，这类sql可以称之为prepare语句。prepare语句有很多好处，可以防止sql注入，可以批量执行等。但是prepare的连接管理有其自己的机制，也有其使用上的陷进，关于prepare的使用，我们将会在以后讨论。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/11/Golang Mysql笔记（一）--- 连接与连接池.md/" rel="next" title="Golang Mysql笔记（一）--- 连接与连接池">
+                <i class="fa fa-chevron-left"></i> Golang Mysql笔记（一）--- 连接与连接池
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/14/Golang Mysql笔记（三）--- Prepared剖析/" rel="prev" title="Golang Mysql笔记（三）--- Prepared剖析">
+                Golang Mysql笔记（三）--- Prepared剖析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库查询"><span class="nav-number">1.</span> <span class="nav-text">数据库查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#读取数据"><span class="nav-number">1.1.</span> <span class="nav-text">读取数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#读取单条记录"><span class="nav-number">1.2.</span> <span class="nav-text">读取单条记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rows-Scan原理"><span class="nav-number">1.3.</span> <span class="nav-text">rows.Scan原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#空值处理"><span class="nav-number">1.4.</span> <span class="nav-text">空值处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动匹配字段"><span class="nav-number">1.5.</span> <span class="nav-text">自动匹配字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Exec"><span class="nav-number">1.6.</span> <span class="nav-text">Exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

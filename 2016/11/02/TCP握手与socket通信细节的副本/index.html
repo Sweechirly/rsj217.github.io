@@ -1,0 +1,732 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="network,tcp," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="协议与接口对于程式开发者而言，几乎每天都需要和协议和接口打交道，尽管有时候很少直接使用他们。开发一个应用程序，为了提高开发效率，往往会选择一个框架/库来进行开发，于是乎不可避免的就需要了解框架的API接口。协议往往是一些底层的通信规则，框架的最大职能就是实现和解析这些协议，并指定一套简洁的接口提供给开发者使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP握手与socket通信细节">
+<meta property="og:url" content="http://rsj217.github.com/2016/11/02/TCP握手与socket通信细节的副本/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="协议与接口对于程式开发者而言，几乎每天都需要和协议和接口打交道，尽管有时候很少直接使用他们。开发一个应用程序，为了提高开发效率，往往会选择一个框架/库来进行开发，于是乎不可避免的就需要了解框架的API接口。协议往往是一些底层的通信规则，框架的最大职能就是实现和解析这些协议，并指定一套简洁的接口提供给开发者使用。">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-ea8b706e150e8e26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-e9287adb39065cd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-a2f361c395257df7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/11043-b5f21cdd89f79c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2016-11-02T06:40:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP握手与socket通信细节">
+<meta name="twitter:description" content="协议与接口对于程式开发者而言，几乎每天都需要和协议和接口打交道，尽管有时候很少直接使用他们。开发一个应用程序，为了提高开发效率，往往会选择一个框架/库来进行开发，于是乎不可避免的就需要了解框架的API接口。协议往往是一些底层的通信规则，框架的最大职能就是实现和解析这些协议，并指定一套简洁的接口提供给开发者使用。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/11043-ea8b706e150e8e26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/11/02/TCP握手与socket通信细节的副本/"/>
+
+
+  <title> TCP握手与socket通信细节 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                TCP握手与socket通信细节
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-11-02T14:29:13+08:00" content="2016-11-02">
+              2016-11-02
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="协议与接口"><a href="#协议与接口" class="headerlink" title="协议与接口"></a>协议与接口</h3><p>对于程式开发者而言，几乎每天都需要和协议和接口打交道，尽管有时候很少直接使用他们。开发一个应用程序，为了提高开发效率，往往会选择一个框架/库来进行开发，于是乎不可避免的就需要了解框架的API接口。协议往往是一些底层的通信规则，框架的最大职能就是实现和解析这些协议，并指定一套简洁的接口提供给开发者使用。</p>
+<a id="more"></a>
+<p>对于web编程，TCP，HTTP协议最熟悉不过了。<a href="http://www.jianshu.com/p/f86512230707" target="_blank" rel="external">TCP握手与挥手</a>中，我们了解了TCP连接相关的具体状态细节。这些算是协议上的规定，对于程式而言，需要如何实现这些协议的从而提供接口呢？所幸，socket的为网络通信协议提供了编程接口。下面就来讨论tcp连接中的socket编程。</p>
+<h3 id="socket编程"><a href="#socket编程" class="headerlink" title="socket编程"></a>socket编程</h3><p>socket就是不同计算机之间进行通信的一个抽象。socket是两个节点之间的数据传输，端点可能处于同一台主机，也可能位于不同的主机中，通常属于C/S架构，一个连接发起者（initiator）另外一个连接侦听者（listener），通常将从事侦听的socket称作“服务器”，将发起连接的套接字称作“客户端”。一图胜千言，下图几位常见的clinet-server通信模型：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-ea8b706e150e8e26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="tcplab.png"></p>
+<p>上图中的左边是clinet，右边是server。server的生命周期大致如下：</p>
+<ol>
+<li>创建socket。</li>
+<li>绑定（bind）地址端口</li>
+<li>监听网络连接</li>
+<li>接受连接</li>
+<li>关闭连接</li>
+</ol>
+<p>clinet的生命周期则稍微简单点：</p>
+<ol>
+<li>创建socket</li>
+<li>绑定地址</li>
+<li>发起连接</li>
+<li>关闭连接</li>
+</ol>
+<p>上述的过程使用python代码也非常简单：<br>clinet</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">import socket</div><div class="line"></div><div class="line">address = (&apos;127.0.0.1&apos;, 8000)</div><div class="line"># 创建 tcp socket</div><div class="line">client = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)</div><div class="line"># 发起连接</div><div class="line">client.connect(address)</div><div class="line"># 发送数据</div><div class="line">client.send(&apos;hello-world&apos;)</div><div class="line"># 接受数据</div><div class="line">data = client.recv(1024)</div><div class="line">print data</div><div class="line"># 关闭连接</div><div class="line">client.close()</div></pre></td></tr></table></figure>
+<p>服务端也很简单</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">import socket</div><div class="line"></div><div class="line">address = (&apos;127.0.0.1&apos;, 8000)</div><div class="line"># 创建 tcp socket</div><div class="line">server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)</div><div class="line">server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)</div><div class="line"># 绑定地址</div><div class="line">server.bind(address)</div><div class="line"># 监听</div><div class="line">server.listen(5)</div><div class="line"></div><div class="line">while True:</div><div class="line">    # 获取连接</div><div class="line">    conn, addr = server.accept()</div><div class="line">    while True:</div><div class="line">        # 读取数据</div><div class="line">        data = conn.recv(1024)</div><div class="line">        # 发送数据给客户端</div><div class="line">        conn.sendall(data)</div><div class="line">        if not data:</div><div class="line">            # 关闭连接</div><div class="line">            conn.close()</div><div class="line">            break</div><div class="line"># 关闭socket</div><div class="line">server.close()</div></pre></td></tr></table></figure>
+<p>运行服务端server.py 服务端将会开启一个无限循环的监听，与客户端创建连接之后，进行数据交互，然后关闭连接，同时进入下一个生命周期的监听。</p>
+<p>对于clinet的代码，发现我们并没有显示的绑定地址。对于服务器，绑定固定的端口，用于监听，客户端如果没有绑定，操作系统会自动分配绑定一个端口</p>
+<h3 id="socket与握手细节"><a href="#socket与握手细节" class="headerlink" title="socket与握手细节"></a>socket与握手细节</h3><p>从最上面的网络模型图看出，握手的连接发生在客户端connect，服务端的accept返回连接。握手的细节其实是客户端connet和服务端的listen过程，而accept只是返回队列里的连接。下面通过nc和wireshaker抓包来分析tcp三次握手和socket的通信细节。</p>
+<h4 id="clinet创建socket，server尚未bind地址"><a href="#clinet创建socket，server尚未bind地址" class="headerlink" title="clinet创建socket，server尚未bind地址"></a>clinet创建socket，server尚未bind地址</h4><p>server如果尚未绑定地址，clinet就发起连接，将会收到一个RST拒绝连接的包。修改server.py运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">import socket</div><div class="line">import time</div><div class="line"></div><div class="line">address = (&apos;127.0.0.1&apos;, 8000)</div><div class="line">server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)</div><div class="line"></div><div class="line">while True:</div><div class="line">    print &apos;sleep&apos;</div><div class="line">    time.sleep(1)</div></pre></td></tr></table></figure>
+<p>clinet运行之后，connect调用之后触发了一个异常，程序退出。查看连接情况如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div></pre></td></tr></table></figure>
+<p>可见并没有创建连接通道，使用wireshaker的抓包如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-e9287adb39065cd6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1.png"></p>
+<p>这个过程对于客户端是</p>
+<ol>
+<li>客户端发送一个握手包(SYN Seq)</li>
+<li>端口直接返回（RST, ACK）拒绝连接</li>
+</ol>
+<h4 id="server绑定地址"><a href="#server绑定地址" class="headerlink" title="server绑定地址"></a>server绑定地址</h4><p>接下来把server的地址进行绑定，但是尚未监听。运行服务端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">import socket</div><div class="line">import time</div><div class="line"></div><div class="line">address = (&apos;127.0.0.1&apos;, 8000)</div><div class="line"># 创建 tcp socket</div><div class="line">server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)</div><div class="line">server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)</div><div class="line"># 绑定地址</div><div class="line">server.bind(address)</div><div class="line"></div><div class="line">while True:</div><div class="line">    print &apos;sleep&apos;</div><div class="line">    time.sleep(1)</div></pre></td></tr></table></figure>
+<p>使用nc查看连接情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    CLOSED</div></pre></td></tr></table></figure>
+<p>然后运行clinet.py代码，这一次并不像之前connect调用就出现异常，而是客户端阻塞了一段时间之后，最后超时退出。查看wireshaker如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-a2f361c395257df7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="2.png"></p>
+<ol>
+<li>客户端发送一个握手包(SYN Seq)</li>
+<li>端口没有响应，导致客户端一直重发，此时connect阻塞，直到超时退出(退出进程)。</li>
+</ol>
+<p>此时再使用netstat查看会得到如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.55808        127.0.0.1.8000         SYN_SENT</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    CLOSED</div><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.55808        127.0.0.1.8000         SYN_SENT</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    CLOSED</div><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.55808        127.0.0.1.8000         SYN_SENT</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    CLOSED</div><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    CLOSED</div></pre></td></tr></table></figure>
+<p>通过wireshaker和netstat的观察，client发送SYN之后，自身状态编程SYS_SENT，server则一直处于CLOSED。这其实是第一次握手，clinet正等待server的ACK，可惜server并没有呼应，最后clinet超时退出。</p>
+<h4 id="server进行listen监听"><a href="#server进行listen监听" class="headerlink" title="server进行listen监听"></a>server进行listen监听</h4><p>将server.py加上监听调用，listen接口有一个参数，即连接队列中的连接数，通常设置为5，表示如果创建了连接，就存储再连接队列中，这个队列最大的容量是5。在mac上最大的则是128。</p>
+<p>server.py</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">import socket</div><div class="line">import time</div><div class="line">address = (&apos;127.0.0.1&apos;, 8000)</div><div class="line"># 创建 tcp socket</div><div class="line">server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)</div><div class="line">server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)</div><div class="line"># 绑定地址</div><div class="line">server.bind(address)</div><div class="line"># 监听</div><div class="line">server.listen(5)</div><div class="line"></div><div class="line">while True:</div><div class="line">    print &apos;sleep&apos;</div><div class="line">    time.sleep(1)</div></pre></td></tr></table></figure>
+<p>查看连接状况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    LISTEN</div></pre></td></tr></table></figure>
+<p>可见server处于LISTEM状态。</p>
+<p>这次我们使用nc工具来进行交互实验：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">☁  ~  nc 127.0.0.1 8000</div></pre></td></tr></table></figure>
+<p>上述命令等同于connect函数的调用，可见运行nc命令之后，客户端一直被阻塞。一段时间之后，再手动command+c 结束 nc 命令。此时再查看连接状态和抓包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.8000         127.0.0.1.55832        ESTABLISHED</div><div class="line">tcp4       0      0  127.0.0.1.55832        127.0.0.1.8000         ESTABLISHED</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    LISTEN</div><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.8000         127.0.0.1.55832        ESTABLISHED</div><div class="line">tcp4       0      0  127.0.0.1.55832        127.0.0.1.8000         ESTABLISHED</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*                    LISTEN</div><div class="line">☁  ~  netstat -nat | grep -i &quot;8000&quot; | grep 127.0.0.1</div><div class="line">tcp4       0      0  127.0.0.1.8000         127.0.0.1.55832        CLOSE_WAIT</div><div class="line">tcp4       0      0  127.0.0.1.55832        127.0.0.1.8000         FIN_WAIT_2</div><div class="line">tcp4       0      0  127.0.0.1.8000         *.*</div></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/11043-b5f21cdd89f79c3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3.png"></p>
+<p>从netstat和抓包的情况来看，此时client和server进行了三次握手：</p>
+<ol>
+<li>客户端发送一个握手包(SYN Seq)，第一次握手，客户端连接状态为 SYS_SEND</li>
+<li>服务端端有响应，并发送一个(SYN, ACK)的应答包， 第二次握手 客户端的状态都变成ESTABLISHED表示可以发送数据了</li>
+<li>客户端再向服务端发送（ACK）应答包，第三次握手，建立TCP连接，服务端也可以发送数据。</li>
+<li>客户端发送一个[FIN, ACK]的包，表示关闭连接。</li>
+<li>服务端发送一个[ACK]包表示确定关闭客户端到服务端的连接。客户端到服务端的连接断了。服务端到客户端的连接还保持。</li>
+</ol>
+<h3 id="listen-amp-accept函数"><a href="#listen-amp-accept函数" class="headerlink" title="listen&amp;accept函数"></a>listen&amp;accept函数</h3><p>通过上述的实验，可见tcp三次握手发生在client的connect调用之后，server端的listen函数调用之后，但是并不是由listen函数完成的，listen()的作用仅仅告诉内核一些信息，即连接队列的大小，三次握手是以后内核完成的。一旦完成了三次握手，内核就把连接放入连接队列之中。</p>
+<p>当socket对象调用accpet函数的时候，就从连接队列中将tcp连接取出并返回。如果连接队列中没有连接，那么accept函数调用将会阻塞（如果socket是非阻塞模式，accept此时会返回，并触发一个异常）。</p>
+<p>上述的代码listen只设置了5，如果连接同事超过了5个会怎么样呢？对于unix，server不会对再对建立新连接的握手进行应答，clinet的 connect 就会返回 ETIMEDOUT。可是在linux中server并不会拒绝连接，只是会延时连接，然后accept调用的时候却未必能把已经建立好的连接全部取出来。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>tcp握手的系统调用有 connect bind listen函数。python封装的api和C的很像。客户端connect发起握手，接受到服务器的ack应答返回。server在listen调用之后创建连接队列，同时监听端口，客户端connect发起的syn送达，在服务器的内核完成握手。只有当server端调用accept，才从连接队列中取tcp连接，如果连接队列中还没有握手后的连接，那么aceept调用在socket阻塞模式中就会阻塞，在非阻塞模式中则会返回异常错误。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag">#network</a>
+          
+            <a href="/tags/tcp/" rel="tag">#tcp</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/02/Nginx静态服务配置---详解root和alias指令/" rel="next" title="Nginx静态服务配置---详解root和alias指令">
+                <i class="fa fa-chevron-left"></i> Nginx静态服务配置---详解root和alias指令
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/无题/" rel="prev" title="无题">
+                无题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#协议与接口"><span class="nav-number">1.</span> <span class="nav-text">协议与接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket编程"><span class="nav-number">2.</span> <span class="nav-text">socket编程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket与握手细节"><span class="nav-number">3.</span> <span class="nav-text">socket与握手细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#clinet创建socket，server尚未bind地址"><span class="nav-number">3.1.</span> <span class="nav-text">clinet创建socket，server尚未bind地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#server绑定地址"><span class="nav-number">3.2.</span> <span class="nav-text">server绑定地址</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#server进行listen监听"><span class="nav-number">3.3.</span> <span class="nav-text">server进行listen监听</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#listen-amp-accept函数"><span class="nav-number">4.</span> <span class="nav-text">listen&accept函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

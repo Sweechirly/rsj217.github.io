@@ -1,0 +1,707 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python,黑魔法," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="所谓上下文计算机上下文（Context）对于我而言，一直是一个很抽象的名词。就像形而上一样，经常听见有人说，但是无法和现实认知世界相结合。
+最直观的上下文，莫过于小学的语文课，经常会问联系上下文，推测...，回答...，表明作者...。文章里的上下文比较好懂，无非就是前与后。
+直到了解了计算机的执行状态，程式的运行，才稍微对计算机的上下文(context)有了一定的认识，多半还是只可意会，不可言传">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python黑魔法---上下文管理器（contextor）">
+<meta property="og:url" content="http://rsj217.github.com/2016/08/31/python-magic-contextor/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="所谓上下文计算机上下文（Context）对于我而言，一直是一个很抽象的名词。就像形而上一样，经常听见有人说，但是无法和现实认知世界相结合。
+最直观的上下文，莫过于小学的语文课，经常会问联系上下文，推测...，回答...，表明作者...。文章里的上下文比较好懂，无非就是前与后。
+直到了解了计算机的执行状态，程式的运行，才稍微对计算机的上下文(context)有了一定的认识，多半还是只可意会，不可言传">
+<meta property="og:updated_time" content="2017-04-02T08:52:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python黑魔法---上下文管理器（contextor）">
+<meta name="twitter:description" content="所谓上下文计算机上下文（Context）对于我而言，一直是一个很抽象的名词。就像形而上一样，经常听见有人说，但是无法和现实认知世界相结合。
+最直观的上下文，莫过于小学的语文课，经常会问联系上下文，推测...，回答...，表明作者...。文章里的上下文比较好懂，无非就是前与后。
+直到了解了计算机的执行状态，程式的运行，才稍微对计算机的上下文(context)有了一定的认识，多半还是只可意会，不可言传">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2016/08/31/python-magic-contextor/"/>
+
+
+  <title> python黑魔法---上下文管理器（contextor） |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                python黑魔法---上下文管理器（contextor）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-31T11:36:46+08:00" content="2016-08-31">
+              2016-08-31
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="所谓上下文"><a href="#所谓上下文" class="headerlink" title="所谓上下文"></a>所谓上下文</h3><p>计算机上下文（Context）对于我而言，一直是一个很抽象的名词。就像<code>形而上</code>一样，经常听见有人说，但是无法和现实认知世界相结合。</p>
+<p>最直观的上下文，莫过于小学的语文课，经常会问<code>联系上下文，推测...，回答...，表明作者...</code>。文章里的上下文比较好懂，无非就是<code>前</code>与<code>后</code>。</p>
+<p>直到了解了计算机的执行状态，程式的运行，才稍微对计算机的上下文(context)有了一定的认识，多半还是只可意会，不可言传。本文所讨论的上下文，简而言之，就是程式所执行的环境状态，或者说程式运行的情景。</p>
+<p>关于上下文的定义，我就不在多言，具体通过程式来理解。既然提及上下文，就不可避免的涉及Python中关于上下文的魔法，即上下文管理器（contextor）。</p>
+<a id="more"></a>
+<h3 id="资源的创建和释放场景"><a href="#资源的创建和释放场景" class="headerlink" title="资源的创建和释放场景"></a>资源的创建和释放场景</h3><p>上下文管理器的常用于一些资源的操作，需要在资源的获取与释放相关的操作，一个典型的例子就是数据库的连接，查询，关闭处理。先看如下一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Database</span><span class="params">(object)</span>:</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></div><div class="line">        self.connected = <span class="keyword">False</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect</span><span class="params">(self)</span>:</span></div><div class="line">        self.connected = <span class="keyword">True</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close</span><span class="params">(self)</span>:</span></div><div class="line">        self.connected = <span class="keyword">False</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">query</span><span class="params">(self)</span>:</span></div><div class="line">        <span class="keyword">if</span> self.connected:</div><div class="line">            <span class="keyword">return</span> <span class="string">'query data'</span></div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> ValueError(<span class="string">'DB not connected '</span>)</div><div class="line">            </div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_query</span><span class="params">()</span>:</span></div><div class="line">    db = Database()</div><div class="line">    db.connect()</div><div class="line">    <span class="keyword">print</span> <span class="string">'handle --- '</span>, db.query()</div><div class="line">    db.close()</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">    handle_query()</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    main()</div></pre></td></tr></table></figure>
+<p>上述的代码很简单，针对<code>Database</code>这个数据库类，提供了<code>connect</code> <code>query</code> 和<code>close</code> 三种常见的db交互接口。客户端的代码中，需要查询数据库并处理查询结果。当然这个操作之前，需要连接数据库（db.connect()）和操作之后关闭数据库连接（ db.close()）。上述的代码可以work，可是如果很多地方有类似handle_query的逻辑，连接和关闭这样的代码就得copy很多遍，显然不是一个优雅的设计。</p>
+<p>对于这样的场景，在<a href="http://www.jianshu.com/p/7e5466661744" target="_blank" rel="external">python黑魔法—装饰器</a>中有讨论如何优雅的处理。下面使用装饰器进行改写如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Database</span><span class="params">(object)</span>:</span></div><div class="line">  ...</div><div class="line">  </div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbconn</span><span class="params">(fn)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwargs)</span>:</span></div><div class="line">        db = Database()</div><div class="line">        db.connect()</div><div class="line">        ret = fn(db, *args, **kwargs)</div><div class="line">        db.close()</div><div class="line">        <span class="keyword">return</span> ret</div><div class="line">    <span class="keyword">return</span> wrapper</div><div class="line"></div><div class="line"><span class="meta">@dbconn</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_query</span><span class="params">(db=None)</span>:</span></div><div class="line">    <span class="keyword">print</span> <span class="string">'handle --- '</span>, db.query()</div><div class="line">    </div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">  ...</div></pre></td></tr></table></figure>
+<p>编写一个dbconn的装饰器，然后在针对handle_query进行装饰即可。使用装饰器，复用了很多数据库连接和释放的代码逻辑，看起来不错。</p>
+<p>装饰器解放了生产力。可是，每个装饰器都需要事先定义一下db的资源句柄，看起来略丑，不够优雅。</p>
+<h3 id="优雅的With-as语句"><a href="#优雅的With-as语句" class="headerlink" title="优雅的With as语句"></a>优雅的With as语句</h3><p>Python提供了With语句语法，来构建对资源创建与释放的语法糖。给Database添加两个魔法方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">class Database(object):</div><div class="line"></div><div class="line">    ...</div><div class="line">    </div><div class="line">    def __enter__(self):</div><div class="line">        self.connect()</div><div class="line">        return self</div><div class="line"></div><div class="line">    def __exit__(self, exc_type, exc_val, exc_tb):</div><div class="line">        self.close()</div></pre></td></tr></table></figure>
+<p>然后修改handle_query函数如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">def handle_query():</div><div class="line">    with Database() as db:</div><div class="line">        print &apos;handle ---&apos;, db.query()</div></pre></td></tr></table></figure>
+<p>在Database类实例的时候，使用with语句。一切正常work。比起装饰器的版本，虽然多写了一些字符，但是代码可读性变强了。</p>
+<h3 id="上下文管理协议"><a href="#上下文管理协议" class="headerlink" title="上下文管理协议"></a>上下文管理协议</h3><p>前面初略的提及了上下文，那什么又是上下文管理器呢？与<a href="http://www.jianshu.com/p/dcf83643deeb" target="_blank" rel="external">python黑魔法—迭代器</a>类似，实现了迭代协议的函数/对象即为迭代器。实现了上下文协议的函数/对象即为上下文管理器。</p>
+<p>迭代器协议是实现了<code>__iter__</code>方法。上下文管理协议则是<code>__enter__</code>和<code>__exit__</code>。对于如下代码结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">class Contextor:</div><div class="line">  def __enter__(self):</div><div class="line">    pass</div><div class="line">    </div><div class="line">  def __exit__(self, exc_type, exc_val, exc_tb):</div><div class="line">    pass</div><div class="line"></div><div class="line">contextor = Contextor()</div><div class="line"></div><div class="line">with contextor [as var]:</div><div class="line">  with_body</div></pre></td></tr></table></figure>
+<p><code>Contextor</code> 实现了<code>__enter__</code>和<code>__exit__</code>这两个上下文管理器协议，当Contextor调用/实例化的时候，则创建了上下文管理器<code>contextor</code>。类似于实现迭代器协议类调用生成迭代器一样。</p>
+<p>配合with语句使用的时候，上下文管理器会自动调用<code>__enter__</code>方法，然后进入运行时上下文环境，如果有as 从句，返回自身或另一个与运行时上下文相关的对象，值赋值给var。当with_body执行完毕退出with语句块或者with_body代码块出现异常，则会自动执行<code>__exit__</code>方法，并且会把对于的异常参数传递进来。如果<code>__exit__</code>函数返回<code>True</code>。则with语句代码块不会显示的抛出异常，终止程序，如果返回None或者False，异常会被主动raise，并终止程序。</p>
+<p>大致对with语句的执行原理总结<a href="http://kuanghy.github.io/2015/08/08/python-with" target="_blank" rel="external">Python上下文管理器与with语句</a>:</p>
+<blockquote>
+<ol>
+<li>执行 contextor 以获取上下文管理器</li>
+<li>加载上下文管理器的 <strong>exit</strong>() 方法以备稍后调用</li>
+<li>调用上下文管理器的 <strong>enter</strong>() 方法</li>
+<li>如果有 as var 从句，则将 <strong>enter</strong>() 方法的返回值赋给 var</li>
+<li>执行子代码块 with_body</li>
+<li>调用上下文管理器的 <strong>exit</strong>() 方法，如果 with_body 的退出是由异常引发的，那么该异常的 type、value 和 traceback 会作为参数传给 <strong>exit</strong>()，否则传三个 None</li>
+<li>如果 with_body 的退出由异常引发，并且 <strong>exit</strong>() 的返回值等于 False，那么这个异常将被重新引发一次；如果 <strong>exit</strong>() 的返回值等于 True，那么这个异常就被无视掉，继续执行后面的代码</li>
+</ol>
+</blockquote>
+<p>了解了with语句和上下文管理协议，或许对上下文有了一个更清晰的认识。即代码或函数执行的时候，调用函数时候有一个环境，在不同的环境调用，有时候效果就不一样，这些不同的环境就是上下文。例如数据库连接之后创建了一个数据库交互的上下文，进入这个上下文，就能使用连接进行查询，执行完毕关闭连接退出交互环境。创建连接和释放连接都需要有一个共同的调用环境。不同的上下文，通常见于异步的代码中。</p>
+<h3 id="上下文管理器工具"><a href="#上下文管理器工具" class="headerlink" title="上下文管理器工具"></a>上下文管理器工具</h3><p>通过实现上下文协议定义创建上下文管理器很方便，Python为了更优雅，还专门提供了一个模块用于实现更函数式的上下文管理器用法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">import contextlib</div><div class="line"></div><div class="line">@contextlib.contextmanager</div><div class="line">def database():</div><div class="line">    db = Database()</div><div class="line">    try:</div><div class="line">        if not db.connected:</div><div class="line">            db.connect()</div><div class="line">        yield db</div><div class="line">    except Exception as e:</div><div class="line">        db.close()</div><div class="line"></div><div class="line">def handle_query():</div><div class="line">    with database() as db:</div><div class="line">        print &apos;handle ---&apos;, db.query()</div></pre></td></tr></table></figure>
+<p>使用contextlib 定义一个上下文管理器函数，通过with语句，database调用生成一个上下文管理器，然后调用函数隐式的<code>__enter__</code>方法，并将结果通yield返回。最后退出上下文环境的时候，在excepit代码块中执行了<code>__exit__</code>方法。当然我们可以手动模拟上述代码的执行的细节。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">In [1]: context = database()    # 创建上下文管理器</div><div class="line"></div><div class="line">In [2]: context</div><div class="line">&lt;contextlib.GeneratorContextManager object at 0x107188f10&gt;</div><div class="line"></div><div class="line">In [3]: db = context.__enter__() # 进入with语句</div><div class="line"></div><div class="line">In [4]: db              # as语句，返回 Database实例</div><div class="line">Out[4]: &lt;__main__.Database at 0x107188a10&gt;</div><div class="line"></div><div class="line">In [5]: db.query()       </div><div class="line">Out[5]: &apos;query data&apos;</div><div class="line"></div><div class="line">In [6]: db.connected</div><div class="line">Out[6]: True</div><div class="line"></div><div class="line">In [7]: db.__exit__(None, None, None)    # 退出with语句</div><div class="line"></div><div class="line">In [8]: db</div><div class="line">Out[8]: &lt;__main__.Database at 0x107188a10&gt;</div><div class="line"></div><div class="line">In [9]: db.connected</div><div class="line">Out[9]: False</div></pre></td></tr></table></figure>
+<h3 id="上下文管理器的用法"><a href="#上下文管理器的用法" class="headerlink" title="上下文管理器的用法"></a>上下文管理器的用法</h3><p>既然了解了上下文协议和管理器，当然是运用到实践啦。通常需要切换上下文环境，往往是在多线程/进程这种编程模型。当然，单线程异步或者协程的当时，也容易出现函数的上下文环境经常变动。</p>
+<p>异步式的代码经常在定义和运行时存在不同的上下文环境。此时就需要针对异步代码做上下文包裹的hack。看下面一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> tornado.ioloop</div><div class="line"></div><div class="line">ioloop = tornado.ioloop.IOLoop.instance()</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">callback</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">print</span> <span class="string">'run callback'</span></div><div class="line">    <span class="keyword">raise</span> ValueError(<span class="string">'except in callback'</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">async_task</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">print</span> <span class="string">'run async task'</span></div><div class="line">    ioloop.add_callback(callback=callback)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line"></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        async_task()</div><div class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</div><div class="line">        <span class="keyword">print</span> <span class="string">'exception &#123;&#125;'</span>.format(e)</div><div class="line">    <span class="keyword">print</span> <span class="string">'end'</span></div><div class="line"></div><div class="line">main()</div><div class="line">ioloop.start()</div><div class="line"></div><div class="line">运行上述代码得到如下结果</div><div class="line"></div><div class="line">run <span class="keyword">async</span> task</div><div class="line">end</div><div class="line">run callback</div><div class="line">ERROR:root:Exception <span class="keyword">in</span> callback &lt;tornado.stack_context._StackContextWrapper object at <span class="number">0x1098cb7e0</span>&gt;</div><div class="line">Traceback (most recent call last):</div><div class="line">  ...</div><div class="line">    <span class="keyword">raise</span> ValueError(<span class="string">'except in callback'</span>)</div><div class="line">ValueError: <span class="keyword">except</span> <span class="keyword">in</span> callback</div></pre></td></tr></table></figure>
+<p>主函数中main中，定义了异步任务函数async_task的调用。async_task中异常，在except中很容易catch，可是callback中出现的异常，则无法捕捉。原因就是定义的时候上下文为当前的线程执行环境，而使用了tornado的ioloop.add_callback方法，注册了一个异步的调用。当callback异步执行的时候，他的上下文已经和async_task的上下文不一样了。因此在main的上下文，无法catch异步中callback的异常。</p>
+<p>下面使用上下文管理器包装如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">class Contextor(object):</div><div class="line">    def __enter__(self):</div><div class="line">        pass</div><div class="line"></div><div class="line">    def __exit__(self, exc_type, exc_val, exc_tb):</div><div class="line">        if all([exc_type, exc_val, exc_tb]):</div><div class="line">            print &apos;handler except&apos;</div><div class="line">            print &apos;exception &#123;&#125;&apos;.format(exc_val)</div><div class="line">        return True</div><div class="line"></div><div class="line">def main():</div><div class="line">    with tornado.stack_context.StackContext(Contextor):</div><div class="line">        async_task()</div><div class="line">        </div><div class="line">运行main之后的结果如下：</div><div class="line"></div><div class="line">run async task</div><div class="line">handler except</div><div class="line">run callback</div><div class="line">handler except</div><div class="line">exception except in callback</div></pre></td></tr></table></figure>
+<p>可见，callback的函数的异常，在上下文管理器Contextor中被处理了，也就是说callback调用的时候，把之前main的上下文保存并传递给了callback。当然，上述的代码也可以改写如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">@contextlib.contextmanager</div><div class="line">def contextor():</div><div class="line">    try:</div><div class="line">        yield</div><div class="line">    except Exception as e:</div><div class="line">        print &apos;handler except&apos;</div><div class="line">        print &apos;exception &#123;&#125;&apos;.format(e)</div><div class="line">    finally:    </div><div class="line">        print &apos;release&apos;</div><div class="line"></div><div class="line">def main():</div><div class="line">    with tornado.stack_context.StackContext(contextor):</div><div class="line">        async_task()</div></pre></td></tr></table></figure>
+<p>效果类似。当然，也许有人会对StackContext这个tornado的模块感到迷惑。其实他恰恰应用上下文管理器的魔法的典范。查看StackContext的源码，实现非常精秒，非常佩服tornado作者的编码设计能力。至于StackContext究竟如何神秘，已经超出了本篇的范围，将会在介绍<a href="http://www.jianshu.com/p/3e58f977b908" target="_blank" rel="external">tonrado异步上下文管理器</a>中介绍</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag">#python</a>
+          
+            <a href="/tags/黑魔法/" rel="tag">#黑魔法</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/18/Elixir-管道一试/" rel="next" title="Elixir 管道一试">
+                <i class="fa fa-chevron-left"></i> Elixir 管道一试
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/02/Elixir 简明笔记（十三） --- 模块指令/" rel="prev" title="Elixir 简明笔记（十三） --- 模块指令">
+                Elixir 简明笔记（十三） --- 模块指令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#所谓上下文"><span class="nav-number">1.</span> <span class="nav-text">所谓上下文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源的创建和释放场景"><span class="nav-number">2.</span> <span class="nav-text">资源的创建和释放场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优雅的With-as语句"><span class="nav-number">3.</span> <span class="nav-text">优雅的With as语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文管理协议"><span class="nav-number">4.</span> <span class="nav-text">上下文管理协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文管理器工具"><span class="nav-number">5.</span> <span class="nav-text">上下文管理器工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上下文管理器的用法"><span class="nav-number">6.</span> <span class="nav-text">上下文管理器的用法</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

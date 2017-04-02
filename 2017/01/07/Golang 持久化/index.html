@@ -1,0 +1,708 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="golang,mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="持久化程序可以定义为算法+数据。算法是我们的代码逻辑，代码逻辑处理数据。数据的存在形式并不单一，可以存在数据库，文件。无论存在什么地方，处理数据的时候都需要把数据读入内存。如果直接存在内存中，不就可以可以直接读了么？的确，数据可以存在内存中。涉及数据存储的的过程称之为持久化。下面golang中的数据持久化做简单的介绍。主要包括内存存储，文件存储和数据库存储。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 持久化">
+<meta property="og:url" content="http://rsj217.github.com/2017/01/07/Golang 持久化/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="持久化程序可以定义为算法+数据。算法是我们的代码逻辑，代码逻辑处理数据。数据的存在形式并不单一，可以存在数据库，文件。无论存在什么地方，处理数据的时候都需要把数据读入内存。如果直接存在内存中，不就可以可以直接读了么？的确，数据可以存在内存中。涉及数据存储的的过程称之为持久化。下面golang中的数据持久化做简单的介绍。主要包括内存存储，文件存储和数据库存储。">
+<meta property="og:updated_time" content="2017-04-02T09:12:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang 持久化">
+<meta name="twitter:description" content="持久化程序可以定义为算法+数据。算法是我们的代码逻辑，代码逻辑处理数据。数据的存在形式并不单一，可以存在数据库，文件。无论存在什么地方，处理数据的时候都需要把数据读入内存。如果直接存在内存中，不就可以可以直接读了么？的确，数据可以存在内存中。涉及数据存储的的过程称之为持久化。下面golang中的数据持久化做简单的介绍。主要包括内存存储，文件存储和数据库存储。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://rsj217.github.com/2017/01/07/Golang 持久化/"/>
+
+
+  <title> Golang 持久化 |  </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+    <div class="site-meta-headline">
+      <a>
+        <img class="custom-logo-image" src="/logo.png"
+             alt=""/>
+      </a>
+    </div>
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title"></span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">艺术·极客·流氓</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            文章
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-resume-zh">
+          <a href="/resume" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            简历
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Golang 持久化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-07T12:31:02+08:00" content="2017-01-07">
+              2017-01-07
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><p>程序可以定义为算法+数据。算法是我们的代码逻辑，代码逻辑处理数据。数据的存在形式并不单一，可以存在数据库，文件。无论存在什么地方，处理数据的时候都需要把数据读入内存。如果直接存在内存中，不就可以可以直接读了么？的确，数据可以存在内存中。涉及数据存储的的过程称之为持久化。下面golang中的数据持久化做简单的介绍。主要包括内存存储，文件存储和数据库存储。</p>
+<a id="more"></a>
+<h3 id="内存存储"><a href="#内存存储" class="headerlink" title="内存存储"></a>内存存储</h3><p>所谓内存存储，即定义一些数据结构，数组切片，图或者其他自定义结构，把需要持久化的数据存储在这些数据结构中。使用数据的时候可以直接操作这些结构。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">type Post struct &#123;</div><div class="line">    Id      int</div><div class="line">    Content string</div><div class="line">    Author  string</div><div class="line">&#125;</div><div class="line"></div><div class="line">var PostById map[int]*Post</div><div class="line">var PostsByAuthor map[string][]*Post</div><div class="line"></div><div class="line">func store(post Post) &#123;</div><div class="line">    PostById[post.Id] = &amp;post</div><div class="line">    PostsByAuthor[post.Author] = append(PostsByAuthor[post.Author], &amp;post)</div><div class="line">&#125;</div><div class="line">func main() &#123;</div><div class="line">    PostById = make(map[int]*Post)</div><div class="line">    PostsByAuthor = make(map[string][]*Post)</div><div class="line"></div><div class="line">    post1 := Post&#123;Id: 1, Content: &quot;Hello World!&quot;, Author: &quot;Sau Sheong&quot;&#125;</div><div class="line">    post2 := Post&#123;Id: 2, Content: &quot;Bonjour Monde!&quot;, Author: &quot;Pierre&quot;&#125;</div><div class="line">    post3 := Post&#123;Id: 3, Content: &quot;Hola Mundo!&quot;, Author: &quot;Pedro&quot;&#125;</div><div class="line">    post4 := Post&#123;Id: 4, Content: &quot;Greetings Earthlings!&quot;, Author: &quot;Sau Sheong&quot;&#125;</div><div class="line"></div><div class="line">    store(post1)</div><div class="line">    store(post2)</div><div class="line">    store(post3)</div><div class="line">    store(post4)</div><div class="line"></div><div class="line">    fmt.Println(PostById[1])</div><div class="line">    fmt.Println(PostById[2])</div><div class="line"></div><div class="line">    for _, post := range PostsByAuthor[&quot;Sau Sheong&quot;] &#123;</div><div class="line">        fmt.Println(post)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    for _, post := range PostsByAuthor[&quot;Pedro&quot;] &#123;</div><div class="line">        fmt.Println(post)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们定义了两个map的结构PostById，PostByAuthor，store方法会把post数据存入这两个结构中。当需要数据的时候，再从这两个内存结构读取即可。</p>
+<p>内存持久化比较简单，严格来说这也不算是持久化，比较程序退出会清空内存，所保存的数据也会消失。这种持久化只是相对程序运行时而言。想要程序退出重启还能读取所存储的数据，这时就得依赖文件或者数据库（非内存数据库）。</p>
+<h3 id="文件存储"><a href="#文件存储" class="headerlink" title="文件存储"></a>文件存储</h3><p>文件存储，顾名思议，就是将需要存储的数据写入文件中，然后文件保存在硬盘中。需要读取数据的时候，再载入文件，把数据读取到内存中。所写入的数据和创建的文件可以自定义，例如一个存文本，格式化文本，甚至是二进制文件都可以。无非就是编码写入，读取解码的两个过程。</p>
+<p>下面我们介绍三种常用的文件存储方式，纯文本文件，csv文件或二进制文件。</p>
+<h4 id="纯文本"><a href="#纯文本" class="headerlink" title="纯文本"></a>纯文本</h4><p>纯文本文件是最简单的一种文件存储方式，只需要将保存的字符串写入文本保存即可。golang提供了ioutil库用于读写文件，也提供了os相关的文件创建，写入，保存的工具函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line">    data := []byte(&quot;Hello World!\n&quot;)</div><div class="line">    fmt.Println(data)</div><div class="line">    err := ioutil.WriteFile(&quot;data1&quot;, data, 0644)</div><div class="line">    if err != nil&#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    read1, _ := ioutil.ReadFile(&quot;data1&quot;)</div><div class="line">    fmt.Println(string(read1))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我先创建了一个byte类型的数组，<code>Hello World!\n</code>一共13个字符，对应的切片为<code>[72 101 108 108 111 32 87 111 114 108 100 33 10]</code>。调用ioutil的WriteFile方法，即可创建一个<code>data1</code>的文件。并且文件存储的是文本字符串。使用<code>ReadFile</code>方法可以读取文本字符串内容，注意，读取的数据也是一个byte类型的切片，因此需要使用string转换成文本。</p>
+<p>除了ioutil库，还可以使用os库的函数进行文件读写操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">func main()  &#123;</div><div class="line">    </div><div class="line">    data := []byte(&quot;Hello World!\n&quot;)</div><div class="line"></div><div class="line">    file1, _ := os.Create(&quot;data2&quot;)</div><div class="line">    defer file1.Close()</div><div class="line"></div><div class="line">    bytes, _ := file1.Write(data)</div><div class="line">    fmt.Printf(&quot;Wrote %d bytes to file \n&quot;, bytes)</div><div class="line"></div><div class="line">    file2, _:= os.Open(&quot;data2&quot;)</div><div class="line">    defer file2.Close()</div><div class="line"></div><div class="line">    read2 := make([]byte, len(data))</div><div class="line"></div><div class="line">    bytes, _ = file2.Read(read2)</div><div class="line"></div><div class="line">    fmt.Printf(&quot;Read %d bytes from file\n&quot;, bytes)</div><div class="line">    fmt.Println(read2, string(read2))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用os的Create方法，创建一个文件，返回一个文件句柄结构。对于文件这种资源结构，及时定义defer资源清理是一个好习惯。使用Write将数据写入文件。文件的写入完毕。</p>
+<p>读取的时候略显麻烦，使用Open函数打开文件句柄，创建一个空的byte切片，然后使用Read方法读取数据，并赋值给切片。如果想要文本字符，还需要调用string转换格式。</p>
+<h4 id="csv"><a href="#csv" class="headerlink" title="csv"></a>csv</h4><p>csv文件是一种以逗号分割单元数据的文件，类似表格，但是很轻量。对于存储一些结构化的数据很有用。golang提供了专门处理csv的库。</p>
+<p>和纯文本文件读写类似，csv文件需要通过os创建一个文件句柄，然后调用相关的csv函数读写数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line">type Post struct &#123;</div><div class="line">    Id      int</div><div class="line">    Content string</div><div class="line">    Author  string</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    csvFile, err := os.Create(&quot;posts.csv&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    defer csvFile.Close()</div><div class="line"></div><div class="line">    allPosts := []Post&#123;</div><div class="line">        Post&#123;Id: 1, Content: &quot;Hello World!&quot;, Author: &quot;Sau Sheong&quot;&#125;,</div><div class="line">        Post&#123;Id: 2, Content: &quot;Bonjour Monde!&quot;, Author: &quot;Pierre&quot;&#125;,</div><div class="line">        Post&#123;Id: 3, Content: &quot;Hola Mundo!&quot;, Author: &quot;Pedro&quot;&#125;,</div><div class="line">        Post&#123;Id: 4, Content: &quot;Greetings Earthlings!&quot;, Author: &quot;Sau Sheong&quot;&#125;,</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    writer := csv.NewWriter(csvFile)</div><div class="line">    for _, post := range allPosts &#123;</div><div class="line">        line := []string&#123;strconv.Itoa(post.Id), post.Content, post.Author&#125;</div><div class="line">        fmt.Println(line)</div><div class="line">        err := writer.Write(line)</div><div class="line">        if err != nil &#123;</div><div class="line">            panic(err)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    writer.Flush()</div><div class="line"></div><div class="line">    file, err := os.Open(&quot;posts.csv&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    defer file.Close()</div><div class="line"></div><div class="line">    reader := csv.NewReader(file)</div><div class="line">    reader.FieldsPerRecord = -1</div><div class="line">    record, err := reader.ReadAll()</div><div class="line">    if err != nil &#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    var posts []Post</div><div class="line">    for _, item := range record &#123;</div><div class="line">        id, _ := strconv.ParseInt(item[0], 0, 0)</div><div class="line">        post := Post&#123;Id: int(id), Content:item[1], Author: item[2]&#125;</div><div class="line">        posts = append(posts, post)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    fmt.Println(posts[0].Id)</div><div class="line">    fmt.Println(posts[0].Content)</div><div class="line">    fmt.Println(posts[0].Author)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建了文件句柄之后，使用csv的函数NewWriter创建一个可写对象，然后依次遍历数据，写入数据。写完的时候，需要调用Flush方法。</p>
+<p>读取csv文件也类似，创建一个NewReader的可读对象，然后读取内容。</p>
+<h4 id="gob"><a href="#gob" class="headerlink" title="gob"></a>gob</h4><p>无论纯文本还是csv文件的读写，所存储的数据文件是可以直接用文本工具打开的。对于一些不希望被文件工具打开，需要将数据写成二进制。幸好go提供了gob模板用于创建二进制文件。</p>
+<p>定义一个函数，用于写入数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func store(data interface&#123;&#125;, filename string)&#123;</div><div class="line">    buffer := new(bytes.Buffer)</div><div class="line">    encoder := gob.NewEncoder(buffer)</div><div class="line">    err := encoder.Encode(data)</div><div class="line">    if err != nil&#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line">    err = ioutil.WriteFile(filename, buffer.Bytes(), 0600)</div><div class="line">    if err != nil&#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用NewEncoder方法创建一个encoder对象，然后对数据进行二进制编码，最后将数据写入文件中。因此，读取文件的内容的过程则与之相反即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func load(data interface&#123;&#125;, filename string)&#123;</div><div class="line">    raw, err := ioutil.ReadFile(filename)</div><div class="line">    if err != nil&#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line">    buffer := bytes.NewBuffer(raw)</div><div class="line">    dec := gob.NewDecoder(buffer)</div><div class="line">    err = dec.Decode(data)</div><div class="line">    if err != nil&#123;</div><div class="line">        panic(err)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>先读取文件的内容，然后把这个二进制内容转换成一个buffer对象，最后再解码。调用的过程也很简单：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">func main() &#123;</div><div class="line">    post := Post&#123;Id:1, Content:&quot;Hello World!&quot;, Author: &quot;Vanyarpy&quot;&#125;</div><div class="line">    store(post, &quot;post3&quot;)</div><div class="line">    var postRead Post</div><div class="line">    load(&amp;postRead, &quot;post3&quot;)</div><div class="line">    fmt.Println(postRead)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过上面这些小例子，我们讨论了golang中的基本文件读写操作。基本上涉及的都有纯文本，格式化文本和二进制文本的读写操作。通过文件持久化数据比起内存才是真正的持久化。然而很多应用的开发，持久化更多还是和数据库打交道。</p>
+<p>关于数据库，又是一个很大的话题。我们先简单的讨论一下sql。后续再针对mysql的操作做详细的介绍，也有可能介绍nosql的两个代表，redis和mongodb的操作。</p>
+<h3 id="sql"><a href="#sql" class="headerlink" title="sql"></a>sql</h3><p>sql数据库做持久化是最习以为常的了。把数据写入数据库，根据数据库提供强大的查询工具获取数据。成为很多应用的基本模式。下面介绍一下golang使用mysql数据库的增删改查（CURD）功能。</p>
+<h4 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h4><p>golang封装了<code>database/sql</code>标准库，它提供了用于处理sql相关的操作的接口。而接口的实现则交给了数据库驱动。这样的设计还是很好，写代码逻辑的时候，不用考虑后端的具体数据库，即使迁移数据库类型的时候，也只需要迁移相应的驱动即可，而不用修改代码。更多关于数据库的用法，我们在后面再讨论。现在先简单的创建一个数据库连接吧：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">import (</div><div class="line">    &quot;log&quot;</div><div class="line">    &quot;database/sql&quot;</div><div class="line">    _ &quot;github.com/go-sql-driver/mysql&quot;</div><div class="line">)</div><div class="line"></div><div class="line"></div><div class="line">var Db *sql.DB</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    var err error</div><div class="line">    Db, err = sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/chitchat?parseTime=true&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line">    defer Db.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建数据库连接之前，我们需要安装并导入驱动，这里我们使用了<code>go-sql-driver/mysql</code>的驱动。golang下载和安全第三方包比较方便，运行下面命令即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ go get github.com/go-sql-driver/mysql</div></pre></td></tr></table></figure>
+<p>命令结束之后，会在<code>$GOPATH/src/github.com</code> 中找到go-sql-driver这个三方mysql驱动。直接import导入就行。</p>
+<p>sql.Open方法接收两个参数，第一个书数据库类型，第二个则是数据库的连接方式字串。返回一个 *sql.DB的指针对象。</p>
+<p>返回的Db对象只是一个数据库操作的对象，它并不是一个连接。go封装了连接池，不会暴露给开发者。当Db对象开始数据库操作的时候，go的连接池才会惰性的建立连接，查询完毕之后又会释放连接，连接会返回到连接池之中。更多关于数据库的操作，我们将会在后面的mysql专题介绍。</p>
+<h4 id="增"><a href="#增" class="headerlink" title="增"></a>增</h4><p>增加数据就如同文件操作的写一样。对于mysql，增加记录可以使用insert语句。</p>
+<p>我们拓展Post结构，通过定义其方法来进行数据操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">type Post struct &#123;</div><div class="line">    Id      int</div><div class="line">    Content string</div><div class="line">    Author  string</div><div class="line">&#125;</div><div class="line"></div><div class="line">func (post *Post) Create() (err error) &#123;</div><div class="line">    rs, err := Db.Exec(&quot;INSERT INTO posts (content, author) Values (?, ?)&quot;, post.Content, post.Author)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    id, err := rs.LastInsertId()</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    fmt.Println(id)</div><div class="line">    return</div><div class="line">&#125;</div><div class="line"></div><div class="line">var Db *sql.DB</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    var err error</div><div class="line">    Db, err = sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/chitchat?parseTime=true&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    post := Post&#123;</div><div class="line">        Content:&quot;hello world&quot;,</div><div class="line">        Author:&quot;vanyarpy&quot;,</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    post.Create()</div><div class="line">    defer Db.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Exec的方法会执行一个sql语句。为了避免sql注入，mysql参数则使用<code>?</code>占位符。执行sql后会返回一个result对象，后者有两个方法<code>LastInsertId</code>返回插入后记录的id值，<code>RowsAffected</code>返回影响的行数。</p>
+<h4 id="删"><a href="#删" class="headerlink" title="删"></a>删</h4><p>删除和插入类似，同样执行Exec方法即可。例如删除刚哥插入的id为1的记录。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">func (post *Post) Delete() (err error)&#123;</div><div class="line">    rs, err := Db.Exec(&quot;DELETE FROM posts WHERE id=?&quot;, post.Id)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    rows, err := rs.RowsAffected()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    fmt.Println(rows)</div><div class="line">    return</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="改"><a href="#改" class="headerlink" title="改"></a>改</h4><p>修改记录与插入删除类似，仍然使用Exec方法即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">func (post *Post) Update() (err error) &#123;</div><div class="line">    rs, err := Db.Exec(&quot;UPDATE posts SET author=? WHERE id=?&quot;, post.Author, post.Id)</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    rows, err := rs.RowsAffected()</div><div class="line">    if err != nil&#123;</div><div class="line">        log.Fatalln(err)</div><div class="line">    &#125;</div><div class="line">    fmt.Println(rows)</div><div class="line">    return</div><div class="line">&#125;</div><div class="line"></div><div class="line">var Db *sql.DB</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    var err error</div><div class="line">    Db, err = sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/chitchat?parseTime=true&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    post := Post&#123;</div><div class="line">        Content:&quot;hello world&quot;,</div><div class="line">        Author: &quot;vanyarpy&quot;,</div><div class="line">    &#125;</div><div class="line">    post.Create()</div><div class="line"></div><div class="line">    post = Post&#123;</div><div class="line">        Id:2,</div><div class="line">        Author:&quot;rsj217&quot;,</div><div class="line">    &#125;</div><div class="line">    post.Update()</div><div class="line">    defer Db.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们新增一条记录，然后再修改该记录。</p>
+<h4 id="查"><a href="#查" class="headerlink" title="查"></a>查</h4><p>curd中，最后一个就是r，Retrie数据。查询获取数据的方式很多，总体分为两类，一类是获取单条记录，其次就是获取多条记录。</p>
+<p>获取单条记录只需要调用query方法即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">func RetrievePost(id int) (post Post, err error)&#123;</div><div class="line">    post = Post&#123;&#125;</div><div class="line">    err = Db.QueryRow(&quot;SELECT id, content, author FROM posts WHERE id=?&quot;, id).Scan(</div><div class="line">        &amp;post.Id, &amp;post.Content, &amp;post.Author)</div><div class="line">    return</div><div class="line">&#125;</div><div class="line"></div><div class="line">func main() &#123;</div><div class="line">    var err error</div><div class="line">    Db, err = sql.Open(&quot;mysql&quot;, &quot;root:@tcp(127.0.0.1:3306)/chitchat?parseTime=true&quot;)</div><div class="line">    if err != nil &#123;</div><div class="line">        log.Fatal(err)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    post, err := RetrievePost(2)</div><div class="line">    fmt.Println(post)</div><div class="line">    defer Db.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>获取单条记录比较简单，只需要定义一个结构。再查询结果后Scan其值就好。这种读取数据的方式，在C语言中很常见。读取多条记录也大同小异，不同在于需要通过迭代才能把多个记录赋值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">func RetrievePost(id int) (post Post, err error)&#123;</div><div class="line">    post = Post&#123;&#125;</div><div class="line">    err = Db.QueryRow(&quot;SELECT id, content, author FROM posts WHERE id=?&quot;, id).Scan(</div><div class="line">        &amp;post.Id, &amp;post.Content, &amp;post.Author)</div><div class="line">    return</div><div class="line">&#125;</div><div class="line"></div><div class="line">func RetrievePosts()(posts []Post, err error)&#123;</div><div class="line"></div><div class="line">    rows, err := Db.Query(&quot;SELECT id, content, author FROM posts&quot;)</div><div class="line">    for rows.Next()&#123;</div><div class="line">        post := Post&#123;&#125;</div><div class="line">        err := rows.Scan(&amp;post.Id, &amp;post.Content, &amp;post.Author)</div><div class="line">        if err != nil&#123;</div><div class="line">            log.Println(err)</div><div class="line">        &#125;</div><div class="line">        posts = append(posts, post)</div><div class="line">    &#125;</div><div class="line">    rows.Close()</div><div class="line">    return</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>迭代rows的过程中，如果因为循环内的代码执行问题导致循环退出，此时数据库连接池并不知道连接的情况，不会自动回收，因此需要手动指定rows.Close方法。</p>
+<p>至此，对于sql数据库的基本操作都进行了介绍。golang的sql标准库的内容却远不如此，后面我们还会如何更好的使用sql进行介绍，还会讨论其中练级池，连接释放，prepare语句和事务处理方面的内容。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>数据持久化我们介绍了内存，文件和数据库三种持久化方案。其中内存并不是严格意义的持久化，但是对于一些需要频繁操作，并且程序启动后就需要处理的数据，可以考虑内存持久化。对于简单的配置，可以使用文件持久化，更多时候，数据的持久化方案还是依托于数据库。如今数据库种类繁多，无论是sql还是nosql，都需要考虑具体的使用场景。而无论什么场景，对数据的操作都可以归结为基本的CURD。</p>
+<p>我们已经学习了很多持久化的内容，接下来我们将更深入的介绍golang的Mysql数据操作。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/wechatpay.jpeg" alt="rsj217 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/golang/" rel="tag">#golang</a>
+          
+            <a href="/tags/mysql/" rel="tag">#mysql</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/29/Golang Template 简明笔记/" rel="next" title="Golang Template 简明笔记">
+                <i class="fa fa-chevron-left"></i> Golang Template 简明笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/11/Golang Mysql笔记（一）--- 连接与连接池.md/" rel="prev" title="Golang Mysql笔记（一）--- 连接与连接池">
+                Golang Mysql笔记（一）--- 连接与连接池 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/avatar.jpg"
+               alt="rsj217" />
+          <p class="site-author-name" itemprop="name">rsj217</p>
+          <p class="site-description motion-element" itemprop="description">人世间的Blog</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/rsj217" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/rsj217" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#持久化"><span class="nav-number">1.</span> <span class="nav-text">持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存存储"><span class="nav-number">2.</span> <span class="nav-text">内存存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件存储"><span class="nav-number">3.</span> <span class="nav-text">文件存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#纯文本"><span class="nav-number">3.1.</span> <span class="nav-text">纯文本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#csv"><span class="nav-number">3.2.</span> <span class="nav-text">csv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gob"><span class="nav-number">3.3.</span> <span class="nav-text">gob</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql"><span class="nav-number">4.</span> <span class="nav-text">sql</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#连接"><span class="nav-number">4.1.</span> <span class="nav-text">连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#增"><span class="nav-number">4.2.</span> <span class="nav-text">增</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删"><span class="nav-number">4.3.</span> <span class="nav-text">删</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#改"><span class="nav-number">4.4.</span> <span class="nav-text">改</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查"><span class="nav-number">4.5.</span> <span class="nav-text">查</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">rsj217</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
