@@ -142,7 +142,7 @@ Linkedin
 Python
 Golang
 JavaScript (">
-<meta property="og:updated_time" content="2017-05-08T02:24:59.000Z">
+<meta property="og:updated_time" content="2017-05-08T15:00:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="简历">
 <meta name="twitter:description" content="基本信息
@@ -358,10 +358,8 @@ JavaScript (">
 <li>Golang</li>
 <li>JavaScript (ES5, ES6)</li>
 <li>Elixir</li>
-<li>Racket<ul>
+<li>Racket</li>
 <li>SQL</li>
-</ul>
-</li>
 </ul>
 <h6 id="库和框架"><a href="#库和框架" class="headerlink" title="库和框架"></a>库和框架</h6><ul>
 <li>Js<ul>
@@ -417,6 +415,31 @@ JavaScript (">
 <li><p>2015年 1 月     老虎证券  研发工程师</p>
 </li>
 </ul>
+<h3 id="项目经验"><a href="#项目经验" class="headerlink" title="项目经验"></a><strong>项目经验</strong></h3><h5 id="老虎证券"><a href="#老虎证券" class="headerlink" title="老虎证券"></a>老虎证券</h5><hr>
+<h6 id="开户受理系统"><a href="#开户受理系统" class="headerlink" title="开户受理系统"></a>开户受理系统</h6><ul>
+<li>技术栈：Python（Tornado）+ Redis + Mongodb</li>
+<li>项目简介：老虎证券开户系统是老虎的核心系统之一。开户和交易是券商两大核心业务。我作为公司的研发工程师，主导设计和实现了开户受理系统，并持续开发新功能和维护其正常运转。系统主要使用Tornado构建Web 服务。使用Mongodb作为数据持久化方案，配合Redis做缓存和部分业务需求。</li>
+<li>项目成绩：经过多次的优化和改进，从最初的1.0版本到现在开户流程经过了3次大变革，每次都给客服同学提升了近50-70%的工作效率。因此荣获公司月最佳项目奖。</li>
+</ul>
+<h6 id="OAuth服务"><a href="#OAuth服务" class="headerlink" title="OAuth服务"></a>OAuth服务</h6><ul>
+<li>技术栈：Python（Tornado）+ Redis + Mysql</li>
+<li>项目简介：老虎的客户端产品和服务器之间的通信使用了OAuth2协议。作为公司的研发独立设计并实现了OAuth2协议，开发了公司的OAuth鉴权服务。保证了公司客户端和各个后台服务之间的通信安全和便利。该项目依然使用Tornado作为接入网关层，依赖epoll的特性实现高并发。服务上线以来运行高效稳定。</li>
+<li>项目成绩：OAuth服务成为了公司产品线上的基础服务，每天作为用户使用产品的入口之一。几次业务核心的变动，OAuth服务很好的配合后端各服务的鉴权需求。代码安全质量经过了安全人员白帽测试。</li>
+</ul>
+<h6 id="渠道佣金清算系统"><a href="#渠道佣金清算系统" class="headerlink" title="渠道佣金清算系统"></a>渠道佣金清算系统</h6><ul>
+<li>技术栈：Python + Jinja2 + Mysql</li>
+<li>项目简介：渠道管理和佣金清算系统也是公司的核心产品之一。该系统提供给公司管理推广渠道和对底层交易通道进行交易清算和佣金计算。使用Python配合Jinja2实现了完整的类CRM系统。</li>
+<li>项目成绩：该系统也是由我逐步构建并完善的系统。经过和同事的开发和优化，已经成为了公司不可或缺的一个产品服务。</li>
+</ul>
+<h6 id="微服务架构"><a href="#微服务架构" class="headerlink" title="微服务架构"></a>微服务架构</h6><ul>
+<li>技术栈：Python+Golang+Nginx</li>
+<li>项目简介：公司的产品和服务越来越多。对用户系统需要进行系统拆分。我主导构建了部分服务的拆分职能。即构建以Tornado为基础的前端网关接入层，其后端以Golang实现了微服务。前端和后端采用RPC over HTTP的方式同时，数据格式为jsonrpc2.0。后期也打算支持RPC over TCP的方式。</li>
+<li>项目成绩：项目目前搭建了基础架构，重写了大部分服务。经过了第一轮测试，暂时未上线。</li>
+</ul>
+<h5 id="网利金融"><a href="#网利金融" class="headerlink" title="网利金融"></a>网利金融</h5><hr>
+<h6 id="P2P理财系统"><a href="#P2P理财系统" class="headerlink" title="P2P理财系统"></a>P2P理财系统</h6><p>技术栈：Python（Django）+ Mysql<br>项目简介：网利宝是一款P2P理财产品。作为公司的后端工程师，和同事一起开发网利的p2p系统，包括用户系统，订单系统，支付系统和渠道邀请系统等服务。同时对系统进行自动化部署设计和调优工作。<br>项目成绩：参与了大部分系统功能的开发，形成了一套p2p完整的工作流。在公司业务逐渐扩大中提供稳定的服务。</p>
+<h5 id="知闻天下"><a href="#知闻天下" class="headerlink" title="知闻天下"></a>知闻天下</h5><hr>
+<h6 id="知闻天下后台系统"><a href="#知闻天下后台系统" class="headerlink" title="知闻天下后台系统"></a>知闻天下后台系统</h6><p>技术栈：Python（Flask）+ Mysql + uWSGI<br>项目简介：知闻天下提供的产品主要为有声音频和车载音频服务。作为公司的研发工程师，开发了知闻的后台产品，即一个完善的CMS管理系统。同时为客户端提供API服务。<br>项目成绩：知闻曾经和网易，百度，人民日报进行内容合作。依托合作伙伴的流量，我们需要调用python服务，借助uWSGI实现了稳定的高并发服务。</p>
 <h3 id="兴趣"><a href="#兴趣" class="headerlink" title="兴趣"></a><strong>兴趣</strong></h3><ul>
 <li>Python 数据分析</li>
 <li>云计算</li>
