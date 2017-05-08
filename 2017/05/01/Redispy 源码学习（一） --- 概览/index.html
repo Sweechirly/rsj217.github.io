@@ -96,7 +96,7 @@ Redispy 源码学习">
 目录：
 
 Redispy 源码学习">
-<meta property="og:updated_time" content="2017-05-08T06:31:45.000Z">
+<meta property="og:updated_time" content="2017-05-08T06:34:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redispy 源码学习（一） --- 概览">
 <meta name="twitter:description" content="Redis是一个高性能的Nosql内存数据库。代码精简，性能和扩展性强，被广泛用于互联网应用之中。许多语言也都支持redis，并实现了其客户端驱动。Python的redis驱动写得非常好（以下简称redis.py），通过阅读redis.py可以学习redis的通信协议，网络客户端的编程以及连接池管理等技术，我们也将通过对这三部分的逐一解析来学习redis.py。
@@ -344,6 +344,7 @@ Redispy 源码学习">
 <li>Redispy 源码学习（七） — 客户端接口</li>
 <li>Redispy 源码学习（八） — 多线程和阻塞连接池</li>
 </ol>
+<a id="more"></a>
 <h3 id="Redis-通信协议"><a href="#Redis-通信协议" class="headerlink" title="Redis 通信协议"></a>Redis 通信协议</h3><p>redis设计了一个非常简单高效的通信协议<code>RESP</code>—REdis Serialization Protocol，该协议基于TCP的应用层协议。在编码RESP协议的时候，我们需要学习字符的编码与解码。由于TCP是流（stream）模式，并没有边界，因此关于抽象出来的<code>包</code>的边界，将会是<code>RESP</code>协议的重点处理方式。同时也会发现<code>RESP</code>设计比较巧妙。</p>
 <h3 id="网络通信"><a href="#网络通信" class="headerlink" title="网络通信"></a>网络通信</h3><p>redis.py是redis的python客户端驱动，因此我们只需要实现客户端的逻辑，服务端当然就是redis服务器本身。简而言之，就是我们需要使用python实现一个<code>redis-cli</code>。虽然客户端的socket编码不比服务端的复杂，可是要是处理不当，同样也会带来诸多问题。构建一个健壮的客户端是写好服务端的基础。</p>
 <p>学习了<code>RESP</code>的编码与解码之后，我们就需要借助socket把网络数据发送给redis服务器，同时介绍服务器的应答，完成客户端对数据库的操作。</p>
