@@ -266,6 +266,123 @@
             
               
                 
+                <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（二）/" itemprop="url">
+                  Python-SocketServer-py-源码分析（二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-02-17T16:30:03+08:00" content="2016-02-17">
+              2016-02-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>BaseServer 和 BaseRequestHandler是网络处理的两个基类。实际应用中，网络操作更多是使用 TCP 或 HTTP 协议。SocketServer.py 也提供了更高级的TCP、UDP封装。下面就来看下关于TCP方面的网络模块（UDP和TCP的在代码组织上差别不是特别大，暂且忽略）。</p>
+<h3 id="TCPServer"><a href="#TCPServer" class="headerlink" title="TCPServer"></a>TCPServer</h3><p>TCPServer 继承了BaseServer，初始化的时候，进行了socket套接字的创建。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, server_address, RequestHandlerClass, bind_and_activate=True)</span>:</span></div><div class="line">    BaseServer.__init__(self, server_address, RequestHandlerClass)</div><div class="line">    self.socket = socket.socket(self.address_family,</div><div class="line">                                self.socket_type)</div><div class="line">    <span class="keyword">if</span> bind_and_activate:</div><div class="line">        self.server_bind()</div><div class="line">        self.server_activate()</div></pre></td></tr></table></figure>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/17/Python-SocketServer-py-源码分析（二）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/02/17/Python-SocketServer-py-源码分析（一）/" itemprop="url">
                   Python-SocketServer-py-源码分析（一）
                 </a>
@@ -1300,122 +1417,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/16/Pycrypto与RSA密码技术笔记/" itemprop="url">
-                  Pycrypto与RSA密码技术笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-16T15:30:02+08:00" content="2016-02-16">
-              2016-02-16
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="密码与通信"><a href="#密码与通信" class="headerlink" title="密码与通信"></a>密码与通信</h3><p>密码技术是一门历史悠久的技术。信息传播离不开加密与解密。密码技术的用途主要源于两个方面，<strong>加密/解密</strong>和<strong>签名/验签</strong></p>
-<p>在信息传播中，通常有<strong>发送者</strong>，<strong>接受者</strong>和<strong>窃听者</strong>三个角色。假设发送者Master想要写信给接受者Ghost，可是又不想信的内容被别人看到，因此Master需要先对信加密，而Ghost收到信之后又能解密。这样别的人即使窃听盗取了密文也无法解密。其次，如果窃听者并不像破译内容，而是伪造Master发消息给Ghost，那么Master发消息前就得先对机密内容进行签名。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/16/Pycrypto与RSA密码技术笔记/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1461,7 +1462,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-count">77</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1478,7 +1479,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

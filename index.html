@@ -266,6 +266,206 @@
             
               
                 
+                <a class="post-title-link" href="/2017/05/01/Redispy 源码学习（一） --- 概览/" itemprop="url">
+                  Redispy 源码学习（一） --- 概览
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-05-01T16:30:03+08:00" content="2017-05-01">
+              2017-05-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/技术流/" itemprop="url" rel="index">
+                    <span itemprop="name">技术流</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><code>Redis</code>是一个高性能的<code>Nosql</code>内存数据库。代码精简，性能和扩展性强，被广泛用于互联网应用之中。许多语言也都支持redis，并实现了其客户端驱动。Python的redis驱动写得非常好（以下简称redis.py），通过阅读redis.py可以学习redis的通信协议，网络客户端的编程以及连接池管理等技术，我们也将通过对这三部分的逐一解析来学习redis.py。</p>
+<p>目录：</p>
+<ol>
+<li><a href="http://www.jianshu.com/p/a79fc17ebdf4" target="_blank" rel="external">Redispy 源码学习（一） — 概览</a></li>
+<li><a href="http://www.jianshu.com/p/5ac030a05acd" target="_blank" rel="external">Redispy 源码学习（二） — RESP协议简介</a></li>
+<li><a href="http://www.jianshu.com/p/b4e14194a251" target="_blank" rel="external">Redispy 源码学习（三） — RESP协议实现–编码</a></li>
+<li><a href="http://www.jianshu.com/p/1af42a7206e7" target="_blank" rel="external">Redispy 源码学习（四） — 创建连接</a></li>
+<li>Redispy 源码学习（五） — RESP协议实现–解码</li>
+<li>Redispy 源码学习（六） — 连接池</li>
+<li>Redispy 源码学习（七） — 客户端接口</li>
+<li>Redispy 源码学习（八） — 多线程和阻塞连接池</li>
+</ol>
+<h3 id="Redis-通信协议"><a href="#Redis-通信协议" class="headerlink" title="Redis 通信协议"></a>Redis 通信协议</h3><p>redis设计了一个非常简单高效的通信协议<code>RESP</code>—REdis Serialization Protocol，该协议基于TCP的应用层协议。在编码RESP协议的时候，我们需要学习字符的编码与解码。由于TCP是流（stream）模式，并没有边界，因此关于抽象出来的<code>包</code>的边界，将会是<code>RESP</code>协议的重点处理方式。同时也会发现<code>RESP</code>设计比较巧妙。</p>
+<h3 id="网络通信"><a href="#网络通信" class="headerlink" title="网络通信"></a>网络通信</h3><p>redis.py是redis的python客户端驱动，因此我们只需要实现客户端的逻辑，服务端当然就是redis服务器本身。简而言之，就是我们需要使用python实现一个<code>redis-cli</code>。虽然客户端的socket编码不比服务端的复杂，可是要是处理不当，同样也会带来诸多问题。构建一个健壮的客户端是写好服务端的基础。</p>
+<p>学习了<code>RESP</code>的编码与解码之后，我们就需要借助socket把网络数据发送给redis服务器，同时介绍服务器的应答，完成客户端对数据库的操作。</p>
+<h3 id="连接池"><a href="#连接池" class="headerlink" title="连接池"></a>连接池</h3><p>redis.py是一个redis的客户端，主要任务是发送命令到redis服务器。对于客户端而言，与服务器的通信基于tcp的socket，客户端的生命周期，自然而然就需要创建连接，发送数据，关闭连接等基本操作。</p>
+<p>连接的频繁创建与销毁也会消耗资源，引入连接池管理连接将会是一种比较好的解决方式。redis.py的连接池写得很不错，我们也会从中受益良多。</p>
+<h3 id="redis-py的软件架构"><a href="#redis-py的软件架构" class="headerlink" title="redis.py的软件架构"></a>redis.py的软件架构</h3><p>一个大型的系统需要一个良好的设计和架构。小的软件或者脚本也离不开好的设计结构。redis.py作为python的客户端，封装了很多redis命令的接口。因此在python中使用redis将非常方便和优雅。</p>
+<h3 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h3><p>redis提供分布式功能，我们也会针对其分布式实现和使用解释其原理。</p>
+<h3 id="阅读方式"><a href="#阅读方式" class="headerlink" title="阅读方式"></a>阅读方式</h3><p>在阅读redis.py源码的时候，尝试自己实现一个驱动将会对学习理解提供莫大帮助，同时也能带来成就感。因此我们将使用Python3的编码环境，以单文件为基础，实现一个简易的redis-like.py。</p>
+<h3 id="redis-py-的架构概览"><a href="#redis-py-的架构概览" class="headerlink" title="redis.py 的架构概览"></a>redis.py 的架构概览</h3><h4 id="软件结构"><a href="#软件结构" class="headerlink" title="软件结构"></a>软件结构</h4><p>下面我们就先对redis.py做一个简单地概览。redis.py已经<code>2.10</code>版本。其文件结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">☁  redis  tree</div><div class="line">.</div><div class="line">├── __init__.py</div><div class="line">├── _compat.py</div><div class="line">├── client.py</div><div class="line">├── connection.py</div><div class="line">├── exceptions.py</div><div class="line">├── lock.py</div><div class="line">├── sentinel.py</div><div class="line">└── utils.py</div></pre></td></tr></table></figure>
+<ul>
+<li>_compat.py 用于处理python2和python3不兼容的函数，封装并提供统一的接口。</li>
+<li>client.py 该文件提供接口给python代码使用。</li>
+<li>connection.py 该文件非常重要，实现了对redis服务器的连接创建销毁和socket收发过程。</li>
+<li>exceptions.py 自定义异常</li>
+<li>lock.py sentinel.py 用于分布式相关的操作</li>
+<li>utils.py 工具函数库</li>
+</ul>
+<p>redis.py的作者把软件设计很清晰。不过我们可以先忽略这些结构，基于一个文件实现上面的功能。把核心功能实现之后，再拆分和组织代码结构。</p>
+<h4 id="创建客户端，初始化连接池"><a href="#创建客户端，初始化连接池" class="headerlink" title="创建客户端，初始化连接池"></a>创建客户端，初始化连接池</h4><p>下面一段简单的使用代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">import redis</div><div class="line"></div><div class="line">rc = redis.StrictRedis(host=&apos;127.0.0.1&apos;, port=6379, db=0)</div><div class="line">print(rc.ping())</div><div class="line">print(rc.get(&apos;hello&apos;))</div></pre></td></tr></table></figure>
+<p>StrictRedis创建一个客户端 rc（redis_cli），其内部创建一个连接池，当调用<code>ping</code>方法的时候，rc才会创建连接。再次调用<code>get</code>方法的时候，rc会从连接池中读取连接，执行命令。当连接池没有可用连接，rc又会自动创建连接。总之，redis在执行命令的时候，一旦连接坏了，就会清理释放连接，然后重建新连接，并重新执行命令。</p>
+<h4 id="与服务器通信入口"><a href="#与服务器通信入口" class="headerlink" title="与服务器通信入口"></a>与服务器通信入口</h4><p>无论<code>ping</code>还是<code>get</code>方法，调用的都是<code>StrictRedis</code>的<code>execute_command</code>方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">def execute_command(self, *args, **options):</div><div class="line">       </div><div class="line">        pool = self.connection_pool</div><div class="line">        command_name = args[0]</div><div class="line">        connection = pool.get_connection(command_name, **options)</div><div class="line">        try:</div><div class="line">            connection.send_command(*args)</div><div class="line">            return self.parse_response(connection, command_name, **options)</div><div class="line">        except (ConnectionError, TimeoutError) as e:</div><div class="line">            connection.disconnect()</div><div class="line">            if not connection.retry_on_timeout and isinstance(e, TimeoutError):</div><div class="line">                raise</div><div class="line">            connection.send_command(*args)</div><div class="line">            return self.parse_response(connection, command_name, **options)</div><div class="line">        finally:</div><div class="line">            pool.release(connection)</div></pre></td></tr></table></figure>
+<p><code>execute_command</code>方法中，先从连接池中get一条连接，然后调用<code>send_command</code>发送命令给redis服务器，接着调用<code>parse_response</code>方法读取redis的返回结果。</p>
+<p>如果执行发送命令或者读取结果的时候发生异常，将会主动disconnect，即释放客户端的连接资源（如果连接已经断开，就清理对象）。然后再重新发送。等到通信完毕之后，再把连接释放回连接池。</p>
+<blockquote>
+<p>之所以要清理连接对象，是因为在python代码上下文中，逻辑连接还是正常，只不过实际上的tcp连接已经close了。此时要同步逻辑连接和实际的连接。</p>
+</blockquote>
+<h4 id="发送命令"><a href="#发送命令" class="headerlink" title="发送命令"></a>发送命令</h4><p><code>send_command</code>是连接对象的方法，执行该方法之前将会把命令参数按照RESP协议编码。并调用<code>send_packed_comand</code>方法，后者会检查连接是是否存在，如果不存在，将会创建连接。这一步就是rc的惰性创建连接入口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">def send_packed_command(self, command):</div><div class="line">        if not self._sock:</div><div class="line">            self.connect()</div><div class="line">        try:</div><div class="line">            if isinstance(command, str):</div><div class="line">                command = [command]</div><div class="line">            for item in command:</div><div class="line">                self._sock.sendall(item)</div><div class="line">        except socket.timeout:</div><div class="line">            self.disconnect()</div><div class="line">            raise TimeoutError(&quot;Timeout writing to socket&quot;)</div><div class="line">        except socket.error:</div><div class="line">            e = sys.exc_info()[1]</div><div class="line">            self.disconnect()</div><div class="line">            if len(e.args) == 1:</div><div class="line">                errno, errmsg = &apos;UNKNOWN&apos;, e.args[0]</div><div class="line">            else:</div><div class="line">                errno = e.args[0]</div><div class="line">                errmsg = e.args[1]</div><div class="line">            raise ConnectionError(&quot;Error %s while writing to socket. %s.&quot; % (errno, errmsg))</div><div class="line">        except:</div><div class="line">            self.disconnect()</div><div class="line">            raise</div></pre></td></tr></table></figure>
+<p>该方法会调用<code>self._sock.sendall(item)</code>将redis命令发送到服务器。</p>
+<h4 id="连接与连接池"><a href="#连接与连接池" class="headerlink" title="连接与连接池"></a>连接与连接池</h4><p>调用<code>send_packed_command</code>之前就从连接池中读取连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">def get_connection(self, command_name, *keys, **options):</div><div class="line">        &quot;Get a connection from the pool&quot;</div><div class="line">        self._checkpid()</div><div class="line">        try:</div><div class="line">            connection = self._available_connections.pop()</div><div class="line">        except IndexError:</div><div class="line">            connection = self.make_connection()</div><div class="line">        self._in_use_connections.add(connection)</div><div class="line">        return connection</div></pre></td></tr></table></figure>
+<p>可以该方法会从可用的连接池对象中pop一个连接，如果连接不存在，那么就调用<code>make_connection</code>创建连接并返回。然后才能使用<code>send_packed_command</code>发送数据。</p>
+<h4 id="读取响应"><a href="#读取响应" class="headerlink" title="读取响应"></a>读取响应</h4><p>发送的过程并不复杂，接收的过程则比较讲究。后面的我们会详细分析，在此只需要有个大概认识就行了。</p>
+<p><code>parse_response</code>方法会调用连接对象的<code>read_response</code>方法，后者会调用<code>self._parser.read_response()</code>。这个 <code>_parser</code>对象为了兼容<code>Hiredis</code>而做的一个适配器。主要功能就是封装hiredis，提供统一的处理连接管理和数据缓冲的接口。默认使用<code>PythonParse</code>类。</p>
+<p><code>_parser</code>对象有一个<code>_buffer</code>属性，后者是一个<code>SocketBuffer</code>类，主要封装了对socket的接收功能，即从socket的缓冲区读取数据，通过<code>BytesIO</code>写入到内存，然后从内存中读取数据。通过计算对比内存中的数据和读取的数据，控制从socket中读取的数据。这个精妙的设计我们后面会详细介绍。</p>
+<p>再看<code>_parse</code>对象<code>read_response</code>方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">def read_response(self):</div><div class="line">        response = self._buffer.readline()</div><div class="line">        if not response:</div><div class="line">            raise ConnectionError(SERVER_CLOSED_CONNECTION_ERROR)</div><div class="line"></div><div class="line">        byte, response = byte_to_chr(response[0]), response[1:]</div><div class="line"></div><div class="line">        if byte not in (&apos;-&apos;, &apos;+&apos;, &apos;:&apos;, &apos;$&apos;, &apos;*&apos;):</div><div class="line">            raise InvalidResponse(&quot;Protocol Error: %s, %s&quot; %</div><div class="line">                                  (str(byte), str(response)))</div><div class="line"></div><div class="line">        if byte == &apos;-&apos;:</div><div class="line">            response = nativestr(response)</div><div class="line">            error = self.parse_error(response)</div><div class="line">            if isinstance(error, ConnectionError):</div><div class="line">                raise error</div><div class="line">                return error</div><div class="line">        # single value</div><div class="line">        elif byte == &apos;+&apos;:</div><div class="line">            pass</div><div class="line">        # int value</div><div class="line">        elif byte == &apos;:&apos;:</div><div class="line">            response = long(response)</div><div class="line">        # bulk response</div><div class="line">        elif byte == &apos;$&apos;:</div><div class="line">            length = int(response)</div><div class="line">            if length == -1:</div><div class="line">                return None</div><div class="line">            response = self._buffer.read(length)</div><div class="line">        # multi-bulk response</div><div class="line">        elif byte == &apos;*&apos;:</div><div class="line">            length = int(response)</div><div class="line">            if length == -1:</div><div class="line">                return None</div><div class="line">            response = [self._buffer.read(length)() for i in xrange(length)]</div><div class="line">        if isinstance(response, bytes) and self.encoding:</div><div class="line">            response = response.decode(self.encoding)</div><div class="line">        return response</div></pre></td></tr></table></figure>
+<p>调用<code>self._buffer.readline()</code>方法从socket读取数据。然后根据RESP协议处理redis的回复类型，接着逐一解析返回的数据，并返回。注意，遇到RESP中的批量回复(bulk response)和多批量回复(multi-bulk response)，还需要调用<code>self._buffer.read()</code>和递归调用<code>self._buffer.read(length)</code>解析。</p>
+<p>根据<code>self._buffer.readline()</code>只能读取返回一行的数据，因为redis是用<code>\r\n</code>区分数据，因此调用readline的时候，在批量回复和多批量回复的情况下，只能读取最前面的参数，后面的socket数据还在socket的缓冲区，所以需要继续调用read方法读取解析。后面的分析我们将会了解，多批量回复可以分解为多个批量回复，因此就与了迭代response的递归调用<code>response = [self.read_response() for i in xrange(length)]</code>。这也是经典的tcp流无边界问题的处理方式。</p>
+<h4 id="断开连接"><a href="#断开连接" class="headerlink" title="断开连接"></a>断开连接</h4><p>读取响应之后，交互就完成了使命。redis维护的是一个<code>长</code>连接，也就是根据redis的timeout参数来决定连接的空闲时间。默认配置是0，即如果redis不主动close这个连接，连接将会一直存在。所以客户端不会主动disconnect连接，而是释放其回到连接池<code>pool.release(connection)</code>。前面我们已经提到，只要交互过程中发生了异常，客户端才会主动调用disconnect方法释放与连接相关的资源和对象。</p>
+<blockquote>
+<p>如果设置了redis连接的最大空闲时间： CONFIG SET TIMEOUT 30。那么每个redis的连接在30s之后，服务器都会主动close。此时的客户端还认为连接是正常的，执行收发数据的时候将会抛异常。这时就需要同步客户端和服务器的连接状态。</p>
+</blockquote>
+<p>上面的过程可以用下面的流程图简要的说明：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">                                +-----------------------+</div><div class="line">  +------------+                |         pool          |</div><div class="line">  |            |                |-----------------------|</div><div class="line">  |  client    |    1           |                       |</div><div class="line">  |            ++-------------&gt; |    connection_pool    |</div><div class="line">  +-----+------+                |                       |</div><div class="line">        |           2           |                       |</div><div class="line">        +---------------------&gt; |  execute_command      |</div><div class="line">                                +----------+------------+</div><div class="line">                                           |</div><div class="line">                                           |3</div><div class="line">                                           |</div><div class="line">                                           |</div><div class="line">                                           v</div><div class="line">                                +-----------------------+          +---------------------+              +--------------------+</div><div class="line">                                |       pool            |          |       pool          |              |       connection   |</div><div class="line">                                |-----------------------|   4      |---------------------|              |--------------------|</div><div class="line">                                |     get_conncetion    ++--------&gt;|                     |      6       |                    |</div><div class="line">                                |                       |          |     pop connection  | &lt;-----------+|    init a conn     |</div><div class="line">                                |     send_command      +-----+    |                     |     5        |                    |</div><div class="line">                  16            |                       |     |    |     make_connection |+------------&gt;|    conect          |</div><div class="line">            +-------------------+     parse_response    |     |    |                     |              |                    |</div><div class="line">            |                   |                       |     |    +---------------------+              +------------+-------+</div><div class="line">            |                   |     release           |     |                                          ^           |</div><div class="line">            |                   +-----------------------+     +7                                         |           |</div><div class="line">            |                                                 |                                          |           |10</div><div class="line">            |                                                 |                                          |           |</div><div class="line">            |                                                 |                                          |           |</div><div class="line">+--------------------------+                                  v                                          |           v</div><div class="line">|     connection           |    +-------------------+        +---------------------------------+         |   +-------------------+        +---------------+</div><div class="line">|--------------------------|    |                   |        |           connection            |         |   |      connection   |        |    connection |</div><div class="line">|                          |    |                   |        |---------------------------------|         |   |-------------------|        |---------------|</div><div class="line">|     _parse.read_response |    |                   |  8     |                                 |         |   |                   |        |               |</div><div class="line">|                          |    |    pack command   |&lt;------+|        pack_command             |         |   |                   |   11   |               |</div><div class="line">+-----------+--------------+    |                   |-------&gt;|                                 |         |   |     create socket +--------|    on_connect |</div><div class="line">            |                   +-------------------+        +----------------+----------------+         |   |                   |        |               |</div><div class="line">            |                                                                 |                          |   |                   |        |               |</div><div class="line">            |17                                                               v                          |   +--------+----------+        +------+--------+</div><div class="line">            v                                                +---------------------------------+         |            |                          +</div><div class="line">+--------------------------+                                 |          connection             |         |            |                          |</div><div class="line">|       pythonparse        |                                 |---------------------------------|         |            |                          |</div><div class="line">|--------------------------|                                 |                                 |   9     |            |                          |12</div><div class="line">|                          |      18                         |        check sock connect       |+--------+            |                          |</div><div class="line">|      _buffer.readline    +------------+                    |                                 |&lt;---------------------+                          |</div><div class="line">|                          |            |                    +        sock sendall             |                                                 v</div><div class="line">|                          |            |                    |                                 |&lt;--------------------------------+        +----------------+</div><div class="line">|      handle response     |            |                    +-----------------+---------------+                                 |        | PythonParse    |</div><div class="line">|                          |            |                                      |                                                 |        |----------------|</div><div class="line">|                          |            |                                      |15                                               |        |                |</div><div class="line">+----------+---------------+            |                                      |                                                 |        |   on_connect   |</div><div class="line">           |                            |                                      v                                                 |        |                |</div><div class="line">           |                            |                    +-----------------+----------------+                                |        |                |</div><div class="line">           |                            |                    |                                  |                                |        +-------+--------+</div><div class="line">           |                            |                    |           end                    |                                |                |</div><div class="line">           |19                          |                    |                                  |                                |14              |</div><div class="line">           |                            |                    +----------------------------------+                                |                |</div><div class="line">           v                            v                                                                                        |                |13</div><div class="line">+---------------------------+       +----------------------------+                  +-------------------------------+            |                |</div><div class="line">|       pythonparse         |       |      ScoketBuffer          |                  |         SocketBuffer          |            |                v</div><div class="line">|---------------------------|       |----------------------------|                  |-------------------------------|            |       +------------------+</div><div class="line">|                           |       |                            |                  |                               |            |       |                  |</div><div class="line">|       _buffer.read        |       |    readline                |       21         |                               |            |       |------------------|</div><div class="line">|                           |  20   |                            |+----------------&gt;|      read from socket         |            |       |                  |</div><div class="line">|                           |------&gt;|    read                    |                  |                               |            |       |</div><div class="line">|                           |       |                            |                  |                               |            +-------+ init SocketBuffer|</div><div class="line">+---------------------------+       +----------------------------+                  +-------------------------------+                    |                  |</div><div class="line">                                                                                                                                         +------------------+</div></pre></td></tr></table></figure>
+<ol>
+<li>StrictRedis创建客户端对象，并初始化连接池</li>
+<li>执行ping命令</li>
+<li>调用execute_command 从使用 get_connection 从连接池读取连接，然后发送命令，接着解析返回的响应，最后释放连接。</li>
+<li>get_connection 调用，要不重连接池中pop一个连接，如果连接不存在，则调用make_connection 方法创建连接。</li>
+<li>初始化连接对象。</li>
+<li>返回连接对象</li>
+<li>执行send_command 函数，打包编码resp协议的命令。</li>
+<li>编码resp过程。</li>
+<li>检查连接是否存在，如果存在则发送socket数据。如果不存在，则调用connect方法创建连接对象。</li>
+<li>创建socket，用于网络通信。</li>
+<li>连接创建之后，调用连接的on_connect方法。</li>
+<li>调用 pythonparse的on connect方法。初始化socketbuffer对象，用于接受数据时候的socket通信。</li>
+<li>初始化 socketbuffer对象。</li>
+<li>逐步返回连接对象，直到可以sendall数据到服务器。</li>
+<li>结束发送过程。</li>
+<li>调用parse_response 方法，用于读取服务器返回的响应数据</li>
+<li>逐步回溯调用pythonparse封装的方法读取一行数据。</li>
+<li>通过socketbuffer读取一行数据</li>
+<li>遇到批量回复或多批量回复，调用read读取除token之后的数据。</li>
+<li>与19类似，递归处理多批量回复。</li>
+<li>从socket读取数据。</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>经过上面的简述，我们对redis.py的大致框架和功能有了初步的了解，接下来就是针对上面所提及的三个方面深入解析。</p>
+<p>RESP协议的学习比较简单，连接池的设计也不会很难，比较核心的关键是网络通信相关的处理。收发数据是我们的核心重点，连接管理也是举足轻重。一个经典的问题就是客户端的代码逻辑上的连接还存在，可是实际的tcp连接已经close，此时的收发数据该如何处理和管理呢？这将成为我们接下来阅读redispy的关键。</p>
+<blockquote>
+<p>接下来将会在分别介绍redispy源码的时，提供文中使用的客户端测试代码，于文末的gist提供。</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2017/03/28/使用Let‘s Encrypt的SSL证书配置HTTPS手记/" itemprop="url">
                   使用Let‘s Encrypt的SSL证书配置HTTPS手记
                 </a>
@@ -1294,122 +1494,6 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/11/Golang Mysql笔记（一）--- 连接与连接池.md/" itemprop="url">
-                  Golang Mysql笔记（一）--- 连接与连接池
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-01-11T12:31:02+08:00" content="2017-01-11">
-              2017-01-11
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/技术流/" itemprop="url" rel="index">
-                    <span itemprop="name">技术流</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="database-sql"><a href="#database-sql" class="headerlink" title="database/sql"></a>database/sql</h3><p>database/sql是golang的标准库之一，它提供了一系列接口方法，用于访问关系数据库。它并不会提供数据库特有的方法，那些特有的方法交给数据库驱动去实现。</p>
-<p>database/sql库提供了一些type。这些类型对掌握它的用法非常重要。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2017/01/11/Golang Mysql笔记（一）--- 连接与连接池.md/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1455,7 +1539,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">76</span>
+              <span class="site-state-item-count">77</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1472,7 +1556,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
